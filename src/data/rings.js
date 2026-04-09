@@ -103,7 +103,7 @@ export const ringStructure = [
   // Ring 4 — 72 Angels of the Shem HaMephorash
   { ringId:"angels", innerRadius:174, outerRadius:272, segments:
     A.map((a,i)=>({
-      id:`angel_${a[0]}`, label:`${a[0]}·${a[1]}`, subLabel:AN[i], color:ZC[Math.floor(i/6)]
+      id:`angel_${a[0]}`, num:a[0], letters:a[1], hebrew:a[2], subLabel:AN[i], color:ZC[Math.floor(i/6)]
     }))
   },
 

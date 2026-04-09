@@ -15,7 +15,7 @@ function arcPath(cx, cy, ri, ro, s, e) {
     return `M ${s1.x} ${s1.y} A ${ro} ${ro} 0 ${lg} 1 ${e1.x} ${e1.y} L ${e2.x} ${e2.y} A ${ri} ${ri} 0 ${lg} 0 ${s2.x} ${s2.y} Z`;
 }
 
-const FONT = { elements: 8, planets: 5.5, zodiac: 6.5, decanates: 4, angels: 3.2, archangels: 4.8, choirs: 5.2 };
+const FONT = { elements: 8, planets: 5.5, zodiac: 6.5, decanates: 4.2, angels: 3.2, archangels: 5, choirs: 5.5 };
 
 // Pre-compute all segment geometry once
 function buildGeometry() {
@@ -25,7 +25,7 @@ function buildGeometry() {
         const slice = 360 / n;
         const thick = ring.outerRadius - ring.innerRadius;
         const isAngels = ring.ringId === 'angels';
-        const useArc = !isAngels && n >= 9;
+        const useArc = !isAngels && n >= 9; // Only use textPath for dense rings that are NOT angels (angels use radial text)
         const fs = FONT[ring.ringId] || 5;
 
         const segs = ring.segments.map((seg, idx) => {
@@ -44,15 +44,24 @@ function buildGeometry() {
                 arcD = `M ${as_.x} ${as_.y} A ${mr} ${mr} 0 ${slice > 180 ? 1 : 0} 1 ${ae_.x} ${ae_.y}`;
             }
 
-            // Sub-label position (angel full name)
+            // Sub-label positions (angel layout)
             let subPos = null;
-            if (isAngels && seg.subLabel) {
+            let tpAngels = null;
+            if (isAngels) {
+                tpAngels = {
+                    numPos: polar(0, 0, ring.innerRadius + 6, ma),     // 180
+                    fullNamePos: polar(0, 0, ring.innerRadius + 40, ma), // 214
+                    fullNameRot: ma + 90,                              // reads inwards radially
+                    hebrewPos: polar(0, 0, ring.outerRadius - 24, ma),   // 248
+                    lettersPos: polar(0, 0, ring.outerRadius - 10, ma),  // 262
+                };
+            } else if (seg.subLabel) {
                 const sr = ring.innerRadius + thick * 0.78;
                 const sp = polar(0, 0, sr, ma);
-                subPos = { x: sp.x, y: sp.y, rot: flip ? ma + 180 : ma };
+                subPos = { x: sp.x, y: sp.y, rot };
             }
 
-            return { ...seg, d, tp, rot, pathId, arcD, isAngels, useArc, fs, subPos, flip };
+            return { ...seg, d, tp, rot, pathId, arcD, isAngels, useArc, fs, subPos, tpAngels, flip };
         });
 
         return { ringId: ring.ringId, segs };
@@ -63,9 +72,12 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     const svgRef = useRef(null);
     const [rotation, setRotation] = useState(0);
     const [scale, setScale] = useState(1);
+    
+    // Using refs for interactive values to avoid re-renders during drag
     const isDragging = useRef(false);
     const dragStart = useRef({ angle: 0, rot: 0 });
     const pinchStart = useRef({ dist: 0, scale: 1 });
+    const hasDragged = useRef(false);
     const moveCount = useRef(0);
 
     const geometry = useMemo(buildGeometry, []);
@@ -74,13 +86,16 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         const svg = svgRef.current;
         if (!svg) return 0;
         const r = svg.getBoundingClientRect();
-        return Math.atan2(y - r.top - r.height / 2, x - r.left - r.width / 2) * 180 / Math.PI;
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
     }, []);
 
     // Mouse handlers
     const onMouseDown = useCallback((e) => {
         isDragging.current = true;
         moveCount.current = 0;
+        hasDragged.current = false;
         dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: rotation };
     }, [rotation, getAngle]);
 
@@ -88,7 +103,9 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         if (!isDragging.current) return;
         moveCount.current++;
         const a = getAngle(e.clientX, e.clientY);
-        setRotation(dragStart.current.rot + (a - dragStart.current.angle));
+        const delta = a - dragStart.current.angle;
+        if (Math.abs(delta) > 1) hasDragged.current = true;
+        setRotation(dragStart.current.rot + delta);
     }, [getAngle]);
 
     const onMouseUp = useCallback(() => { isDragging.current = false; }, []);
@@ -98,10 +115,11 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         if (e.touches.length === 1) {
             isDragging.current = true;
             moveCount.current = 0;
+            hasDragged.current = false;
             const t = e.touches[0];
             dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: rotation };
         } else if (e.touches.length === 2) {
-            isDragging.current = false;
+            isDragging.current = false; // Disable single-finger drag on pinch
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             pinchStart.current = { dist: Math.hypot(dx, dy), scale };
@@ -109,31 +127,40 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     }, [rotation, scale, getAngle]);
 
     const onTouchMoveHandler = useCallback((e) => {
-        e.preventDefault();
         if (e.touches.length === 1 && isDragging.current) {
             const t = e.touches[0];
             const a = getAngle(t.clientX, t.clientY);
+            const delta = a - dragStart.current.angle;
+            if (Math.abs(delta) > 1) hasDragged.current = true;
             moveCount.current++;
-            setRotation(dragStart.current.rot + (a - dragStart.current.angle));
+            setRotation(dragStart.current.rot + delta);
+            e.preventDefault(); // Prevent page scroll during drag
         } else if (e.touches.length === 2) {
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             const dist = Math.hypot(dx, dy);
             const ns = Math.max(0.5, Math.min(5, pinchStart.current.scale * (dist / pinchStart.current.dist)));
             setScale(ns);
+            e.preventDefault();
         }
     }, [getAngle]);
 
-    const onTouchEnd = useCallback(() => { isDragging.current = false; }, []);
+    const onTouchEnd = useCallback(() => { 
+        isDragging.current = false; 
+    }, []);
 
     // Wheel zoom (desktop)
     const onWheelHandler = useCallback((e) => {
         e.preventDefault();
-        setScale(s => Math.max(0.5, Math.min(5, s - e.deltaY * 0.002)));
+        setScale(s => Math.max(0.8, Math.min(6, s - e.deltaY * 0.002)));
     }, []);
 
-    // Double click/tap → reset zoom
-    const onDoubleClick = useCallback(() => setScale(1), []);
+    // Background handler (Reset zoom only)
+    const onBgClick = useCallback((e) => {
+        if (e.target === svgRef.current || e.target.id === 'lamen-bg') {
+            setScale(1);
+        }
+    }, []);
 
     // Attach non-passive listeners
     useEffect(() => {
@@ -148,7 +175,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     }, [onWheelHandler, onTouchMoveHandler]);
 
     const handleSegClick = useCallback((id) => {
-        if (moveCount.current < 3) onSegmentClick(id);
+        if (!hasDragged.current && moveCount.current < 5) onSegmentClick(id);
     }, [onSegmentClick]);
 
     const vb = 370 / scale;
@@ -156,6 +183,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     return (
         <svg
             ref={svgRef}
+            id="lamen-svg"
             className="lamen-svg"
             viewBox={`${-vb} ${-vb} ${vb * 2} ${vb * 2}`}
             xmlns="http://www.w3.org/2000/svg"
@@ -165,31 +193,75 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             onMouseLeave={onMouseUp}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
-            onDoubleClick={onDoubleClick}
+            onClick={onBgClick}
             style={{ touchAction: 'none' }}
         >
             <defs>
-                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3" result="b" />
-                    <feComposite in="SourceGraphic" in2="b" operator="over" />
+                <filter id="glow-effect" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
             </defs>
 
+            {/* Background for clicking outside segments */}
+            <rect 
+                id="lamen-bg" 
+                x={-vb} y={-vb} width={vb*2} height={vb*2} 
+                fill="transparent" 
+                style={{ pointerEvents: 'all' }}
+            />
+
             <g transform={`rotate(${rotation})`} className="wheel-group">
                 {geometry.map(({ ringId, segs }) => (
-                    <g key={ringId}>
+                    <g key={ringId} className="ring-group">
                         {segs.map((s, idx) => (
-                            <g key={s.id + idx} onClick={() => handleSegClick(s.id)} className="seg-group">
-                                <path d={s.d} fill={s.color || '#333'}
-                                    className={`segment-path ${activeSegmentId === s.id ? 'active' : ''}`} />
+                            <g 
+                                key={s.id + idx} 
+                                onClick={(e) => { e.stopPropagation(); handleSegClick(s.id); }} 
+                                style={{ cursor: 'pointer' }}
+                                className="seg-group"
+                            >
+                                <path 
+                                    d={s.d} 
+                                    fill={s.color || '#333'} 
+                                    className={`segment-path ${activeSegmentId === s.id ? 'active' : ''}`} 
+                                />
 
                                 {s.isAngels ? (
-                                    /* Angel names: radial / vertical text */
-                                    <text x={s.tp.x} y={s.tp.y}
-                                        transform={`rotate(${s.rot},${s.tp.x},${s.tp.y})`}
-                                        className="segment-text angel-text" fontSize={s.fs}>
-                                        {s.label}
-                                    </text>
+                                    <g className="angel-text-group">
+                                        <text 
+                                            x={s.tpAngels.numPos.x} y={s.tpAngels.numPos.y}
+                                            transform={`rotate(${s.rot},${s.tpAngels.numPos.x},${s.tpAngels.numPos.y})`}
+                                            className="segment-text angel-num" 
+                                            fontSize={s.fs * 0.9}
+                                        >
+                                            {s.num}
+                                        </text>
+                                        <text 
+                                            x={s.tpAngels.fullNamePos.x} y={s.tpAngels.fullNamePos.y}
+                                            transform={`rotate(${s.tpAngels.fullNameRot},${s.tpAngels.fullNamePos.x},${s.tpAngels.fullNamePos.y})`}
+                                            className="segment-text angel-fullname" 
+                                            fontSize={s.fs * 1.05}
+                                        >
+                                            {s.subLabel}
+                                        </text>
+                                        <text 
+                                            x={s.tpAngels.hebrewPos.x} y={s.tpAngels.hebrewPos.y}
+                                            transform={`rotate(${s.rot},${s.tpAngels.hebrewPos.x},${s.tpAngels.hebrewPos.y})`}
+                                            className="segment-text angel-hebrew" 
+                                            fontSize={s.fs * 1.15}
+                                        >
+                                            {s.hebrew}
+                                        </text>
+                                        <text 
+                                            x={s.tpAngels.lettersPos.x} y={s.tpAngels.lettersPos.y}
+                                            transform={`rotate(${s.rot},${s.tpAngels.lettersPos.x},${s.tpAngels.lettersPos.y})`}
+                                            className="segment-text angel-letters" 
+                                            fontSize={s.fs * 0.9}
+                                        >
+                                            {s.letters}
+                                        </text>
+                                    </g>
                                 ) : s.useArc ? (
                                     <>
                                         <path id={s.pathId} d={s.arcD} fill="none" stroke="none" />
@@ -200,17 +272,23 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
                                         </text>
                                     </>
                                 ) : (
-                                    <text x={s.tp.x} y={s.tp.y}
+                                    <text 
+                                        x={s.tp.x} y={s.tp.y}
                                         transform={`rotate(${s.rot},${s.tp.x},${s.tp.y})`}
-                                        className="segment-text" fontSize={s.fs}>
+                                        className="segment-text" 
+                                        fontSize={s.fs}
+                                    >
                                         {s.label}
                                     </text>
                                 )}
 
                                 {s.subPos && (
-                                    <text x={s.subPos.x} y={s.subPos.y}
+                                    <text 
+                                        x={s.subPos.x} y={s.subPos.y}
                                         transform={`rotate(${s.subPos.rot},${s.subPos.x},${s.subPos.y})`}
-                                        className="segment-text sub-label" fontSize={s.fs * 0.6}>
+                                        className="segment-text sub-label" 
+                                        fontSize={s.isAngels ? s.fs * 0.9 : s.fs * 0.62}
+                                    >
                                         {s.subLabel}
                                     </text>
                                 )}
@@ -218,7 +296,8 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
                         ))}
                     </g>
                 ))}
-                <circle cx={0} cy={0} r={4} fill="#d4af37" filter="url(#glow)" />
+                
+                <circle cx={0} cy={0} r={5} fill="#d4af37" filter="url(#glow-effect)" />
                 <circle cx={0} cy={0} r={2} fill="#fff" />
             </g>
         </svg>
