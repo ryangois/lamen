@@ -2,8 +2,8 @@
 .lamen-svg {
     width: 100%;
     height: 100%;
-    max-height: 90vh;
-    /* The SVG itself can spin slowly for visual flair if we add a pause-on-hover */
+    max-height: 92vh;
+    user-select: none;
 }
 
 .lamen-svg:hover {
@@ -11,42 +11,49 @@
 }
 
 .ring-group {
-    /* Groups can also have their own animation speed if desired in the future */
+    /* Container for each ring of segments */
 }
 
 .segment-path {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
     cursor: pointer;
-    stroke: rgba(255, 255, 255, 0.4);
-    stroke-width: 0.5px;
+    stroke: rgba(0, 0, 0, 0.35);
+    stroke-width: 0.4px;
 }
 
 .segment-path:hover {
-    opacity: 0.9;
-    stroke: var(--accent-gold);
-    stroke-width: 2px;
+    opacity: 0.88;
+    stroke: var(--accent-gold, #d4af37);
+    stroke-width: 1.8px;
     filter: url(#glow-effect);
-    /* drop-shadow equivalent for SVG paths */
-    transform: scale(1.002);
+    transform: scale(1.003);
     transform-origin: center;
 }
 
 .segment-path.active {
     stroke: #fff;
-    stroke-width: 3px;
-    filter: url(#glow-effect);
+    stroke-width: 2.5px;
+    filter: url(#glow-strong);
     fill-opacity: 1;
 }
 
 .segment-text {
     fill: #fff;
-    font-size: 6px;
     text-anchor: middle;
     dominant-baseline: middle;
     pointer-events: none;
-    /* Passes mouse events through to the path */
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 0.8);
-    letter-spacing: 0.2px;
+    letter-spacing: 0.15px;
+    paint-order: stroke;
+    stroke: rgba(0,0,0,0.7);
+    stroke-width: 0.3px;
+    stroke-linejoin: round;
+}
+
+.segment-text.heb-text {
+    font-family: 'Noto Sans Hebrew', 'David', serif;
+    font-weight: 400;
+    stroke-width: 0.2px;
+    opacity: 0.85;
 }
