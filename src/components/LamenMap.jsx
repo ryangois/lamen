@@ -68,15 +68,21 @@ function buildGeometry() {
     });
 }
 
-export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     const svgRef = useRef(null);
     const [rotation, setRotation] = useState(0);
-    const [scale, setScale] = useState(1);
     
+    // ViewBox state for pan and targeted zoom
+    const vbRef = useRef({ x: -370, y: -370, w: 740, h: 740 });
+    const [vbState, setVbState] = useState(vbRef.current);
+    const updateVb = useCallback((newVb) => {
+        vbRef.current = newVb;
+        setVbState(newVb);
+    }, []);
+
     // Using refs for interactive values to avoid re-renders during drag
     const isDragging = useRef(false);
     const dragStart = useRef({ angle: 0, rot: 0 });
-    const pinchStart = useRef({ dist: 0, scale: 1 });
+    const pinchStart = useRef({ dist: 0, w: 740, h: 740, sx: 0, sy: 0, pcx: 0, pcy: 0 });
     const hasDragged = useRef(false);
     const moveCount = useRef(0);
 
@@ -86,8 +92,10 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         const svg = svgRef.current;
         if (!svg) return 0;
         const r = svg.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
+        const vb = vbRef.current;
+        // Find position of the wheel origin (0,0) on the screen
+        const cx = r.left + (-vb.x / vb.w) * r.width;
+        const cy = r.top + (-vb.y / vb.h) * r.height;
         return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
     }, []);
 
@@ -120,11 +128,23 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: rotation };
         } else if (e.touches.length === 2) {
             isDragging.current = false; // Disable single-finger drag on pinch
-            const dx = e.touches[0].clientX - e.touches[1].clientX;
-            const dy = e.touches[0].clientY - e.touches[1].clientY;
-            pinchStart.current = { dist: Math.hypot(dx, dy), scale };
+            const t1 = e.touches[0];
+            const t2 = e.touches[1];
+            const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+            
+            const pcx = (t1.clientX + t2.clientX) / 2;
+            const pcy = (t1.clientY + t2.clientY) / 2;
+            
+            const svg = svgRef.current;
+            const r = svg.getBoundingClientRect();
+            const vb = vbRef.current;
+            
+            const sx = vb.x + (pcx - r.left) / r.width * vb.w;
+            const sy = vb.y + (pcy - r.top) / r.height * vb.h;
+
+            pinchStart.current = { dist, w: vb.w, h: vb.h, sx, sy, pcx, pcy };
         }
-    }, [rotation, scale, getAngle]);
+    }, [rotation, getAngle]);
 
     const onTouchMoveHandler = useCallback((e) => {
         if (e.touches.length === 1 && isDragging.current) {
@@ -136,31 +156,76 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             setRotation(dragStart.current.rot + delta);
             e.preventDefault(); // Prevent page scroll during drag
         } else if (e.touches.length === 2) {
-            const dx = e.touches[0].clientX - e.touches[1].clientX;
-            const dy = e.touches[0].clientY - e.touches[1].clientY;
-            const dist = Math.hypot(dx, dy);
-            const ns = Math.max(0.5, Math.min(5, pinchStart.current.scale * (dist / pinchStart.current.dist)));
-            setScale(ns);
             e.preventDefault();
+            const t1 = e.touches[0];
+            const t2 = e.touches[1];
+            const newDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+            const { dist, w, h, sx, sy } = pinchStart.current;
+            
+            const newCx = (t1.clientX + t2.clientX) / 2;
+            const newCy = (t1.clientY + t2.clientY) / 2;
+
+            const zoomRatio = dist / newDist;
+            let newW = w * zoomRatio;
+            let newH = h * zoomRatio;
+
+            const maxW = 740 / 0.5; // max zoom out (scale 0.5)
+            const minW = 740 / 6;   // max zoom in (scale 6)
+
+            if (newW > maxW) newW = maxW;
+            if (newW < minW) newW = minW;
+            if (newH > maxW) newH = maxW;
+            if (newH < minW) newH = minW;
+
+            const svg = svgRef.current;
+            const r = svg.getBoundingClientRect();
+
+            const newX = sx - (newCx - r.left) / r.width * newW;
+            const newY = sy - (newCy - r.top) / r.height * newH;
+
+            updateVb({ x: newX, y: newY, w: newW, h: newH });
         }
-    }, [getAngle]);
+    }, [getAngle, updateVb]);
 
     const onTouchEnd = useCallback(() => { 
         isDragging.current = false; 
     }, []);
 
-    // Wheel zoom (desktop)
+    // Wheel zoom (desktop) targeted at cursor
     const onWheelHandler = useCallback((e) => {
         e.preventDefault();
-        setScale(s => Math.max(0.8, Math.min(6, s - e.deltaY * 0.002)));
-    }, []);
+        const svg = svgRef.current;
+        if (!svg) return;
+        const r = svg.getBoundingClientRect();
+        const vb = vbRef.current;
+        
+        const sx = vb.x + (e.clientX - r.left) / r.width * vb.w;
+        const sy = vb.y + (e.clientY - r.top) / r.height * vb.h;
 
-    // Background handler (Reset zoom only)
+        const zoomFactor = e.deltaY > 0 ? 1.1 : 1/1.1;
+        let newW = vb.w * zoomFactor;
+        let newH = vb.h * zoomFactor;
+
+        const maxW = 740 / 0.8; 
+        const minW = 740 / 6;
+
+        if (newW > maxW) newW = maxW;
+        if (newW < minW) newW = minW;
+        if (newH > maxW) newH = maxW;
+        if (newH < minW) newH = minW;
+
+        const newX = sx - (e.clientX - r.left) / r.width * newW;
+        const newY = sy - (e.clientY - r.top) / r.height * newH;
+
+        updateVb({ x: newX, y: newY, w: newW, h: newH });
+    }, [updateVb]);
+
+    // Background handler (Reset zoom/pan to center)
     const onBgClick = useCallback((e) => {
         if (e.target === svgRef.current || e.target.id === 'lamen-bg') {
-            setScale(1);
+            updateVb({ x: -370, y: -370, w: 740, h: 740 });
         }
-    }, []);
+    }, [updateVb]);
 
     // Attach non-passive listeners
     useEffect(() => {
@@ -178,14 +243,12 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         if (!hasDragged.current && moveCount.current < 5) onSegmentClick(id);
     }, [onSegmentClick]);
 
-    const vb = 370 / scale;
-
     return (
         <svg
             ref={svgRef}
             id="lamen-svg"
             className="lamen-svg"
-            viewBox={`${-vb} ${-vb} ${vb * 2} ${vb * 2}`}
+            viewBox={`${vbState.x} ${vbState.y} ${vbState.w} ${vbState.h}`}
             xmlns="http://www.w3.org/2000/svg"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
@@ -206,7 +269,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             {/* Background for clicking outside segments */}
             <rect 
                 id="lamen-bg" 
-                x={-vb} y={-vb} width={vb*2} height={vb*2} 
+                x={vbState.x} y={vbState.y} width={vbState.w} height={vbState.h} 
                 fill="transparent" 
                 style={{ pointerEvents: 'all' }}
             />
