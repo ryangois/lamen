@@ -68,6 +68,7 @@ function buildGeometry() {
     });
 }
 
+export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     const svgRef = useRef(null);
     const [rotation, setRotation] = useState(0);
     
