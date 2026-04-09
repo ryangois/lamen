@@ -163,6 +163,45 @@ const choirs = [
 ];
 choirs.forEach(([id,t,sub,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
 
+// ─── DECANATE MINOR ARCANA ───────────────────────────────────────────────────
+const signs=["Áries","Touro","Gêmeos","Câncer","Leão","Virgem","Libra","Escorpião","Sagitário","Capricórnio","Aquário","Peixes"];
+const dcCards=[
+["2·Bastões","3·Bastões","4·Bastões"],["5·Ouros","6·Ouros","7·Ouros"],
+["8·Espadas","9·Espadas","10·Espadas"],["2·Copas","3·Copas","4·Copas"],
+["5·Bastões","6·Bastões","7·Bastões"],["8·Ouros","9·Ouros","10·Ouros"],
+["2·Espadas","3·Espadas","4·Espadas"],["5·Copas","6·Copas","7·Copas"],
+["8·Bastões","9·Bastões","10·Bastões"],["2·Ouros","3·Ouros","4·Ouros"],
+["5·Espadas","6·Espadas","7·Espadas"],["8·Copas","9·Copas","10·Copas"],
+];
+const dcPlanets=[
+["Marte","Sol","Vênus"],["Mercúrio","Lua","Saturno"],
+["Júpiter","Marte","Sol"],["Vênus","Mercúrio","Lua"],
+["Saturno","Júpiter","Marte"],["Sol","Vênus","Mercúrio"],
+["Lua","Saturno","Júpiter"],["Marte","Sol","Vênus"],
+["Mercúrio","Lua","Saturno"],["Júpiter","Marte","Sol"],
+["Vênus","Mercúrio","Lua"],["Saturno","Júpiter","Marte"],
+];
+dcCards.forEach((cards,si)=>cards.forEach((card,di)=>{
+  const deg=`${di*10}°–${(di+1)*10}° ${signs[si]}`;
+  c[`dec_${si}_${di}`]={title:card,subtitle:`Decanato de ${signs[si]}`,
+    description:`${card} corresponde ao ${di+1}º decanato de ${signs[si]} (${deg}), regido por ${dcPlanets[si][di]}.`,
+    associations:{Signo:signs[si],Graus:deg,"Planeta Regente":dcPlanets[si][di],Decanato:`${di+1}º`}};
+}));
+
+// ─── ARCHANGEL REGENTS ───────────────────────────────────────────────────────
+const arcs=[
+["arc_metatron","Metatron","Anjo da Presença","Metatron é o arcanjo mais elevado, o chanceler celestial. Registra todos os atos no Livro da Vida.",{Sephirah:"Kether",Coro:"Serafins",Anjos:"1–8",Título:"Anjo da Face de Deus"}],
+["arc_raziel","Raziel","Segredos de Deus","Raziel guarda os segredos da criação. Seu livro contém todo o conhecimento celestial.",{Sephirah:"Chokmah",Coro:"Querubins",Anjos:"9–16",Título:"Anjo dos Mistérios"}],
+["arc_tzaphkiel","Tzaphkiel","Contemplação de Deus","Tzaphkiel governa a compreensão profunda e a forma primordial.",{Sephirah:"Binah",Coro:"Tronos",Anjos:"17–24",Título:"Vigilante de Deus"}],
+["arc_tzadkiel","Tzadkiel","Justiça de Deus","Tzadkiel é o arcanjo da misericórdia, bondade e abundância divina.",{Sephirah:"Chesed",Coro:"Dominações",Anjos:"25–32",Título:"Retidão de Deus"}],
+["arc_kamael","Kamael","Severidade de Deus","Kamael é o guerreiro celestial que executa a justiça divina com precisão.",{Sephirah:"Geburah",Coro:"Potências",Anjos:"33–40",Título:"Aquele que vê Deus"}],
+["arc_raphael","Raphael","Cura de Deus","Raphael é o curador divino, guia de viajantes e protetor da saúde.",{Sephirah:"Tiphareth",Coro:"Virtudes",Anjos:"41–48",Título:"Medicina de Deus"}],
+["arc_haniel","Haniel","Graça de Deus","Haniel governa a beleza, o amor e a harmonia nas esferas celestiais.",{Sephirah:"Netzach",Coro:"Principados",Anjos:"49–56",Título:"Alegria de Deus"}],
+["arc_michael","Michael","Quem é como Deus","Michael é o líder dos exércitos celestiais, protetor supremo contra as trevas.",{Sephirah:"Hod",Coro:"Arcanjos",Anjos:"57–64",Título:"Príncipe dos Arcanjos"}],
+["arc_gabriel","Gabriel","Força de Deus","Gabriel é o mensageiro divino, portador de revelações e anunciações sagradas.",{Sephirah:"Yesod",Coro:"Anjos",Anjos:"65–72",Título:"Heraldo de Deus"}],
+];
+arcs.forEach(([id,t,sub,desc,assoc])=>{c[id]={title:t,subtitle:sub,description:desc,associations:assoc};});
+
 export const contentData = c;
 
 export function getContent(id) {
