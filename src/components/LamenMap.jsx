@@ -33,8 +33,8 @@ function buildGeometry() {
             const mr = ring.innerRadius === 0 ? ring.outerRadius * 0.55 : ring.innerRadius + thick / 2;
             const d = arcPath(0, 0, ring.innerRadius, ring.outerRadius, sa, ea);
             const tp = polar(0, 0, mr, ma);
-            const flip = ma > 90 && ma < 270;
-            const rot = flip ? ma + 180 : ma;
+            const flip = false; // Always false. Spinning the wheel handles rotation correctly
+            const rot = ma; // Consistent orientation regardless of absolute rotation.
             const pathId = `tp${++pid}`;
 
             let arcD = null;
@@ -51,7 +51,7 @@ function buildGeometry() {
                 tpAngels = {
                     numPos: polar(0, 0, ring.innerRadius + 6, ma),     // 180
                     fullNamePos: polar(0, 0, ring.innerRadius + 40, ma), // 214
-                    fullNameRot: ma + 90,                              // reads inwards radially
+                    fullNameRot: rot,                                  // Follows consistent text tangency
                     hebrewPos: polar(0, 0, ring.outerRadius - 24, ma),   // 248
                     lettersPos: polar(0, 0, ring.outerRadius - 10, ma),  // 262
                 };
@@ -70,14 +70,31 @@ function buildGeometry() {
 
 export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     const svgRef = useRef(null);
-    const [rotation, setRotation] = useState(0);
+    const bgRectRef = useRef(null);
+    const wheelGroupRef = useRef(null);
+    const lamenTransformRef = useRef(0);
     
+    // Set rotation without re-rendering everything
+    const setRotation = useCallback((newRot) => {
+        lamenTransformRef.current = newRot;
+        if (wheelGroupRef.current) {
+            wheelGroupRef.current.setAttribute('transform', `rotate(${newRot})`);
+        }
+    }, []);
+
     // ViewBox state for pan and targeted zoom
     const vbRef = useRef({ x: -370, y: -370, w: 740, h: 740 });
-    const [vbState, setVbState] = useState(vbRef.current);
     const updateVb = useCallback((newVb) => {
         vbRef.current = newVb;
-        setVbState(newVb);
+        if (svgRef.current) {
+            svgRef.current.setAttribute('viewBox', `${newVb.x} ${newVb.y} ${newVb.w} ${newVb.h}`);
+        }
+        if (bgRectRef.current) {
+            bgRectRef.current.setAttribute('x', newVb.x);
+            bgRectRef.current.setAttribute('y', newVb.y);
+            bgRectRef.current.setAttribute('width', newVb.w);
+            bgRectRef.current.setAttribute('height', newVb.h);
+        }
     }, []);
 
     // Using refs for interactive values to avoid re-renders during drag
@@ -105,8 +122,8 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         isDragging.current = true;
         moveCount.current = 0;
         hasDragged.current = false;
-        dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: rotation };
-    }, [rotation, getAngle]);
+        dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: lamenTransformRef.current };
+    }, [getAngle]);
 
     const onMouseMove = useCallback((e) => {
         if (!isDragging.current) return;
@@ -126,7 +143,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             moveCount.current = 0;
             hasDragged.current = false;
             const t = e.touches[0];
-            dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: rotation };
+            dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: lamenTransformRef.current };
         } else if (e.touches.length === 2) {
             isDragging.current = false; // Disable single-finger drag on pinch
             const t1 = e.touches[0];
@@ -145,7 +162,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
 
             pinchStart.current = { dist, w: vb.w, h: vb.h, sx, sy, pcx, pcy };
         }
-    }, [rotation, getAngle]);
+    }, [getAngle]);
 
     const onTouchMoveHandler = useCallback((e) => {
         if (e.touches.length === 1 && isDragging.current) {
@@ -249,7 +266,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             ref={svgRef}
             id="lamen-svg"
             className="lamen-svg"
-            viewBox={`${vbState.x} ${vbState.y} ${vbState.w} ${vbState.h}`}
+            viewBox={`${vbRef.current.x} ${vbRef.current.y} ${vbRef.current.w} ${vbRef.current.h}`}
             xmlns="http://www.w3.org/2000/svg"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
@@ -270,12 +287,13 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             {/* Background for clicking outside segments */}
             <rect 
                 id="lamen-bg" 
-                x={vbState.x} y={vbState.y} width={vbState.w} height={vbState.h} 
+                ref={bgRectRef}
+                x={vbRef.current.x} y={vbRef.current.y} width={vbRef.current.w} height={vbRef.current.h} 
                 fill="transparent" 
                 style={{ pointerEvents: 'all' }}
             />
 
-            <g transform={`rotate(${rotation})`} className="wheel-group">
+            <g ref={wheelGroupRef} transform={`rotate(${lamenTransformRef.current})`} className="wheel-group">
                 {geometry.map(({ ringId, segs }) => (
                     <g key={ringId} className="ring-group">
                         {segs.map((s, idx) => (
