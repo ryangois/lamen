@@ -44,7 +44,7 @@
     pointer-events: none;
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    letter-spacing: 0.1px;
+    letter-spacing: 0.02em;
     paint-order: stroke;
     stroke: rgba(0, 0, 0, 0.7);
     stroke-width: 0.2px;
@@ -62,7 +62,7 @@
 .segment-text.angel-fullname {
     font-weight: 500;
     opacity: 0.95;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.15em;
 }
 
 .segment-text.angel-hebrew {
