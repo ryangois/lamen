@@ -19,15 +19,22 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-color);
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 50%, rgba(20, 25, 45, 0.5), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(30, 20, 45, 0.5), transparent 25%);
   color: var(--text-primary);
   min-height: 100vh;
-  overflow: hidden; /* Hide scrollbars, everything is in a fixed layout */
+  overflow: hidden;
+  /* Hide scrollbars, everything is in a fixed layout */
 }
 
-h1, h2, h3, h4, h5, h6, .brand-font {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand-font {
   font-family: 'Cinzel', serif;
 }
 
@@ -50,21 +57,31 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {

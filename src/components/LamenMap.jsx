@@ -51,7 +51,7 @@ function buildGeometry() {
                 tpAngels = {
                     numPos: polar(0, 0, ring.innerRadius + 6, ma),     // 180
                     fullNamePos: polar(0, 0, ring.innerRadius + 40, ma), // 214
-                    fullNameRot: rot,                                  // Follows consistent text tangency
+                    fullNameRot: ma + 90,                                  // Follows consistent radial/vertical text
                     hebrewPos: polar(0, 0, ring.outerRadius - 24, ma),   // 248
                     lettersPos: polar(0, 0, ring.outerRadius - 10, ma),  // 262
                 };
