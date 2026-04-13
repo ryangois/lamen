@@ -135,7 +135,6 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         moveCount.current = 0;
         hasDragged.current = false;
         dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: lamenTransformRef.current };
-        if (svgRef.current) svgRef.current.classList.add('is-dragging');
     }, [getAngle]);
 
     const onMouseMove = useCallback((e) => {
@@ -143,7 +142,10 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         moveCount.current++;
         const a = getAngle(e.clientX, e.clientY);
         const delta = a - dragStart.current.angle;
-        if (Math.abs(delta) > 1) hasDragged.current = true;
+        if (Math.abs(delta) > 1) {
+            hasDragged.current = true;
+            if (svgRef.current) svgRef.current.classList.add('is-dragging');
+        }
         setRotation(dragStart.current.rot + delta);
     }, [getAngle, setRotation]);
 
@@ -160,7 +162,6 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             hasDragged.current = false;
             const t = e.touches[0];
             dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: lamenTransformRef.current };
-            if (svgRef.current) svgRef.current.classList.add('is-dragging');
         } else if (e.touches.length === 2) {
             isDragging.current = false; // Disable single-finger drag on pinch
             const t1 = e.touches[0];
@@ -186,7 +187,10 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             const t = e.touches[0];
             const a = getAngle(t.clientX, t.clientY);
             const delta = a - dragStart.current.angle;
-            if (Math.abs(delta) > 1) hasDragged.current = true;
+            if (Math.abs(delta) > 1) {
+                hasDragged.current = true;
+                if (svgRef.current) svgRef.current.classList.add('is-dragging');
+            }
             moveCount.current++;
             setRotation(dragStart.current.rot + delta);
             e.preventDefault(); // Prevent page scroll during drag
