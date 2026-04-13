@@ -73,29 +73,41 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     const bgRectRef = useRef(null);
     const wheelGroupRef = useRef(null);
     const lamenTransformRef = useRef(0);
-    
+    const reqRef = useRef(null);
+
+    const requestUpdate = useCallback(() => {
+        if (!reqRef.current) {
+            reqRef.current = requestAnimationFrame(() => {
+                if (wheelGroupRef.current) {
+                    wheelGroupRef.current.setAttribute('transform', `rotate(${lamenTransformRef.current})`);
+                }
+                const vb = vbRef.current;
+                if (svgRef.current) {
+                    svgRef.current.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+                }
+                if (bgRectRef.current) {
+                    bgRectRef.current.setAttribute('x', vb.x);
+                    bgRectRef.current.setAttribute('y', vb.y);
+                    bgRectRef.current.setAttribute('width', vb.w);
+                    bgRectRef.current.setAttribute('height', vb.h);
+                }
+                reqRef.current = null;
+            });
+        }
+    }, []);
+
     // Set rotation without re-rendering everything
     const setRotation = useCallback((newRot) => {
         lamenTransformRef.current = newRot;
-        if (wheelGroupRef.current) {
-            wheelGroupRef.current.setAttribute('transform', `rotate(${newRot})`);
-        }
-    }, []);
+        requestUpdate();
+    }, [requestUpdate]);
 
     // ViewBox state for pan and targeted zoom
     const vbRef = useRef({ x: -370, y: -370, w: 740, h: 740 });
     const updateVb = useCallback((newVb) => {
         vbRef.current = newVb;
-        if (svgRef.current) {
-            svgRef.current.setAttribute('viewBox', `${newVb.x} ${newVb.y} ${newVb.w} ${newVb.h}`);
-        }
-        if (bgRectRef.current) {
-            bgRectRef.current.setAttribute('x', newVb.x);
-            bgRectRef.current.setAttribute('y', newVb.y);
-            bgRectRef.current.setAttribute('width', newVb.w);
-            bgRectRef.current.setAttribute('height', newVb.h);
-        }
-    }, []);
+        requestUpdate();
+    }, [requestUpdate]);
 
     // Using refs for interactive values to avoid re-renders during drag
     const isDragging = useRef(false);
@@ -123,6 +135,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         moveCount.current = 0;
         hasDragged.current = false;
         dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: lamenTransformRef.current };
+        if (svgRef.current) svgRef.current.classList.add('is-dragging');
     }, [getAngle]);
 
     const onMouseMove = useCallback((e) => {
@@ -132,9 +145,12 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         const delta = a - dragStart.current.angle;
         if (Math.abs(delta) > 1) hasDragged.current = true;
         setRotation(dragStart.current.rot + delta);
-    }, [getAngle]);
+    }, [getAngle, setRotation]);
 
-    const onMouseUp = useCallback(() => { isDragging.current = false; }, []);
+    const onMouseUp = useCallback(() => { 
+        isDragging.current = false; 
+        if (svgRef.current) svgRef.current.classList.remove('is-dragging');
+    }, []);
 
     // Touch handlers (for drag + pinch zoom)
     const onTouchStart = useCallback((e) => {
@@ -144,6 +160,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
             hasDragged.current = false;
             const t = e.touches[0];
             dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: lamenTransformRef.current };
+            if (svgRef.current) svgRef.current.classList.add('is-dragging');
         } else if (e.touches.length === 2) {
             isDragging.current = false; // Disable single-finger drag on pinch
             const t1 = e.touches[0];
@@ -207,6 +224,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
 
     const onTouchEnd = useCallback(() => { 
         isDragging.current = false; 
+        if (svgRef.current) svgRef.current.classList.remove('is-dragging');
     }, []);
 
     // Wheel zoom (desktop) targeted at cursor

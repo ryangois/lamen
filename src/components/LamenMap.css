@@ -13,6 +13,12 @@
     cursor: grabbing;
 }
 
+/* Disable expensive hover effects during wheel drag/spin */
+.lamen-svg.is-dragging .segment-path,
+.lamen-svg.is-dragging .segment-group {
+    pointer-events: none !important;
+}
+
 .wheel-group {
     will-change: transform;
 }
