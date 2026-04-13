@@ -366,6 +366,16 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
                                             {s.letters}
                                         </text>
                                     </g>
+                                ) : s.image ? (
+                                    <image 
+                                        href={s.image}
+                                        x={s.tp.x - 14 * (s.scale || 1)} 
+                                        y={s.tp.y - 14 * (s.scale || 1)}
+                                        width={28 * (s.scale || 1)}
+                                        height={28 * (s.scale || 1)}
+                                        transform={`rotate(${s.rot},${s.tp.x},${s.tp.y})`}
+                                        style={{ pointerEvents: 'none', filter: 'invert(1) brightness(2)' }}
+                                    />
                                 ) : s.useArc ? (
                                     <>
                                         <path id={s.pathId} d={s.arcD} fill="none" stroke="none" />
