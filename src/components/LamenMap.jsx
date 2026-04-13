@@ -378,10 +378,11 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
                         ))}
                     </g>
                 ))}
-                
-                <circle cx={0} cy={0} r={5} fill="#d4af37" filter="url(#glow-effect)" />
-                <circle cx={0} cy={0} r={2} fill="#fff" />
             </g>
+            
+            {/* Center dots moved outside the rotating group for performance */}
+            <circle cx={0} cy={0} r={5} fill="#d4af37" filter="url(#glow-effect)" />
+            <circle cx={0} cy={0} r={2} fill="#fff" />
         </svg>
     );
 }
