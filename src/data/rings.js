@@ -79,18 +79,18 @@ export const ringStructure = [
 
   // Ring 2 — 12 Zodiac (with major arcana association)
   { ringId:"zodiac", innerRadius:86, outerRadius:128, segments:[
-    {id:"aries",image:"/assets/zodiac/aries-svgrepo-com.svg",color:ZC[0], scale: 1.6},
+    {id:"aries",image:"/assets/zodiac/aries-svgrepo-com.svg",color:ZC[0], scale: 0.65},
     {id:"taurus",image:"/assets/zodiac/taurus-svgrepo-com.svg",color:ZC[1], scale: 0.6},
-    {id:"gemini",image:"/assets/zodiac/gemini-svgrepo-com.svg",color:ZC[2], scale: 0.65},
-    {id:"cancer",image:"/assets/zodiac/cancer-svgrepo-com.svg",color:ZC[3], scale: 0.5},
-    {id:"leo",image:"/assets/zodiac/leo-svgrepo-com.svg",color:ZC[4], scale: 1.45},
-    {id:"virgo",image:"/assets/zodiac/virgo-svgrepo-com.svg",color:ZC[5], scale: 1.25},
-    {id:"libra",image:"/assets/zodiac/libra-svgrepo-com.svg",color:ZC[6], scale: 0.5},
-    {id:"scorpio",image:"/assets/zodiac/scorpio-svgrepo-com.svg",color:ZC[7], scale: 0.65},
+    {id:"gemini",image:"/assets/zodiac/gemini-svgrepo-com.svg",color:ZC[2], scale: 0.6},
+    {id:"cancer",image:"/assets/zodiac/cancer-svgrepo-com.svg",color:ZC[3], scale: 0.55},
+    {id:"leo",image:"/assets/zodiac/leo-svgrepo-com.svg",color:ZC[4], scale: 0.8},
+    {id:"virgo",image:"/assets/zodiac/virgo-svgrepo-com.svg",color:ZC[5], scale: 0.6},
+    {id:"libra",image:"/assets/zodiac/libra-svgrepo-com.svg",color:ZC[6], scale: 0.6},
+    {id:"scorpio",image:"/assets/zodiac/scorpio-svgrepo-com.svg",color:ZC[7], scale: 0.6},
     {id:"sagittarius",image:"/assets/zodiac/sagittarius-svgrepo-com.svg",color:ZC[8], scale: 0.55},
-    {id:"capricorn",image:"/assets/zodiac/capricorn-svgrepo-com.svg",color:ZC[9], scale: 1.5},
+    {id:"capricorn",image:"/assets/zodiac/capricorn-svgrepo-com.svg",color:ZC[9], scale: 1.25},
     {id:"aquarius",image:"/assets/zodiac/aquarius-svgrepo-com.svg",color:ZC[10], scale: 0.6},
-    {id:"pisces",image:"/assets/zodiac/pisces-svgrepo-com.svg",color:ZC[11], scale: 0.55},
+    {id:"pisces",image:"/assets/zodiac/pisces-svgrepo-com.svg",color:ZC[11], scale: 0.6},
   ]},
 
   // Ring 3 — 36 Decanate cards (minor arcana)
