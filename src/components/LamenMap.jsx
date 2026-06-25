@@ -208,6 +208,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         ctx.save();
         ctx.shadowColor = 'rgba(0,0,0,.9)';
         ctx.shadowBlur = 1.2;
+        ctx.fillStyle = segment.textColor || '#fff';
 
         if (ring.ringId === 'zodiac' && segment.image) {
           const image = imagesRef.current.get(segment.image);

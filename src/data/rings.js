@@ -109,9 +109,9 @@ export const ringStructure = [
 
   // Ring 5 — 9 Archangel Regents
   { ringId:"archangels", innerRadius:276, outerRadius:298, segments:[
-    {id:"arc_metatron",label:"METATRON",color:"#bdc3c7"},
+    {id:"arc_metatron",label:"METATRON",color:"#bdc3c7",textColor:"#080a0f"},
     {id:"arc_raziel",label:"RAZIEL",color:"#95a5a6"},
-    {id:"arc_tzaphkiel",label:"TZAPHKIEL",color:"#607d8b"},
+    {id:"arc_tzaphkiel",label:"TZAPHKIEL",color:"#050608"},
     {id:"arc_tzadkiel",label:"TZADKIEL",color:"#1a237e"},
     {id:"arc_kamael",label:"KAMAEL",color:"#b71c1c"},
     {id:"arc_raphael",label:"RAPHAEL",color:"#f9a825"},
@@ -122,9 +122,9 @@ export const ringStructure = [
 
   // Ring 6 — 9 Angelic Choirs (outermost)
   { ringId:"choirs", innerRadius:302, outerRadius:335, segments:[
-    {id:"serafins",label:"SERAFINS",color:"#cfd8dc"},
+    {id:"serafins",label:"SERAFINS",color:"#cfd8dc",textColor:"#080a0f"},
     {id:"querubins",label:"QUERUBINS",color:"#90a4ae"},
-    {id:"tronos",label:"TRONOS",color:"#546e7a"},
+    {id:"tronos",label:"TRONOS",color:"#050608"},
     {id:"dominacoes",label:"DOMINAÇÕES",color:"#283593"},
     {id:"potencias",label:"POTÊNCIAS",color:"#c62828"},
     {id:"virtudes",label:"VIRTUDES",color:"#fdd835"},
