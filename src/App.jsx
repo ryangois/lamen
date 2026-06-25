@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import LamenMap from './components/LamenMap';
-import InfoPanel from './components/InfoPanel';
 import './App.css';
+
+const InfoPanel = lazy(() => import('./components/InfoPanel'));
 
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(null);
 
-  const handleSegmentClick = (id) => {
+  const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
-  };
+  }, []);
 
-  const handleClosePanel = () => {
+  const handleClosePanel = useCallback(() => {
     setActiveSegmentId(null);
-  };
+  }, []);
 
   return (
     <div className="app-container">
@@ -27,10 +28,14 @@ function App() {
         </div>
       </main>
 
-      <InfoPanel
-        activeSegmentId={activeSegmentId}
-        onClose={handleClosePanel}
-      />
+      {activeSegmentId && (
+        <Suspense fallback={null}>
+          <InfoPanel
+            activeSegmentId={activeSegmentId}
+            onClose={handleClosePanel}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

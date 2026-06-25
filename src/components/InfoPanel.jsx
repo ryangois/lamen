@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { getContent } from '../data/content';
 import './InfoPanel.css';
 
@@ -11,14 +11,9 @@ const ICONS = {
 };
 
 export default function InfoPanel({ activeSegmentId, onClose }) {
-    const [content, setContent] = useState(null);
-
-    useEffect(() => {
-        if (activeSegmentId) setContent(getContent(activeSegmentId));
-    }, [activeSegmentId]);
-
     if (!activeSegmentId) return null;
 
+    const content = getContent(activeSegmentId);
     const icon = ICONS[activeSegmentId] || '✦';
 
     return (

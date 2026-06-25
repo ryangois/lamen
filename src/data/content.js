@@ -19,7 +19,7 @@ const planets = [
   ["mercury","☿ Mercúrio","Hod","Comunicação · Magia · Intelecto","Mercúrio é o mensageiro, regendo a comunicação, a magia e a habilidade intelectual. Corresponde a Hod.",{Sephirah:"Hod",Metal:"Mercúrio",Dia:"Quarta-feira",Cor:"Laranja"}],
   ["moon_p","☽ Lua","Yesod","Inconsciente · Sonhos · Fundação","A Lua governa o inconsciente, os sonhos e os ciclos naturais. Corresponde a Yesod, o fundamento.",{Sephirah:"Yesod",Metal:"Prata",Dia:"Segunda-feira",Cor:"Violeta"}],
 ];
-planets.forEach(([id,t,seph,sub,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
+planets.forEach(([id,t,,sub,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
 
 // ─── 22 HEBREW LETTERS / TAROT ──────────────────────────────────────────────
 const hebrewTarot = [
@@ -46,7 +46,7 @@ const hebrewTarot = [
   ["judgement","ש Shin","20 · O Julgamento","Fogo","O Julgamento é o despertar final do espírito. Shin é o dente de fogo, a trindade divina.",{Letra:"ש Shin",Valor:"300",Tipo:"Mãe",Elemento:"Fogo",Caminho:"Hod → Malkuth"}],
   ["world","ת Tav","21 · O Mundo","Saturno","O Mundo é a realização completa, a dança cósmica. Tav é a cruz, a marca final da criação.",{Letra:"ת Tav",Valor:"400",Tipo:"Dupla",Planeta:"Saturno",Caminho:"Yesod → Malkuth"}],
 ];
-hebrewTarot.forEach(([id,t,sub,elem,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
+hebrewTarot.forEach(([id,t,sub,,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
 
 // ─── ZODIAC ──────────────────────────────────────────────────────────────────
 const zodiac = [

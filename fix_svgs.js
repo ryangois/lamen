@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const xml2js = require('xml2js');
+import fs from 'node:fs';
+import path from 'node:path';
+import xml2js from 'xml2js';
+import { svgPathBbox } from 'svg-path-bbox';
 
 const dir = 'public/assets/zodiac';
 const files = fs.readdirSync(dir).filter(f => f.endsWith('.svg'));
 
 async function processAll() {
-    const { svgPathBbox } = await import('svg-path-bbox');
     for (const file of files) {
         const p = path.join(dir, file);
         const content = fs.readFileSync(p, 'utf8');
@@ -62,4 +62,7 @@ async function processAll() {
     }
 }
 
-processAll();
+processAll().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

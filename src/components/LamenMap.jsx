@@ -1,420 +1,469 @@
-import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ringStructure } from '../data/rings';
 import './LamenMap.css';
 
-function polar(cx, cy, r, deg) {
-    const rad = (deg - 90) * Math.PI / 180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+const BASE_VIEW = { x: -370, y: -370, w: 740, h: 740 };
+const FONT_SIZE = {
+  elements: 8,
+  planets: 5.5,
+  zodiac: 6.5,
+  decanates: 4.2,
+  angels: 3.2,
+  archangels: 5,
+  choirs: 5.5,
+};
+const TAU = Math.PI * 2;
+
+function normalizeAngle(angle) {
+  return ((angle % 360) + 360) % 360;
 }
 
-function arcPath(cx, cy, ri, ro, s, e) {
-    const s1 = polar(cx, cy, ro, s), e1 = polar(cx, cy, ro, e);
-    const lg = e - s > 180 ? 1 : 0;
-    if (ri === 0) return `M ${s1.x} ${s1.y} A ${ro} ${ro} 0 ${lg} 1 ${e1.x} ${e1.y} L ${cx} ${cy} Z`;
-    const s2 = polar(cx, cy, ri, s), e2 = polar(cx, cy, ri, e);
-    return `M ${s1.x} ${s1.y} A ${ro} ${ro} 0 ${lg} 1 ${e1.x} ${e1.y} L ${e2.x} ${e2.y} A ${ri} ${ri} 0 ${lg} 0 ${s2.x} ${s2.y} Z`;
+function radians(degrees) {
+  return (degrees - 90) * Math.PI / 180;
 }
 
-const FONT = { elements: 8, planets: 5.5, zodiac: 6.5, decanates: 4.2, angels: 3.2, archangels: 5, choirs: 5.5 };
+function pointAt(radius, degrees) {
+  const angle = radians(degrees);
+  return { x: radius * Math.cos(angle), y: radius * Math.sin(angle) };
+}
 
-// Pre-compute all segment geometry once
-function buildGeometry() {
-    let pid = 0;
-    return ringStructure.map(ring => {
-        const n = ring.segments.length;
-        const slice = 360 / n;
-        const thick = ring.outerRadius - ring.innerRadius;
-        const isAngels = ring.ringId === 'angels';
-        const useArc = !isAngels && n >= 9; // Only use textPath for dense rings that are NOT angels (angels use radial text)
-        const fs = FONT[ring.ringId] || 5;
+function makeGeometry() {
+  return ringStructure.map((ring) => {
+    const slice = 360 / ring.segments.length;
+    return {
+      ...ring,
+      slice,
+      segments: ring.segments.map((segment, index) => ({
+        ...segment,
+        start: index * slice,
+        end: (index + 1) * slice,
+        middle: index * slice + slice / 2,
+      })),
+    };
+  });
+}
 
-        const segs = ring.segments.map((seg, idx) => {
-            const sa = idx * slice, ea = sa + slice, ma = sa + slice / 2;
-            const mr = ring.innerRadius === 0 ? ring.outerRadius * 0.55 : ring.innerRadius + thick / 2;
-            const d = arcPath(0, 0, ring.innerRadius, ring.outerRadius, sa, ea);
-            const tp = polar(0, 0, mr, ma);
-            const flip = false; // Always false. Spinning the wheel handles rotation correctly
-            const rot = ma; // Consistent orientation regardless of absolute rotation.
-            const pathId = `tp${++pid}`;
+function traceSegment(ctx, ring, segment) {
+  ctx.beginPath();
+  ctx.arc(0, 0, ring.outerRadius, radians(segment.start), radians(segment.end));
+  if (ring.innerRadius > 0) {
+    ctx.arc(0, 0, ring.innerRadius, radians(segment.end), radians(segment.start), true);
+  } else {
+    ctx.lineTo(0, 0);
+  }
+  ctx.closePath();
+}
 
-            let arcD = null;
-            if (useArc) {
-                const as_ = polar(0, 0, mr, sa + 0.5);
-                const ae_ = polar(0, 0, mr, ea - 0.5);
-                arcD = `M ${as_.x} ${as_.y} A ${mr} ${mr} 0 ${slice > 180 ? 1 : 0} 1 ${ae_.x} ${ae_.y}`;
-            }
+function fitFont(ctx, text, maxWidth, initialSize, weight = 600) {
+  let size = initialSize;
+  ctx.font = `${weight} ${size}px Cinzel, serif`;
+  while (size > 2.4 && ctx.measureText(text).width > maxWidth) {
+    size -= 0.25;
+    ctx.font = `${weight} ${size}px Cinzel, serif`;
+  }
+}
 
-            // Sub-label positions (angel layout)
-            let subPos = null;
-            let tpAngels = null;
-            if (isAngels) {
-                tpAngels = {
-                    numPos: polar(0, 0, ring.innerRadius + 6, ma),     // 180
-                    fullNamePos: polar(0, 0, ring.innerRadius + 40, ma), // 214
-                    fullNameRot: ma + 90,                                  // Follows consistent radial/vertical text
-                    hebrewPos: polar(0, 0, ring.outerRadius - 24, ma),   // 248
-                    lettersPos: polar(0, 0, ring.outerRadius - 10, ma),  // 262
-                };
-            } else if (seg.subLabel) {
-                const sr = ring.innerRadius + thick * 0.78;
-                const sp = polar(0, 0, sr, ma);
-                subPos = { x: sp.x, y: sp.y, rot };
-            }
+function drawCenteredText(ctx, text, x, y, rotation, size, maxWidth, weight = 600) {
+  if (!text) return;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation * Math.PI / 180);
+  fitFont(ctx, text, maxWidth, size, weight);
+  ctx.fillText(text, 0, 0);
+  ctx.restore();
+}
 
-            return { ...seg, d, tp, rot, pathId, arcD, isAngels, useArc, fs, subPos, tpAngels, flip };
-        });
+function drawArcText(ctx, text, radius, start, end, size) {
+  if (!text) return;
+  fitFont(ctx, text, radius * (end - start) * Math.PI / 180 * 0.92, size);
+  const chars = [...text];
+  const widths = chars.map((char) => ctx.measureText(char).width);
+  const totalAngle = widths.reduce((sum, width) => sum + width / radius, 0);
+  let angle = ((start + end) / 2) * Math.PI / 180 - totalAngle / 2;
 
-        return { ringId: ring.ringId, segs };
-    });
+  chars.forEach((char, index) => {
+    const charAngle = widths[index] / radius;
+    angle += charAngle / 2;
+    const position = pointAt(radius, angle * 180 / Math.PI);
+    ctx.save();
+    ctx.translate(position.x, position.y);
+    ctx.rotate(angle);
+    ctx.fillText(char, 0, 0);
+    ctx.restore();
+    angle += charAngle / 2;
+  });
 }
 
 export default function LamenMap({ onSegmentClick, activeSegmentId }) {
-    const svgRef = useRef(null);
-    const bgRectRef = useRef(null);
-    const wheelGroupRef = useRef(null);
-    const lamenTransformRef = useRef(0);
-    const reqRef = useRef(null);
+  const canvasRef = useRef(null);
+  const frameRef = useRef(null);
+  const sizeRef = useRef({ width: 1, height: 1, dpr: 1 });
+  const viewportRef = useRef({ ...BASE_VIEW });
+  const rotationRef = useRef(0);
+  const pointersRef = useRef(new Map());
+  const gestureRef = useRef(null);
+  const draggedRef = useRef(false);
+  const lowDetailRef = useRef(false);
+  const hoveredRef = useRef(null);
+  const imagesRef = useRef(new Map());
+  const activeIdRef = useRef(activeSegmentId);
+  const geometry = useMemo(() => makeGeometry(), []);
 
-    const requestUpdate = useCallback(() => {
-        if (!reqRef.current) {
-            reqRef.current = requestAnimationFrame(() => {
-                if (wheelGroupRef.current) {
-                    wheelGroupRef.current.setAttribute('transform', `rotate(${lamenTransformRef.current})`);
-                }
-                const vb = vbRef.current;
-                if (svgRef.current) {
-                    svgRef.current.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
-                }
-                if (bgRectRef.current) {
-                    bgRectRef.current.setAttribute('x', vb.x);
-                    bgRectRef.current.setAttribute('y', vb.y);
-                    bgRectRef.current.setAttribute('width', vb.w);
-                    bgRectRef.current.setAttribute('height', vb.h);
-                }
-                reqRef.current = null;
-            });
-        }
-    }, []);
+  useEffect(() => {
+    activeIdRef.current = activeSegmentId;
+  }, [activeSegmentId]);
 
-    // Set rotation without re-rendering everything
-    const setRotation = useCallback((newRot) => {
-        lamenTransformRef.current = newRot;
-        requestUpdate();
-    }, [requestUpdate]);
+  const getTransform = useCallback(() => {
+    const { width, height } = sizeRef.current;
+    const view = viewportRef.current;
+    const scale = Math.min(width / view.w, height / view.h);
+    return {
+      scale,
+      x: (width - view.w * scale) / 2 - view.x * scale,
+      y: (height - view.h * scale) / 2 - view.y * scale,
+    };
+  }, []);
 
-    // ViewBox state for pan and targeted zoom
-    const vbRef = useRef({ x: -370, y: -370, w: 740, h: 740 });
-    const updateVb = useCallback((newVb) => {
-        vbRef.current = newVb;
-        requestUpdate();
-    }, [requestUpdate]);
+  const clientToWorld = useCallback((clientX, clientY) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const transform = getTransform();
+    return {
+      x: (clientX - rect.left - transform.x) / transform.scale,
+      y: (clientY - rect.top - transform.y) / transform.scale,
+    };
+  }, [getTransform]);
 
-    // Using refs for interactive values to avoid re-renders during drag
-    const isDragging = useRef(false);
-    const dragStart = useRef({ angle: 0, rot: 0 });
-    const pinchStart = useRef({ dist: 0, w: 740, h: 740, sx: 0, sy: 0, pcx: 0, pcy: 0 });
-    const hasDragged = useRef(false);
-    const moveCount = useRef(0);
+  const getScreenAngle = useCallback((clientX, clientY) => {
+    const world = clientToWorld(clientX, clientY);
+    return Math.atan2(world.y, world.x) * 180 / Math.PI;
+  }, [clientToWorld]);
 
-    const geometry = useMemo(buildGeometry, []);
-
-    const getAngle = useCallback((x, y) => {
-        const svg = svgRef.current;
-        if (!svg) return 0;
-        const r = svg.getBoundingClientRect();
-        const vb = vbRef.current;
-        // Find position of the wheel origin (0,0) on the screen
-        const cx = r.left + (-vb.x / vb.w) * r.width;
-        const cy = r.top + (-vb.y / vb.h) * r.height;
-        return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
-    }, []);
-
-    // Mouse handlers
-    const onMouseDown = useCallback((e) => {
-        isDragging.current = true;
-        moveCount.current = 0;
-        hasDragged.current = false;
-        dragStart.current = { angle: getAngle(e.clientX, e.clientY), rot: lamenTransformRef.current };
-    }, [getAngle]);
-
-    const onMouseMove = useCallback((e) => {
-        if (!isDragging.current) return;
-        moveCount.current++;
-        const a = getAngle(e.clientX, e.clientY);
-        const delta = a - dragStart.current.angle;
-        if (Math.abs(delta) > 1) {
-            hasDragged.current = true;
-            if (svgRef.current) svgRef.current.classList.add('is-dragging');
-        }
-        setRotation(dragStart.current.rot + delta);
-    }, [getAngle, setRotation]);
-
-    const onMouseUp = useCallback(() => { 
-        isDragging.current = false; 
-        if (svgRef.current) svgRef.current.classList.remove('is-dragging');
-    }, []);
-
-    // Touch handlers (for drag + pinch zoom)
-    const onTouchStart = useCallback((e) => {
-        if (e.touches.length === 1) {
-            isDragging.current = true;
-            moveCount.current = 0;
-            hasDragged.current = false;
-            const t = e.touches[0];
-            dragStart.current = { angle: getAngle(t.clientX, t.clientY), rot: lamenTransformRef.current };
-        } else if (e.touches.length === 2) {
-            isDragging.current = false; // Disable single-finger drag on pinch
-            const t1 = e.touches[0];
-            const t2 = e.touches[1];
-            const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-            
-            const pcx = (t1.clientX + t2.clientX) / 2;
-            const pcy = (t1.clientY + t2.clientY) / 2;
-            
-            const svg = svgRef.current;
-            const r = svg.getBoundingClientRect();
-            const vb = vbRef.current;
-            
-            const sx = vb.x + (pcx - r.left) / r.width * vb.w;
-            const sy = vb.y + (pcy - r.top) / r.height * vb.h;
-
-            pinchStart.current = { dist, w: vb.w, h: vb.h, sx, sy, pcx, pcy };
-        }
-    }, [getAngle]);
-
-    const onTouchMoveHandler = useCallback((e) => {
-        if (e.touches.length === 1 && isDragging.current) {
-            const t = e.touches[0];
-            const a = getAngle(t.clientX, t.clientY);
-            const delta = a - dragStart.current.angle;
-            if (Math.abs(delta) > 1) {
-                hasDragged.current = true;
-                if (svgRef.current) svgRef.current.classList.add('is-dragging');
-            }
-            moveCount.current++;
-            setRotation(dragStart.current.rot + delta);
-            e.preventDefault(); // Prevent page scroll during drag
-        } else if (e.touches.length === 2) {
-            e.preventDefault();
-            const t1 = e.touches[0];
-            const t2 = e.touches[1];
-            const newDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-            const { dist, w, h, sx, sy } = pinchStart.current;
-            
-            const newCx = (t1.clientX + t2.clientX) / 2;
-            const newCy = (t1.clientY + t2.clientY) / 2;
-
-            const zoomRatio = dist / newDist;
-            let newW = w * zoomRatio;
-            let newH = h * zoomRatio;
-
-            const maxW = 740 / 0.5; // max zoom out (scale 0.5)
-            const minW = 740 / 6;   // max zoom in (scale 6)
-
-            if (newW > maxW) newW = maxW;
-            if (newW < minW) newW = minW;
-            if (newH > maxW) newH = maxW;
-            if (newH < minW) newH = minW;
-
-            const svg = svgRef.current;
-            const r = svg.getBoundingClientRect();
-
-            const newX = sx - (newCx - r.left) / r.width * newW;
-            const newY = sy - (newCy - r.top) / r.height * newH;
-
-            updateVb({ x: newX, y: newY, w: newW, h: newH });
-        }
-    }, [getAngle, updateVb]);
-
-    const onTouchEnd = useCallback(() => { 
-        isDragging.current = false; 
-        if (svgRef.current) svgRef.current.classList.remove('is-dragging');
-    }, []);
-
-    // Wheel zoom (desktop) targeted at cursor
-    const onWheelHandler = useCallback((e) => {
-        e.preventDefault();
-        const svg = svgRef.current;
-        if (!svg) return;
-        const r = svg.getBoundingClientRect();
-        const vb = vbRef.current;
-        
-        const sx = vb.x + (e.clientX - r.left) / r.width * vb.w;
-        const sy = vb.y + (e.clientY - r.top) / r.height * vb.h;
-
-        const zoomFactor = e.deltaY > 0 ? 1.1 : 1/1.1;
-        let newW = vb.w * zoomFactor;
-        let newH = vb.h * zoomFactor;
-
-        const maxW = 740 / 0.8; 
-        const minW = 740 / 6;
-
-        if (newW > maxW) newW = maxW;
-        if (newW < minW) newW = minW;
-        if (newH > maxW) newH = maxW;
-        if (newH < minW) newH = minW;
-
-        const newX = sx - (e.clientX - r.left) / r.width * newW;
-        const newY = sy - (e.clientY - r.top) / r.height * newH;
-
-        updateVb({ x: newX, y: newY, w: newW, h: newH });
-    }, [updateVb]);
-
-    // Background handler (Reset zoom/pan to center)
-    const onBgClick = useCallback((e) => {
-        if (e.target === svgRef.current || e.target.id === 'lamen-bg') {
-            updateVb({ x: -370, y: -370, w: 740, h: 740 });
-        }
-    }, [updateVb]);
-
-    // Attach non-passive listeners
-    useEffect(() => {
-        const svg = svgRef.current;
-        if (!svg) return;
-        svg.addEventListener('wheel', onWheelHandler, { passive: false });
-        svg.addEventListener('touchmove', onTouchMoveHandler, { passive: false });
-        return () => {
-            svg.removeEventListener('wheel', onWheelHandler);
-            svg.removeEventListener('touchmove', onTouchMoveHandler);
-        };
-    }, [onWheelHandler, onTouchMoveHandler]);
-
-    const handleSegClick = useCallback((id) => {
-        if (!hasDragged.current && moveCount.current < 5) onSegmentClick(id);
-    }, [onSegmentClick]);
-
-    return (
-        <svg
-            ref={svgRef}
-            id="lamen-svg"
-            className="lamen-svg"
-            viewBox={`${vbRef.current.x} ${vbRef.current.y} ${vbRef.current.w} ${vbRef.current.h}`}
-            xmlns="http://www.w3.org/2000/svg"
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            onClick={onBgClick}
-            style={{ touchAction: 'none' }}
-        >
-            <defs>
-                <filter id="glow-effect" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-            </defs>
-
-            {/* Background for clicking outside segments */}
-            <rect 
-                id="lamen-bg" 
-                ref={bgRectRef}
-                x={vbRef.current.x} y={vbRef.current.y} width={vbRef.current.w} height={vbRef.current.h} 
-                fill="transparent" 
-                style={{ pointerEvents: 'all' }}
-            />
-
-            <g ref={wheelGroupRef} transform={`rotate(${lamenTransformRef.current})`} className="wheel-group">
-                {geometry.map(({ ringId, segs }) => (
-                    <g key={ringId} className="ring-group">
-                        {segs.map((s, idx) => (
-                            <g 
-                                key={s.id + idx} 
-                                onClick={(e) => { e.stopPropagation(); handleSegClick(s.id); }} 
-                                style={{ cursor: 'pointer' }}
-                                className="seg-group"
-                            >
-                                <path 
-                                    d={s.d} 
-                                    fill={s.color || '#333'} 
-                                    className={`segment-path ${activeSegmentId === s.id ? 'active' : ''}`} 
-                                />
-
-                                {s.isAngels ? (
-                                    <g className="angel-text-group">
-                                        <text 
-                                            x={s.tpAngels.numPos.x} y={s.tpAngels.numPos.y}
-                                            transform={`rotate(${s.rot},${s.tpAngels.numPos.x},${s.tpAngels.numPos.y})`}
-                                            className="segment-text angel-num" 
-                                            fontSize={s.fs * 0.9}
-                                        >
-                                            {s.num}
-                                        </text>
-                                        <text 
-                                            x={s.tpAngels.fullNamePos.x} y={s.tpAngels.fullNamePos.y}
-                                            transform={`rotate(${s.tpAngels.fullNameRot},${s.tpAngels.fullNamePos.x},${s.tpAngels.fullNamePos.y})`}
-                                            className="segment-text angel-fullname" 
-                                            fontSize={s.fs * 1.05}
-                                        >
-                                            {s.subLabel}
-                                        </text>
-                                        <text 
-                                            x={s.tpAngels.hebrewPos.x} y={s.tpAngels.hebrewPos.y}
-                                            transform={`rotate(${s.rot},${s.tpAngels.hebrewPos.x},${s.tpAngels.hebrewPos.y})`}
-                                            className="segment-text angel-hebrew" 
-                                            fontSize={s.fs * 1.15}
-                                        >
-                                            {s.hebrew}
-                                        </text>
-                                        <text 
-                                            x={s.tpAngels.lettersPos.x} y={s.tpAngels.lettersPos.y}
-                                            transform={`rotate(${s.rot},${s.tpAngels.lettersPos.x},${s.tpAngels.lettersPos.y})`}
-                                            className="segment-text angel-letters" 
-                                            fontSize={s.fs * 0.9}
-                                        >
-                                            {s.letters}
-                                        </text>
-                                    </g>
-                                ) : s.image ? (
-                                    <image 
-                                        href={s.image}
-                                        x={s.tp.x - 14 * (s.scale || 1)} 
-                                        y={s.tp.y - 14 * (s.scale || 1)}
-                                        width={28 * (s.scale || 1)}
-                                        height={28 * (s.scale || 1)}
-                                        transform={`rotate(${s.rot},${s.tp.x},${s.tp.y})`}
-                                        style={{ pointerEvents: 'none', filter: 'invert(1) brightness(2)' }}
-                                    />
-                                ) : s.useArc ? (
-                                    <>
-                                        <path id={s.pathId} d={s.arcD} fill="none" stroke="none" />
-                                        <text className="segment-text" fontSize={s.fs}>
-                                            <textPath href={`#${s.pathId}`} startOffset="50%" textAnchor="middle">
-                                                {s.label}
-                                            </textPath>
-                                        </text>
-                                    </>
-                                ) : (
-                                    <text 
-                                        x={s.tp.x} y={s.tp.y}
-                                        transform={`rotate(${s.rot},${s.tp.x},${s.tp.y})`}
-                                        className="segment-text" 
-                                        fontSize={s.fs}
-                                    >
-                                        {s.label}
-                                    </text>
-                                )}
-
-                                {s.subPos && (
-                                    <text 
-                                        x={s.subPos.x} y={s.subPos.y}
-                                        transform={`rotate(${s.subPos.rot},${s.subPos.x},${s.subPos.y})`}
-                                        className="segment-text sub-label" 
-                                        fontSize={s.isAngels ? s.fs * 0.9 : s.fs * 0.62}
-                                    >
-                                        {s.subLabel}
-                                    </text>
-                                )}
-                            </g>
-                        ))}
-                    </g>
-                ))}
-            </g>
-            
-            {/* Center dots moved outside the rotating group for performance */}
-            <circle cx={0} cy={0} r={5} fill="#d4af37" filter="url(#glow-effect)" />
-            <circle cx={0} cy={0} r={2} fill="#fff" />
-        </svg>
+  const hitTest = useCallback((clientX, clientY) => {
+    const point = clientToWorld(clientX, clientY);
+    const radius = Math.hypot(point.x, point.y);
+    const screenAngle = normalizeAngle(Math.atan2(point.y, point.x) * 180 / Math.PI + 90);
+    const angle = normalizeAngle(screenAngle - rotationRef.current);
+    const ring = geometry.find(
+      (candidate) => radius >= candidate.innerRadius && radius <= candidate.outerRadius,
     );
+    if (!ring) return null;
+    return ring.segments[Math.min(ring.segments.length - 1, Math.floor(angle / ring.slice))] || null;
+  }, [clientToWorld, geometry]);
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const { width, height, dpr } = sizeRef.current;
+    const transform = getTransform();
+    const lowDetail = lowDetailRef.current;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.translate(transform.x, transform.y);
+    ctx.scale(transform.scale, transform.scale);
+    ctx.rotate(rotationRef.current * Math.PI / 180);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+
+    geometry.forEach((ring) => {
+      ring.segments.forEach((segment) => {
+        const active = activeIdRef.current === segment.id;
+        const hovered = hoveredRef.current === segment.id && !lowDetail;
+        traceSegment(ctx, ring, segment);
+        ctx.fillStyle = segment.color || '#333';
+        ctx.fill();
+        ctx.lineWidth = active ? 2 : hovered ? 1.25 : 0.35;
+        ctx.strokeStyle = active ? '#fff' : hovered ? '#d4af37' : 'rgba(0, 0, 0, 0.55)';
+        if (active || hovered) {
+          ctx.save();
+          ctx.shadowColor = active ? 'rgba(255,255,255,.65)' : 'rgba(212,175,55,.7)';
+          ctx.shadowBlur = active ? 8 : 5;
+          ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.stroke();
+        }
+      });
+    });
+
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.lineWidth = 0.45;
+
+    geometry.forEach((ring) => {
+      if (lowDetail && (ring.ringId === 'angels' || ring.ringId === 'decanates')) return;
+      const thickness = ring.outerRadius - ring.innerRadius;
+      const middleRadius = ring.innerRadius === 0
+        ? ring.outerRadius * 0.55
+        : ring.innerRadius + thickness / 2;
+      const size = FONT_SIZE[ring.ringId] || 5;
+
+      ring.segments.forEach((segment) => {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,.9)';
+        ctx.shadowBlur = 1.2;
+
+        if (ring.ringId === 'zodiac' && segment.image) {
+          const image = imagesRef.current.get(segment.image);
+          if (image?.complete && image.naturalWidth) {
+            const position = pointAt(middleRadius, segment.middle);
+            const dimension = 28 * (segment.scale || 1);
+            ctx.save();
+            ctx.translate(position.x, position.y);
+            ctx.rotate(segment.middle * Math.PI / 180);
+            ctx.filter = 'invert(1) brightness(2)';
+            ctx.drawImage(image, -dimension / 2, -dimension / 2, dimension, dimension);
+            ctx.restore();
+          }
+        } else if (ring.ringId === 'angels') {
+          const num = pointAt(ring.innerRadius + 6, segment.middle);
+          const name = pointAt(ring.innerRadius + 40, segment.middle);
+          const hebrew = pointAt(ring.outerRadius - 24, segment.middle);
+          const letters = pointAt(ring.outerRadius - 10, segment.middle);
+          drawCenteredText(ctx, String(segment.num), num.x, num.y, segment.middle, size * 0.9, 8, 800);
+          drawCenteredText(ctx, segment.subLabel, name.x, name.y, segment.middle + 90, size, 70, 500);
+          drawCenteredText(ctx, segment.hebrew, hebrew.x, hebrew.y, segment.middle, size * 1.15, 12, 400);
+          drawCenteredText(ctx, segment.letters, letters.x, letters.y, segment.middle, size * 0.9, 12, 800);
+        } else if (ring.segments.length >= 9) {
+          drawArcText(ctx, segment.label, middleRadius, segment.start + 0.5, segment.end - 0.5, size);
+        } else {
+          const position = pointAt(middleRadius, segment.middle);
+          const maxWidth = Math.max(16, middleRadius * ring.slice * Math.PI / 180 * 0.8);
+          drawCenteredText(
+            ctx,
+            segment.label,
+            position.x,
+            position.y,
+            segment.middle,
+            size,
+            maxWidth,
+          );
+        }
+        ctx.restore();
+      });
+    });
+
+    ctx.save();
+    ctx.rotate(-rotationRef.current * Math.PI / 180);
+    ctx.fillStyle = '#d4af37';
+    ctx.shadowColor = 'rgba(212, 175, 55, .8)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(0, 0, 5, 0, TAU);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(0, 0, 2, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+  }, [geometry, getTransform]);
+
+  const requestDraw = useCallback(() => {
+    if (frameRef.current) return;
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null;
+      draw();
+    });
+  }, [draw]);
+
+  useEffect(() => {
+    requestDraw();
+  }, [activeSegmentId, requestDraw]);
+
+  useEffect(() => {
+    const uniqueImages = new Set(
+      geometry.flatMap((ring) => ring.segments.map((segment) => segment.image).filter(Boolean)),
+    );
+    uniqueImages.forEach((source) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = source;
+      image.onload = requestDraw;
+      imagesRef.current.set(source, image);
+    });
+    document.fonts?.ready.then(requestDraw);
+  }, [geometry, requestDraw]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      sizeRef.current = { width: rect.width, height: rect.height, dpr };
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      requestDraw();
+    };
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    resize();
+    return () => observer.disconnect();
+  }, [requestDraw]);
+
+  const startLowDetail = useCallback(() => {
+    lowDetailRef.current = true;
+    canvasRef.current?.classList.add('is-dragging');
+  }, []);
+
+  const stopLowDetail = useCallback(() => {
+    lowDetailRef.current = false;
+    canvasRef.current?.classList.remove('is-dragging');
+    requestDraw();
+  }, [requestDraw]);
+
+  const onPointerDown = useCallback((event) => {
+    const canvas = canvasRef.current;
+    canvas?.setPointerCapture(event.pointerId);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    draggedRef.current = false;
+
+    if (pointersRef.current.size === 1) {
+      gestureRef.current = {
+        type: 'rotate',
+        angle: getScreenAngle(event.clientX, event.clientY),
+        rotation: rotationRef.current,
+        startX: event.clientX,
+        startY: event.clientY,
+      };
+    } else if (pointersRef.current.size === 2) {
+      const [first, second] = [...pointersRef.current.values()];
+      const centerX = (first.x + second.x) / 2;
+      const centerY = (first.y + second.y) / 2;
+      const anchor = clientToWorld(centerX, centerY);
+      gestureRef.current = {
+        type: 'pinch',
+        distance: Math.hypot(first.x - second.x, first.y - second.y),
+        view: { ...viewportRef.current },
+        anchor,
+      };
+      startLowDetail();
+    }
+  }, [clientToWorld, getScreenAngle, startLowDetail]);
+
+  const onPointerMove = useCallback((event) => {
+    if (!pointersRef.current.has(event.pointerId)) {
+      const hovered = hitTest(event.clientX, event.clientY)?.id || null;
+      if (hoveredRef.current !== hovered) {
+        hoveredRef.current = hovered;
+        requestDraw();
+      }
+      return;
+    }
+
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    const gesture = gestureRef.current;
+    if (!gesture) return;
+
+    if (gesture.type === 'rotate' && pointersRef.current.size === 1) {
+      const distance = Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY);
+      if (distance > 3) {
+        draggedRef.current = true;
+        startLowDetail();
+      }
+      rotationRef.current = gesture.rotation
+        + getScreenAngle(event.clientX, event.clientY)
+        - gesture.angle;
+      requestDraw();
+    } else if (gesture.type === 'pinch' && pointersRef.current.size === 2) {
+      const [first, second] = [...pointersRef.current.values()];
+      const distance = Math.hypot(first.x - second.x, first.y - second.y);
+      const ratio = gesture.distance / Math.max(distance, 1);
+      const width = Math.min(1480, Math.max(740 / 6, gesture.view.w * ratio));
+      const height = width;
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const centerX = (first.x + second.x) / 2 - rect.left;
+      const centerY = (first.y + second.y) / 2 - rect.top;
+      const scale = Math.min(rect.width / width, rect.height / height);
+      const offsetX = (rect.width - width * scale) / 2;
+      const offsetY = (rect.height - height * scale) / 2;
+      viewportRef.current = {
+        x: gesture.anchor.x - (centerX - offsetX) / scale,
+        y: gesture.anchor.y - (centerY - offsetY) / scale,
+        w: width,
+        h: height,
+      };
+      draggedRef.current = true;
+      requestDraw();
+    }
+  }, [getScreenAngle, hitTest, requestDraw, startLowDetail]);
+
+  const endPointer = useCallback((event) => {
+    const wasSinglePointer = pointersRef.current.size === 1;
+    if (wasSinglePointer && !draggedRef.current) {
+      const segment = hitTest(event.clientX, event.clientY);
+      if (segment) onSegmentClick(segment.id);
+      else viewportRef.current = { ...BASE_VIEW };
+    }
+
+    pointersRef.current.delete(event.pointerId);
+    if (pointersRef.current.size === 0) {
+      gestureRef.current = null;
+      stopLowDetail();
+    }
+  }, [hitTest, onSegmentClick, stopLowDetail]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    const onWheel = (event) => {
+      event.preventDefault();
+      const anchor = clientToWorld(event.clientX, event.clientY);
+      const current = viewportRef.current;
+      const factor = event.deltaY > 0 ? 1.1 : 1 / 1.1;
+      const width = Math.min(925, Math.max(740 / 6, current.w * factor));
+      const height = width;
+      const scaleX = width / current.w;
+      const scaleY = height / current.h;
+      viewportRef.current = {
+        x: anchor.x - (anchor.x - current.x) * scaleX,
+        y: anchor.y - (anchor.y - current.y) * scaleY,
+        w: width,
+        h: height,
+      };
+      startLowDetail();
+      requestDraw();
+      window.clearTimeout(canvas._detailTimer);
+      canvas._detailTimer = window.setTimeout(stopLowDetail, 100);
+    };
+    canvas.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      canvas.removeEventListener('wheel', onWheel);
+      window.clearTimeout(canvas._detailTimer);
+    };
+  }, [clientToWorld, requestDraw, startLowDetail, stopLowDetail]);
+
+  useEffect(() => () => {
+    if (frameRef.current) cancelAnimationFrame(frameRef.current);
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="lamen-canvas"
+      aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar."
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endPointer}
+      onPointerCancel={endPointer}
+      onPointerLeave={() => {
+        if (pointersRef.current.size === 0 && hoveredRef.current) {
+          hoveredRef.current = null;
+          requestDraw();
+        }
+      }}
+    />
+  );
 }
