@@ -37,6 +37,14 @@ export default function InfoPanel({ activeSegmentId, onClose }) {
                         <div className="divider"></div>
                         <p className="description">{content.description}</p>
 
+                        {content.highlights?.length > 0 && (
+                            <ul className="highlights-list">
+                                {content.highlights.map((highlight) => (
+                                    <li key={highlight}>{highlight}</li>
+                                ))}
+                            </ul>
+                        )}
+
                         {content.associations && (
                             <div className="associations-grid">
                                 {Object.entries(content.associations).map(([key, value]) => (
@@ -46,6 +54,39 @@ export default function InfoPanel({ activeSegmentId, onClose }) {
                                     </div>
                                 ))}
                             </div>
+                        )}
+
+                        {content.sections?.map((section) => (
+                            <section className="info-section" key={section.title}>
+                                <h3 className="section-title brand-font">{section.title}</h3>
+                                {section.paragraphs?.map((paragraph) => (
+                                    <p className="section-text" key={paragraph}>{paragraph}</p>
+                                ))}
+                                {section.items?.length > 0 && (
+                                    <ul className="section-list">
+                                        {section.items.map((item) => <li key={item}>{item}</li>)}
+                                    </ul>
+                                )}
+                            </section>
+                        ))}
+
+                        {content.traditionNote && (
+                            <p className="tradition-note">{content.traditionNote}</p>
+                        )}
+
+                        {content.sources?.length > 0 && (
+                            <section className="sources-section">
+                                <h3 className="section-title brand-font">Fontes e referências</h3>
+                                <ul className="sources-list">
+                                    {content.sources.map((source) => (
+                                        <li key={source.url}>
+                                            <a href={source.url} target="_blank" rel="noreferrer">
+                                                {source.label}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
                         )}
                     </div>
                 </div>

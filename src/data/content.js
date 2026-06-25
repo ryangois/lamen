@@ -1,214 +1,655 @@
-// content.js — Full content data for all Lamen segments
-// Built compactly via data arrays then expanded into contentData object.
+import { ringStructure } from './rings.js';
 
-const c = {};
+const content = {};
 
-// ─── ELEMENTS ────────────────────────────────────────────────────────────────
-c.fire  = { title:"Elemento Fogo 🜂", subtitle:"Vontade · Energia · Transformação", description:"O Fogo representa a vontade pura, a energia criativa e o poder de transformação. Relaciona-se ao naipe de Bastões no Tarô e ao mundo de Atziluth na Árvore da Vida.", associations:{ Direção:"Sul", Cores:"Vermelho, Dourado", Arcanjo:"Michael", Qualidades:"Quente e Seco" }};
-c.water = { title:"Elemento Água 🜄", subtitle:"Emoção · Intuição · Inconsciente", description:"A Água simboliza os reinos profundos da intuição e emoção. Corresponde ao naipe de Copas, a Briah na Cabala e às profundezas psíquicas.", associations:{ Direção:"Oeste", Cores:"Azul, Verde-mar", Arcanjo:"Gabriel", Qualidades:"Frio e Úmido" }};
-c.air   = { title:"Elemento Ar 🜁", subtitle:"Intelecto · Comunicação · Razão", description:"O Ar governa o intelecto, a comunicação e o pensamento lógico. Relaciona-se ao naipe de Espadas e ao mundo de Yetzirah.", associations:{ Direção:"Leste", Cores:"Amarelo, Violeta", Arcanjo:"Raphael", Qualidades:"Quente e Úmido" }};
-c.earth = { title:"Elemento Terra 🜃", subtitle:"Matéria · Estabilidade · Manifestação", description:"A Terra representa o mundo físico, a estabilidade e a manifestação concreta. Corresponde ao naipe de Ouros e ao mundo de Assiah.", associations:{ Direção:"Norte", Cores:"Verde, Marrom", Arcanjo:"Uriel", Qualidades:"Frio e Seco" }};
+const sources = {
+  exodus: {
+    label: 'Êxodo 14:19-21 — base textual dos 72 tríplices',
+    url: 'https://www.sefaria.org/Exodus.14.19-21',
+  },
+  shemPaper: {
+    label: 'The Seventy-Two Angels of the Shemhamphorash — estudo e tabelas',
+    url: 'https://utahsricf.org/wp-content/uploads/2015/10/SHEMHAMPHORASH-ASTROILOGY-PAPER-PRINT-VERSION-SRICF.pdf',
+  },
+  shemTable: {
+    label: 'Occult Encyclopedia — nomes, coros e versos tradicionais',
+    url: 'https://www.occult.live/index.php/Kabbalistic_angel',
+  },
+  dionysius: {
+    label: 'Pseudo-Dionísio — The Celestial Hierarchy',
+    url: 'https://sacred-texts.com/chr/dio/index.htm',
+  },
+  agrippa: {
+    label: 'Agrippa — De Occulta Philosophia, Livro III',
+    url: 'https://www.esotericarchives.com/agrippa/agripp3b.htm',
+  },
+  agrippaPlanets: {
+    label: 'Agrippa — correspondências celestes e planetárias',
+    url: 'https://www.esotericarchives.com/agrippa/agrippa2.htm',
+  },
+  nasa: {
+    label: 'NASA Solar System Exploration — dados astronômicos',
+    url: 'https://science.nasa.gov/solar-system/',
+  },
+};
 
-// ─── PLANETS ─────────────────────────────────────────────────────────────────
-const planets = [
-  ["saturn","♄ Saturno","Binah","Restrição · Tempo · Disciplina","Saturno governa a estrutura, os limites e a sabedoria através da experiência. Na Árvore da Vida, corresponde à Sephirah Binah.",{Sephirah:"Binah",Metal:"Chumbo",Dia:"Sábado",Cor:"Negro/Índigo"}],
-  ["jupiter","♃ Júpiter","Chesed","Expansão · Abundância · Misericórdia","Júpiter é o grande benéfico, governando a expansão, a generosidade e a visão filosófica. Corresponde a Chesed.",{Sephirah:"Chesed",Metal:"Estanho",Dia:"Quinta-feira",Cor:"Azul"}],
-  ["mars","♂ Marte","Geburah","Força · Coragem · Conflito","Marte representa a energia combativa, a coragem e a força de ação. Corresponde a Geburah na Árvore da Vida.",{Sephirah:"Geburah",Metal:"Ferro",Dia:"Terça-feira",Cor:"Vermelho"}],
-  ["sun_p","☉ Sol","Tiphareth","Consciência · Beleza · Harmonia","O Sol é o centro da consciência, representando beleza, equilíbrio e iluminação espiritual. Corresponde a Tiphareth.",{Sephirah:"Tiphareth",Metal:"Ouro",Dia:"Domingo",Cor:"Dourado"}],
-  ["venus","♀ Vênus","Netzach","Amor · Arte · Desejo","Vênus governa o amor, a beleza artística e os prazeres sensoriais. Corresponde a Netzach na Árvore da Vida.",{Sephirah:"Netzach",Metal:"Cobre",Dia:"Sexta-feira",Cor:"Verde"}],
-  ["mercury","☿ Mercúrio","Hod","Comunicação · Magia · Intelecto","Mercúrio é o mensageiro, regendo a comunicação, a magia e a habilidade intelectual. Corresponde a Hod.",{Sephirah:"Hod",Metal:"Mercúrio",Dia:"Quarta-feira",Cor:"Laranja"}],
-  ["moon_p","☽ Lua","Yesod","Inconsciente · Sonhos · Fundação","A Lua governa o inconsciente, os sonhos e os ciclos naturais. Corresponde a Yesod, o fundamento.",{Sephirah:"Yesod",Metal:"Prata",Dia:"Segunda-feira",Cor:"Violeta"}],
-];
-planets.forEach(([id,t,,sub,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
+const traditionNote = 'As correspondências abaixo pertencem a sistemas históricos de astrologia, Cabala hermética e magia cerimonial. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
 
-// ─── 22 HEBREW LETTERS / TAROT ──────────────────────────────────────────────
-const hebrewTarot = [
-  ["fool","א Aleph","0 · O Louco","Ar","O Louco representa o início absoluto, o espírito livre antes da manifestação. Aleph é o sopro vital, o princípio do ar.",{Letra:"א Aleph",Valor:"1",Tipo:"Mãe",Elemento:"Ar",Caminho:"Kether → Chokmah"}],
-  ["magician","ב Beth","1 · O Mago","Mercúrio","O Mago canaliza a vontade divina para a manifestação. Beth é a casa do espírito.",{Letra:"ב Beth",Valor:"2",Tipo:"Dupla",Planeta:"Mercúrio",Caminho:"Kether → Binah"}],
-  ["priestess","ג Gimel","2 · A Sacerdotisa","Lua","A Sacerdotisa guarda os mistérios do inconsciente. Gimel é o camelo que atravessa o abismo.",{Letra:"ג Gimel",Valor:"3",Tipo:"Dupla",Planeta:"Lua",Caminho:"Kether → Tiphareth"}],
-  ["empress","ד Daleth","3 · A Imperatriz","Vênus","A Imperatriz é a mãe fértil, abundância e natureza. Daleth é a porta da criação.",{Letra:"ד Daleth",Valor:"4",Tipo:"Dupla",Planeta:"Vênus",Caminho:"Chokmah → Binah"}],
-  ["emperor","ה He","4 · O Imperador","Áries","O Imperador é autoridade, estrutura e lei. He é a janela para o divino.",{Letra:"ה He",Valor:"5",Tipo:"Simples",Signo:"Áries ♈",Caminho:"Chokmah → Tiphareth"}],
-  ["hierophant","ו Vav","5 · O Hierofante","Touro","O Hierofante é o mestre espiritual, tradição e sabedoria sagrada. Vav é o prego que une.",{Letra:"ו Vav",Valor:"6",Tipo:"Simples",Signo:"Touro ♉",Caminho:"Chokmah → Chesed"}],
-  ["lovers","ז Zayin","6 · Os Amantes","Gêmeos","Os Amantes representam escolha, dualidade e união. Zayin é a espada da discriminação.",{Letra:"ז Zayin",Valor:"7",Tipo:"Simples",Signo:"Gêmeos ♊",Caminho:"Binah → Tiphareth"}],
-  ["chariot","ח Cheth","7 · O Carro","Câncer","O Carro representa triunfo da vontade e movimento direcionado. Cheth é a cerca protetora.",{Letra:"ח Cheth",Valor:"8",Tipo:"Simples",Signo:"Câncer ♋",Caminho:"Binah → Geburah"}],
-  ["strength","ט Teth","8 · A Força","Leão","A Força domina o instinto pela consciência superior. Teth é a serpente da sabedoria.",{Letra:"ט Teth",Valor:"9",Tipo:"Simples",Signo:"Leão ♌",Caminho:"Chesed → Geburah"}],
-  ["hermit","י Yod","9 · O Eremita","Virgem","O Eremita busca a luz interior na solidão. Yod é a mão de Deus, a semente primordial.",{Letra:"י Yod",Valor:"10",Tipo:"Simples",Signo:"Virgem ♍",Caminho:"Chesed → Tiphareth"}],
-  ["wheel","כ Kaph","10 · A Roda","Júpiter","A Roda da Fortuna gira os ciclos do destino. Kaph é a palma da mão que recebe.",{Letra:"כ Kaph",Valor:"20",Tipo:"Dupla",Planeta:"Júpiter",Caminho:"Chesed → Netzach"}],
-  ["justice","ל Lamed","11 · A Justiça","Libra","A Justiça mantém o equilíbrio cósmico. Lamed é o aguilhão que impulsiona o aprendizado.",{Letra:"ל Lamed",Valor:"30",Tipo:"Simples",Signo:"Libra ♎",Caminho:"Geburah → Tiphareth"}],
-  ["hanged","מ Mem","12 · O Enforcado","Água","O Enforcado é a rendição e a visão invertida. Mem é a água primordial da criação.",{Letra:"מ Mem",Valor:"40",Tipo:"Mãe",Elemento:"Água",Caminho:"Geburah → Hod"}],
-  ["death","נ Nun","13 · A Morte","Escorpião","A Morte é transformação radical e renascimento. Nun é o peixe que nada nas profundezas.",{Letra:"נ Nun",Valor:"50",Tipo:"Simples",Signo:"Escorpião ♏",Caminho:"Tiphareth → Netzach"}],
-  ["temperance","ס Samekh","14 · Temperança","Sagitário","Temperança é a arte da alquimia interior. Samekh é o suporte e a proteção divina.",{Letra:"ס Samekh",Valor:"60",Tipo:"Simples",Signo:"Sagitário ♐",Caminho:"Tiphareth → Yesod"}],
-  ["devil","ע Ayin","15 · O Diabo","Capricórnio","O Diabo revela as ilusões materiais. Ayin é o olho que vê além da matéria.",{Letra:"ע Ayin",Valor:"70",Tipo:"Simples",Signo:"Capricórnio ♑",Caminho:"Tiphareth → Hod"}],
-  ["tower","פ Pe","16 · A Torre","Marte","A Torre destrói estruturas falsas. Pe é a boca que pronuncia o verbo destruidor e criador.",{Letra:"פ Pe",Valor:"80",Tipo:"Dupla",Planeta:"Marte",Caminho:"Netzach → Hod"}],
-  ["star","צ Tzaddi","17 · A Estrela","Aquário","A Estrela é esperança e inspiração cósmica. Tzaddi é o anzol que pesca a verdade.",{Letra:"צ Tzaddi",Valor:"90",Tipo:"Simples",Signo:"Aquário ♒",Caminho:"Netzach → Yesod"}],
-  ["moon","ק Qoph","18 · A Lua","Peixes","A Lua ilumina os caminhos do inconsciente. Qoph é a parte posterior da cabeça, o oculto.",{Letra:"ק Qoph",Valor:"100",Tipo:"Simples",Signo:"Peixes ♓",Caminho:"Netzach → Malkuth"}],
-  ["sun","ר Resh","19 · O Sol","Sol","O Sol brilha com consciência plena e vitalidade. Resh é a cabeça, o princípio solar.",{Letra:"ר Resh",Valor:"200",Tipo:"Dupla",Planeta:"Sol",Caminho:"Hod → Yesod"}],
-  ["judgement","ש Shin","20 · O Julgamento","Fogo","O Julgamento é o despertar final do espírito. Shin é o dente de fogo, a trindade divina.",{Letra:"ש Shin",Valor:"300",Tipo:"Mãe",Elemento:"Fogo",Caminho:"Hod → Malkuth"}],
-  ["world","ת Tav","21 · O Mundo","Saturno","O Mundo é a realização completa, a dança cósmica. Tav é a cruz, a marca final da criação.",{Letra:"ת Tav",Valor:"400",Tipo:"Dupla",Planeta:"Saturno",Caminho:"Yesod → Malkuth"}],
-];
-hebrewTarot.forEach(([id,t,sub,,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
-
-// ─── ZODIAC ──────────────────────────────────────────────────────────────────
-const zodiac = [
-  ["aries","♈ Áries","Fogo Cardinal",{Elemento:"Fogo",Planeta:"Marte",Casa:"1ª",Qualidade:"Cardinal",Letras:"ה He / פ Pe / ו Vav"}],
-  ["taurus","♉ Touro","Terra Fixo",{Elemento:"Terra",Planeta:"Vênus",Casa:"2ª",Qualidade:"Fixo",Letras:"ו Vav / ר Resh / ע Ayin"}],
-  ["gemini","♊ Gêmeos","Ar Mutável",{Elemento:"Ar",Planeta:"Mercúrio",Casa:"3ª",Qualidade:"Mutável",Letras:"ז Zayin / ק Qoph / ה He"}],
-  ["cancer","♋ Câncer","Água Cardinal",{Elemento:"Água",Planeta:"Lua",Casa:"4ª",Qualidade:"Cardinal",Letras:"ח Cheth / ש Shin / ו Vav"}],
-  ["leo","♌ Leão","Fogo Fixo",{Elemento:"Fogo",Planeta:"Sol",Casa:"5ª",Qualidade:"Fixo",Letras:"ט Teth / ת Tav / ז Zayin"}],
-  ["virgo","♍ Virgem","Terra Mutável",{Elemento:"Terra",Planeta:"Mercúrio",Casa:"6ª",Qualidade:"Mutável",Letras:"י Yod / א Aleph / ח Cheth"}],
-  ["libra","♎ Libra","Ar Cardinal",{Elemento:"Ar",Planeta:"Vênus",Casa:"7ª",Qualidade:"Cardinal",Letras:"ל Lamed / ב Beth / ט Teth"}],
-  ["scorpio","♏ Escorpião","Água Fixo",{Elemento:"Água",Planeta:"Marte/Plutão",Casa:"8ª",Qualidade:"Fixo",Letras:"נ Nun / ג Gimel / י Yod"}],
-  ["sagittarius","♐ Sagitário","Fogo Mutável",{Elemento:"Fogo",Planeta:"Júpiter",Casa:"9ª",Qualidade:"Mutável",Letras:"ס Samekh / ד Daleth / ל Lamed"}],
-  ["capricorn","♑ Capricórnio","Terra Cardinal",{Elemento:"Terra",Planeta:"Saturno",Casa:"10ª",Qualidade:"Cardinal",Letras:"ע Ayin / ה He / נ Nun"}],
-  ["aquarius","♒ Aquário","Ar Fixo",{Elemento:"Ar",Planeta:"Saturno/Urano",Casa:"11ª",Qualidade:"Fixo",Letras:"צ Tzaddi / ו Vav / ס Samekh"}],
-  ["pisces","♓ Peixes","Água Mutável",{Elemento:"Água",Planeta:"Júpiter/Netuno",Casa:"12ª",Qualidade:"Mutável",Letras:"ק Qoph / ז Zayin / ע Ayin"}],
-];
-zodiac.forEach(([id,t,sub,assoc])=>{ c[id]={title:t,subtitle:sub,description:`O signo de ${t.split(' ')[1]} é ${sub}. Governa a ${assoc.Casa} casa astrológica e é regido por ${assoc.Planeta}.`,associations:assoc}; });
-
-// ─── 72 ANGELS ───────────────────────────────────────────────────────────────
-const angelsData = [
-  [1,"Vehuiah","והויה","Serafins","Metatron","0°-5° Áries","Vontade · Iniciativa"],
-  [2,"Jeliel","ילייל","Serafins","Metatron","5°-10° Áries","Amor · Fidelidade"],
-  [3,"Sitael","סיטאל","Serafins","Metatron","10°-15° Áries","Construção · Superação"],
-  [4,"Elemiah","עלמיה","Serafins","Metatron","15°-20° Áries","Poder Divino · Viagem"],
-  [5,"Mahasiah","מהשיה","Serafins","Metatron","20°-25° Áries","Retificação · Harmonia"],
-  [6,"Lelahel","ללהל","Serafins","Metatron","25°-30° Áries","Luz · Cura"],
-  [7,"Achaiah","אכאיה","Querubins","Raziel","0°-5° Touro","Paciência · Verdade"],
-  [8,"Cahetel","כהתל","Querubins","Raziel","5°-10° Touro","Bênção · Agricultura"],
-  [9,"Haziel","הזיאל","Querubins","Raziel","10°-15° Touro","Misericórdia · Perdão"],
-  [10,"Aladiah","אלדיה","Querubins","Raziel","15°-20° Touro","Graça · Regeneração"],
-  [11,"Lauviah I","לאוויה","Querubins","Raziel","20°-25° Touro","Vitória · Revelação"],
-  [12,"Hahahiah","ההעיה","Querubins","Raziel","25°-30° Touro","Refúgio · Sonhos"],
-  [13,"Yesalel","יזאלאל","Tronos","Binael","0°-5° Gêmeos","Fidelidade · Justiça"],
-  [14,"Mebahel","מבהל","Tronos","Binael","5°-10° Gêmeos","Verdade · Liberdade"],
-  [15,"Hariel","הריאל","Tronos","Binael","10°-15° Gêmeos","Purificação · Fé"],
-  [16,"Hekamiah","הקמיה","Tronos","Binael","15°-20° Gêmeos","Lealdade · Liderança"],
-  [17,"Lauviah II","לאויה","Tronos","Binael","20°-25° Gêmeos","Revelação · Alegria"],
-  [18,"Caliel","כלאל","Tronos","Binael","25°-30° Gêmeos","Justiça Divina"],
-  [19,"Leuviah","לוויה","Dominações","Tzadkiel","0°-5° Câncer","Memória · Inteligência"],
-  [20,"Pahaliah","פהליה","Dominações","Tzadkiel","5°-10° Câncer","Redenção · Moral"],
-  [21,"Nelchael","נלכאל","Dominações","Tzadkiel","10°-15° Câncer","Aprendizado · Ciência"],
-  [22,"Yeiayel","ייייאל","Dominações","Tzadkiel","15°-20° Câncer","Fama · Renome"],
-  [23,"Melahel","מלהל","Dominações","Tzadkiel","20°-25° Câncer","Cura · Plantas"],
-  [24,"Haheuiah","ההויה","Dominações","Tzadkiel","25°-30° Câncer","Proteção · Exílio"],
-  [25,"Nith-Haiah","נתהיה","Potências","Kamael","0°-5° Leão","Sabedoria · Magia"],
-  [26,"Haaiah","האאיה","Potências","Kamael","5°-10° Leão","Política · Diplomacia"],
-  [27,"Yeratel","יראתאל","Potências","Kamael","10°-15° Leão","Luz · Civilização"],
-  [28,"Seheiah","שאהיה","Potências","Kamael","15°-20° Leão","Longevidade · Saúde"],
-  [29,"Reiyel","ריייאל","Potências","Kamael","20°-25° Leão","Libertação · Verdade"],
-  [30,"Omael","אומאל","Potências","Kamael","25°-30° Leão","Fertilidade · Paciência"],
-  [31,"Lecabel","לכבאל","Virtudes","Raphael","0°-5° Virgem","Talento · Agricultura"],
-  [32,"Vasariah","וסריה","Virtudes","Raphael","5°-10° Virgem","Justiça · Generosidade"],
-  [33,"Yehuiah","יהויה","Virtudes","Raphael","10°-15° Virgem","Subordinação · Hierarquia"],
-  [34,"Lehahiah","להחיה","Virtudes","Raphael","15°-20° Virgem","Obediência · Calma"],
-  [35,"Chavakiah","כווקיה","Virtudes","Raphael","20°-25° Virgem","Reconciliação · Paz"],
-  [36,"Menadel","מנדאל","Virtudes","Raphael","25°-30° Virgem","Trabalho · Vocação"],
-  [37,"Aniel","אניאל","Principados","Haniel","0°-5° Libra","Coragem · Inspiração"],
-  [38,"Haamiah","האמיה","Principados","Haniel","5°-10° Libra","Ritual · Culto"],
-  [39,"Rehael","ריהאל","Principados","Haniel","10°-15° Libra","Cura · Saúde"],
-  [40,"Ieiazel","ייזזל","Principados","Haniel","15°-20° Libra","Consolo · Alegria"],
-  [41,"Hahahel","ההחל","Principados","Haniel","20°-25° Libra","Missão · Sacerdócio"],
-  [42,"Mikhael","מיכאל","Principados","Haniel","25°-30° Libra","Ordem · Organização"],
-  [43,"Veuliah","וולייה","Arcanjos","Michael","0°-5° Escorpião","Prosperidade · Elevação"],
-  [44,"Yelahiah","ילהיה","Arcanjos","Michael","5°-10° Escorpião","Força Militar · Coragem"],
-  [45,"Sealiah","סאליה","Arcanjos","Michael","10°-15° Escorpião","Motor · Vontade"],
-  [46,"Ariel","אריאל","Arcanjos","Michael","15°-20° Escorpião","Revelação · Natureza"],
-  [47,"Asaliah","עסליה","Arcanjos","Michael","20°-25° Escorpião","Contemplação · Verdade"],
-  [48,"Mihael","מיהאל","Arcanjos","Michael","25°-30° Escorpião","Amor · Fecundidade"],
-  [49,"Vehuel","ויהואל","Anjos","Gabriel","0°-5° Sagitário","Elevação · Grandeza"],
-  [50,"Daniel","דניאל","Anjos","Gabriel","5°-10° Sagitário","Eloquência · Beleza"],
-  [51,"Hahasiah","ההשיה","Anjos","Gabriel","10°-15° Sagitário","Medicina · Ciência"],
-  [52,"Imamiah","עממיה","Anjos","Gabriel","15°-20° Sagitário","Viagem · Proteção"],
-  [53,"Nanael","נניאל","Anjos","Gabriel","20°-25° Sagitário","Conhecimento · Meditação"],
-  [54,"Nithael","ניתאל","Anjos","Gabriel","25°-30° Sagitário","Legitimidade · Estabilidade"],
-  [55,"Mebahiah","מבהיה","Serafins","Metatron","0°-5° Capric.","Moral · Intelectual"],
-  [56,"Poyel","פוייאל","Serafins","Metatron","5°-10° Capric.","Fortuna · Talento"],
-  [57,"Nemamiah","נממיה","Serafins","Metatron","10°-15° Capric.","Prosperidade · Estratégia"],
-  [58,"Yeialel","יילאל","Serafins","Metatron","15°-20° Capric.","Força Mental · Cura"],
-  [59,"Harahel","הרחאל","Serafins","Metatron","20°-25° Capric.","Riqueza · Conhecimento"],
-  [60,"Mitzrael","מצראל","Serafins","Metatron","25°-30° Capric.","Reparação · Cura"],
-  [61,"Umabel","אומבאל","Querubins","Raziel","0°-5° Aquário","Amizade · Afinidades"],
-  [62,"Iah-Hel","יהאל","Querubins","Raziel","5°-10° Aquário","Sabedoria · Retiro"],
-  [63,"Anauel","ענואל","Querubins","Raziel","10°-15° Aquário","Unidade · Comunicação"],
-  [64,"Mehiel","מהיאל","Querubins","Raziel","15°-20° Aquário","Inspiração · Escrita"],
-  [65,"Damabiah","דמביה","Querubins","Raziel","20°-25° Aquário","Sabedoria · Oceanos"],
-  [66,"Manakel","מנקאל","Querubins","Raziel","25°-30° Aquário","Conhecim. · Sonhos"],
-  [67,"Eyael","עיאל","Tronos","Binael","0°-5° Peixes","Transformação · Ciência"],
-  [68,"Habuhiah","חבוהיה","Tronos","Binael","5°-10° Peixes","Cura · Saúde"],
-  [69,"Rochel","ראוחל","Tronos","Binael","10°-15° Peixes","Restituição · Achado"],
-  [70,"Jabamiah","יבמיה","Tronos","Binael","15°-20° Peixes","Alquimia · Transmutação"],
-  [71,"Haiaiel","ייאיאל","Tronos","Binael","20°-25° Peixes","Armas · Proteção"],
-  [72,"Mumiah","מומיה","Tronos","Binael","25°-30° Peixes","Renascimento · Conclusão"],
-];
-angelsData.forEach(([n,name,heb,choir,arch,deg,kw])=>{
-  c[`angel_${n}`]={
-    title:`${n}. ${name} (${heb})`,
-    subtitle:kw,
-    description:`${name} é o ${n}º anjo do Shem HaMephorash, pertencente ao coro dos ${choir}, sob o Arcanjo ${arch}. Governa ${deg}.`,
-    associations:{ Coro:choir, Arcanjo:arch, Graus:deg, "Letras Hebraicas":heb }
+function add(id, data) {
+  content[id] = {
+    traditionNote,
+    ...data,
   };
-});
+}
 
-// ─── CHOIRS ──────────────────────────────────────────────────────────────────
-const choirs = [
-  ["serafins","Serafins · Metatron","1º Coro Angélico","Os Serafins são os anjos mais próximos do trono divino. Cantam incessantemente o louvor a Deus. Metatron é o Arcanjo regente.",{Arcanjo:"Metatron",Sephirah:"Kether",Anjos:"1–6, 55–60",Elemento:"Fogo Sagrado"}],
-  ["querubins","Querubins · Raziel","2º Coro Angélico","Os Querubins guardam os segredos da criação e os mistérios divinos. Raziel é o Arcanjo dos segredos.",{Arcanjo:"Raziel",Sephirah:"Chokmah",Anjos:"7–12, 61–66",Elemento:"Sabedoria Estelar"}],
-  ["tronos","Tronos · Binael","3º Coro Angélico","Os Tronos sustentam a justiça divina e o equilíbrio cósmico. Binael (Tzaphkiel) é o Arcanjo regente.",{Arcanjo:"Binael/Tzaphkiel",Sephirah:"Binah",Anjos:"13–18, 67–72",Elemento:"Compreensão"}],
-  ["dominacoes","Dominações · Tzadkiel","4º Coro Angélico","As Dominações organizam as tarefas dos anjos inferiores e mantêm a ordem cósmica.",{Arcanjo:"Tzadkiel",Sephirah:"Chesed",Anjos:"19–24",Elemento:"Misericórdia"}],
-  ["potencias","Potências · Kamael","5º Coro Angélico","As Potências combatem as forças do mal e protegem a ordem divina. Kamael é o guerreiro celestial.",{Arcanjo:"Kamael",Sephirah:"Geburah",Anjos:"25–30",Elemento:"Severidade"}],
-  ["virtudes","Virtudes · Raphael","6º Coro Angélico","As Virtudes concedem milagres e bênçãos. Raphael é o curador divino.",{Arcanjo:"Raphael",Sephirah:"Tiphareth",Anjos:"31–36",Elemento:"Beleza/Cura"}],
-  ["principados","Principados · Haniel","7º Coro Angélico","Os Principados protegem nações e comunidades. Haniel governa a graça e a beleza.",{Arcanjo:"Haniel",Sephirah:"Netzach",Anjos:"37–42",Elemento:"Vitória"}],
-  ["arcanjos","Arcanjos · Michael","8º Coro Angélico","Os Arcanjos são mensageiros divinos de grande poder. Michael lidera contra as trevas.",{Arcanjo:"Michael",Sephirah:"Hod",Anjos:"43–48",Elemento:"Esplendor"}],
-  ["anjos","Anjos · Gabriel","9º Coro Angélico","Os Anjos são os mensageiros mais próximos da humanidade. Gabriel traz revelações e proteção.",{Arcanjo:"Gabriel",Sephirah:"Yesod",Anjos:"49–54",Elemento:"Fundamento"}],
+const elementProfiles = [
+  {
+    id: 'fire', symbol: '🜂', name: 'Fogo', direction: 'Sul', quality: 'Quente e seco',
+    suit: 'Bastões', world: 'Atziluth', letter: 'Yod', archangel: 'Michael',
+    colors: 'Vermelho, escarlate e dourado', virtues: 'Coragem, iniciativa, entusiasmo e transformação',
+    shadow: 'Impulsividade, agressividade, exaustão e destruição sem propósito',
+    description: 'O Fogo simboliza impulso, vontade e capacidade de transformar. Na leitura hermética, é a centelha que inicia a ação e converte intenção em movimento.',
+  },
+  {
+    id: 'water', symbol: '🜄', name: 'Água', direction: 'Oeste', quality: 'Fria e úmida',
+    suit: 'Copas', world: 'Briah', letter: 'Heh', archangel: 'Gabriel',
+    colors: 'Azul, azul-marinho e verde-mar', virtues: 'Empatia, imaginação, receptividade e cura',
+    shadow: 'Passividade, confusão emocional, fuga e excesso de absorção',
+    description: 'A Água representa sentimento, memória, imaginação e receptividade. É associada ao fluxo psíquico, aos vínculos e à capacidade de adaptar-se sem perder profundidade.',
+  },
+  {
+    id: 'air', symbol: '🜁', name: 'Ar', direction: 'Leste', quality: 'Quente e úmido',
+    suit: 'Espadas', world: 'Yetzirah', letter: 'Vav', archangel: 'Raphael',
+    colors: 'Amarelo, azul-claro e violeta', virtues: 'Clareza, comunicação, análise e mobilidade',
+    shadow: 'Dispersão, frieza, ansiedade e intelectualização excessiva',
+    description: 'O Ar corresponde ao pensamento, à linguagem e às relações entre ideias. Na tradição hermética, conecta, discrimina e torna comunicável aquilo que antes era apenas sensação.',
+  },
+  {
+    id: 'earth', symbol: '🜃', name: 'Terra', direction: 'Norte', quality: 'Fria e seca',
+    suit: 'Ouros', world: 'Assiah', letter: 'Heh final', archangel: 'Uriel ou Sandalphon',
+    colors: 'Verde, marrom, preto e citrino', virtues: 'Estabilidade, paciência, execução e presença',
+    shadow: 'Rigidez, materialismo, estagnação e medo de mudança',
+    description: 'A Terra representa corpo, matéria, recursos e manifestação. Também se aproxima de Malkuth, a esfera em que as forças dos demais mundos recebem forma concreta.',
+  },
 ];
-choirs.forEach(([id,t,sub,desc,assoc])=>{ c[id]={title:t,subtitle:sub,description:desc,associations:assoc}; });
 
-// ─── DECANATE MINOR ARCANA ───────────────────────────────────────────────────
-const signs=["Áries","Touro","Gêmeos","Câncer","Leão","Virgem","Libra","Escorpião","Sagitário","Capricórnio","Aquário","Peixes"];
-const dcCards=[
-["2·Bastões","3·Bastões","4·Bastões"],["5·Ouros","6·Ouros","7·Ouros"],
-["8·Espadas","9·Espadas","10·Espadas"],["2·Copas","3·Copas","4·Copas"],
-["5·Bastões","6·Bastões","7·Bastões"],["8·Ouros","9·Ouros","10·Ouros"],
-["2·Espadas","3·Espadas","4·Espadas"],["5·Copas","6·Copas","7·Copas"],
-["8·Bastões","9·Bastões","10·Bastões"],["2·Ouros","3·Ouros","4·Ouros"],
-["5·Espadas","6·Espadas","7·Espadas"],["8·Copas","9·Copas","10·Copas"],
-];
-const dcPlanets=[
-["Marte","Sol","Vênus"],["Mercúrio","Lua","Saturno"],
-["Júpiter","Marte","Sol"],["Vênus","Mercúrio","Lua"],
-["Saturno","Júpiter","Marte"],["Sol","Vênus","Mercúrio"],
-["Lua","Saturno","Júpiter"],["Marte","Sol","Vênus"],
-["Mercúrio","Lua","Saturno"],["Júpiter","Marte","Sol"],
-["Vênus","Mercúrio","Lua"],["Saturno","Júpiter","Marte"],
-];
-dcCards.forEach((cards,si)=>cards.forEach((card,di)=>{
-  const deg=`${di*10}°–${(di+1)*10}° ${signs[si]}`;
-  c[`dec_${si}_${di}`]={title:card,subtitle:`Decanato de ${signs[si]}`,
-    description:`${card} corresponde ao ${di+1}º decanato de ${signs[si]} (${deg}), regido por ${dcPlanets[si][di]}.`,
-    associations:{Signo:signs[si],Graus:deg,"Planeta Regente":dcPlanets[si][di],Decanato:`${di+1}º`}};
+elementProfiles.forEach((element) => add(element.id, {
+  title: `${element.symbol} Elemento ${element.name}`,
+  subtitle: element.virtues,
+  description: element.description,
+  highlights: [
+    `Potencial: ${element.virtues}.`,
+    `Desequilíbrio: ${element.shadow}.`,
+  ],
+  associations: {
+    Direção: element.direction,
+    Qualidades: element.quality,
+    'Naipe do Tarot': element.suit,
+    'Mundo cabalístico': element.world,
+    'Letra do Tetragrammaton': element.letter,
+    Arcanjo: element.archangel,
+    Cores: element.colors,
+  },
+  sections: [
+    {
+      title: 'Leitura hermética',
+      paragraphs: [
+        `No ciclo dos quatro elementos, ${element.name} descreve uma modalidade fundamental de experiência e ação.`,
+        `Sua expressão equilibrada favorece ${element.virtues.toLowerCase()}; em excesso ou carência, pode aparecer como ${element.shadow.toLowerCase()}.`,
+      ],
+    },
+  ],
+  sources: [sources.agrippaPlanets],
 }));
 
-// ─── ARCHANGEL REGENTS ───────────────────────────────────────────────────────
-const arcs=[
-["arc_metatron","Metatron","Anjo da Presença","Metatron é o arcanjo mais elevado, o chanceler celestial. Registra todos os atos no Livro da Vida.",{Sephirah:"Kether",Coro:"Serafins",Anjos:"1–8",Título:"Anjo da Face de Deus"}],
-["arc_raziel","Raziel","Segredos de Deus","Raziel guarda os segredos da criação. Seu livro contém todo o conhecimento celestial.",{Sephirah:"Chokmah",Coro:"Querubins",Anjos:"9–16",Título:"Anjo dos Mistérios"}],
-["arc_tzaphkiel","Tzaphkiel","Contemplação de Deus","Tzaphkiel governa a compreensão profunda e a forma primordial.",{Sephirah:"Binah",Coro:"Tronos",Anjos:"17–24",Título:"Vigilante de Deus"}],
-["arc_tzadkiel","Tzadkiel","Justiça de Deus","Tzadkiel é o arcanjo da misericórdia, bondade e abundância divina.",{Sephirah:"Chesed",Coro:"Dominações",Anjos:"25–32",Título:"Retidão de Deus"}],
-["arc_kamael","Kamael","Severidade de Deus","Kamael é o guerreiro celestial que executa a justiça divina com precisão.",{Sephirah:"Geburah",Coro:"Potências",Anjos:"33–40",Título:"Aquele que vê Deus"}],
-["arc_raphael","Raphael","Cura de Deus","Raphael é o curador divino, guia de viajantes e protetor da saúde.",{Sephirah:"Tiphareth",Coro:"Virtudes",Anjos:"41–48",Título:"Medicina de Deus"}],
-["arc_haniel","Haniel","Graça de Deus","Haniel governa a beleza, o amor e a harmonia nas esferas celestiais.",{Sephirah:"Netzach",Coro:"Principados",Anjos:"49–56",Título:"Alegria de Deus"}],
-["arc_michael","Michael","Quem é como Deus","Michael é o líder dos exércitos celestiais, protetor supremo contra as trevas.",{Sephirah:"Hod",Coro:"Arcanjos",Anjos:"57–64",Título:"Príncipe dos Arcanjos"}],
-["arc_gabriel","Gabriel","Força de Deus","Gabriel é o mensageiro divino, portador de revelações e anunciações sagradas.",{Sephirah:"Yesod",Coro:"Anjos",Anjos:"65–72",Título:"Heraldo de Deus"}],
+const sphereProfiles = [
+  {
+    id: 'arc_metatron', archangel: 'Metatron', sephirah: 'Kether', hebrew: 'כתר', number: 1,
+    meaning: 'Coroa', planet: 'Primum Mobile / unidade anterior às esferas', choir: 'Serafins',
+    divineName: 'Eheieh', color: 'Branco brilhante', virtue: 'Unidade e vontade primordial',
+    imbalance: 'Dissociação, inflação espiritual e abstração sem aterramento',
+    description: 'Kether é a Coroa, o ponto de unidade no topo da Árvore da Vida. Na Cabala hermética, Metatron representa a mediação entre o ilimitado e a primeira formulação da vontade.',
+  },
+  {
+    id: 'arc_raziel', archangel: 'Raziel', sephirah: 'Chokmah', hebrew: 'חכמה', number: 2,
+    meaning: 'Sabedoria', planet: 'Zodíaco / esfera das estrelas fixas', choir: 'Querubins',
+    divineName: 'Yah', color: 'Cinza luminoso', virtue: 'Sabedoria, dinamismo e revelação',
+    imbalance: 'Força sem forma, precipitação e excesso de impulso',
+    description: 'Chokmah é a Sabedoria, princípio expansivo e dinâmico. Raziel é associado aos mistérios da criação e à transmissão do conhecimento oculto.',
+  },
+  {
+    id: 'arc_tzaphkiel', archangel: 'Tzaphkiel', sephirah: 'Binah', hebrew: 'בינה', number: 3,
+    meaning: 'Entendimento', planet: 'Saturno', choir: 'Tronos',
+    divineName: 'YHVH Elohim', color: 'Preto, índigo e carmesim', virtue: 'Compreensão, silêncio e estrutura',
+    imbalance: 'Fatalismo, rigidez, isolamento e opressão',
+    description: 'Binah é o Entendimento: delimita, organiza e dá forma. Tzaphkiel expressa contemplação, maturidade e a disciplina saturnina que torna a criação sustentável.',
+  },
+  {
+    id: 'arc_tzadkiel', archangel: 'Tzadkiel', sephirah: 'Chesed', hebrew: 'חסד', number: 4,
+    meaning: 'Misericórdia', planet: 'Júpiter', choir: 'Dominações',
+    divineName: 'El', color: 'Azul', virtue: 'Generosidade, ordem e benevolência',
+    imbalance: 'Excesso, paternalismo, complacência e autoridade inflada',
+    description: 'Chesed é a esfera da Misericórdia, expansão e governo benevolente. Tzadkiel representa justiça temperada por compaixão e a capacidade de organizar recursos.',
+  },
+  {
+    id: 'arc_kamael', archangel: 'Kamael', sephirah: 'Geburah', hebrew: 'גבורה', number: 5,
+    meaning: 'Força ou Severidade', planet: 'Marte', choir: 'Potências',
+    divineName: 'Elohim Gibor', color: 'Vermelho', virtue: 'Coragem, discernimento e contenção',
+    imbalance: 'Crueldade, conflito, repressão e destruição',
+    description: 'Geburah é Força, juízo e limite corretivo. Kamael simboliza a coragem de cortar excessos, proteger fronteiras e agir com precisão.',
+  },
+  {
+    id: 'arc_raphael', archangel: 'Raphael', sephirah: 'Tiphareth', hebrew: 'תפארת', number: 6,
+    meaning: 'Beleza', planet: 'Sol', choir: 'Virtudes',
+    divineName: 'YHVH Eloah ve-Daath', color: 'Dourado e amarelo', virtue: 'Harmonia, integridade e cura',
+    imbalance: 'Orgulho, culto à imagem e centralização excessiva',
+    description: 'Tiphareth ocupa o centro equilibrador da Árvore. Raphael reúne beleza, consciência solar, cura e integração entre misericórdia e severidade.',
+  },
+  {
+    id: 'arc_haniel', archangel: 'Haniel', sephirah: 'Netzach', hebrew: 'נצח', number: 7,
+    meaning: 'Vitória ou Eternidade', planet: 'Vênus', choir: 'Principados',
+    divineName: 'YHVH Tzabaoth', color: 'Verde e esmeralda', virtue: 'Amor, criatividade e constância afetiva',
+    imbalance: 'Sedução, dependência, vaidade e desejo sem medida',
+    description: 'Netzach é a Vitória, esfera de Vênus, desejo, arte e emoção. Haniel representa graça, magnetismo e a força de perseverar por aquilo que se ama.',
+  },
+  {
+    id: 'arc_michael', archangel: 'Michael', sephirah: 'Hod', hebrew: 'הוד', number: 8,
+    meaning: 'Esplendor', planet: 'Mercúrio', choir: 'Arcanjos',
+    divineName: 'Elohim Tzabaoth', color: 'Laranja', virtue: 'Razão, linguagem e estratégia',
+    imbalance: 'Racionalização, manipulação, duplicidade e excesso de análise',
+    description: 'Hod é o Esplendor, esfera mercurial da linguagem, método e classificação. Michael, nessa atribuição hermética, ordena e defende por meio da inteligência.',
+  },
+  {
+    id: 'arc_gabriel', archangel: 'Gabriel', sephirah: 'Yesod', hebrew: 'יסוד', number: 9,
+    meaning: 'Fundamento', planet: 'Lua', choir: 'Anjos',
+    divineName: 'Shaddai El Chai', color: 'Violeta e prata', virtue: 'Imaginação, memória e conexão',
+    imbalance: 'Ilusão, instabilidade, projeção e fuga',
+    description: 'Yesod é o Fundamento, esfera lunar das imagens, sonhos e padrões que antecedem a manifestação. Gabriel comunica, reflete e conduz conteúdos entre níveis.',
+  },
 ];
-arcs.forEach(([id,t,sub,desc,assoc])=>{c[id]={title:t,subtitle:sub,description:desc,associations:assoc};});
 
-export const contentData = c;
+sphereProfiles.forEach((sphere, index) => add(sphere.id, {
+  title: `${sphere.archangel} · ${sphere.sephirah}`,
+  subtitle: `${sphere.number}ª esfera — ${sphere.meaning}`,
+  description: sphere.description,
+  highlights: [
+    `Virtude central: ${sphere.virtue}.`,
+    `Desequilíbrio simbólico: ${sphere.imbalance}.`,
+  ],
+  associations: {
+    Sephirah: `${sphere.sephirah} (${sphere.hebrew})`,
+    Número: sphere.number,
+    Significado: sphere.meaning,
+    Esfera: sphere.planet,
+    Arcanjo: sphere.archangel,
+    Coro: sphere.choir,
+    'Nome divino': sphere.divineName,
+    Cor: sphere.color,
+    'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
+  },
+  sections: [
+    {
+      title: 'Função na Árvore da Vida',
+      paragraphs: [
+        `${sphere.sephirah} articula ${sphere.virtue.toLowerCase()} no esquema hermético da Árvore da Vida.`,
+        `A esfera não deve ser entendida como lugar físico: é um mapa simbólico usado para contemplar relações entre consciência, ética, natureza e cosmologia.`,
+      ],
+    },
+    {
+      title: 'Arcanjo regente',
+      paragraphs: [
+        `${sphere.archangel} é associado a ${sphere.sephirah} e ao coro dos ${sphere.choir}. Grafias e regências variam entre fontes judaicas, cristãs e ordens herméticas.`,
+      ],
+    },
+  ],
+  sources: [sources.agrippa, sources.dionysius],
+}));
+
+const planetProfiles = [
+  {
+    id: 'saturn', symbol: '♄', name: 'Saturno', sephirah: 'Binah', archangel: 'Tzaphkiel',
+    weekday: 'Sábado', metal: 'Chumbo', color: 'Preto e índigo', letter: 'Tav', tarot: 'O Mundo',
+    domiciles: 'Capricórnio e Aquário', exaltation: 'Libra', detriment: 'Câncer e Leão', fall: 'Áries',
+    orbit: 'aprox. 29,45 anos', principle: 'Tempo, estrutura, limite, responsabilidade e maturidade',
+    strengths: 'Disciplina, paciência, realismo e permanência',
+    shadow: 'Medo, escassez, rigidez, pessimismo e isolamento',
+  },
+  {
+    id: 'jupiter', symbol: '♃', name: 'Júpiter', sephirah: 'Chesed', archangel: 'Tzadkiel',
+    weekday: 'Quinta-feira', metal: 'Estanho', color: 'Azul', letter: 'Kaph', tarot: 'A Roda da Fortuna',
+    domiciles: 'Sagitário e Peixes', exaltation: 'Câncer', detriment: 'Gêmeos e Virgem', fall: 'Capricórnio',
+    orbit: 'aprox. 11,86 anos', principle: 'Expansão, confiança, lei, filosofia e generosidade',
+    strengths: 'Visão, esperança, crescimento, ensino e proteção',
+    shadow: 'Exagero, dogmatismo, desperdício e promessas maiores que a capacidade',
+  },
+  {
+    id: 'mars', symbol: '♂', name: 'Marte', sephirah: 'Geburah', archangel: 'Kamael',
+    weekday: 'Terça-feira', metal: 'Ferro', color: 'Vermelho', letter: 'Peh', tarot: 'A Torre',
+    domiciles: 'Áries e Escorpião', exaltation: 'Capricórnio', detriment: 'Libra e Touro', fall: 'Câncer',
+    orbit: 'aprox. 687 dias', principle: 'Ação, desejo, disputa, corte e sobrevivência',
+    strengths: 'Coragem, iniciativa, resistência, decisão e defesa',
+    shadow: 'Violência, impaciência, hostilidade e ação sem estratégia',
+  },
+  {
+    id: 'sun_p', symbol: '☉', name: 'Sol', sephirah: 'Tiphareth', archangel: 'Raphael',
+    weekday: 'Domingo', metal: 'Ouro', color: 'Dourado e amarelo', letter: 'Resh', tarot: 'O Sol',
+    domiciles: 'Leão', exaltation: 'Áries', detriment: 'Aquário', fall: 'Libra',
+    orbit: 'a Terra completa sua órbita em aprox. 365,242 dias', principle: 'Identidade, vitalidade, centro, propósito e expressão',
+    strengths: 'Criatividade, coerência, generosidade e liderança',
+    shadow: 'Orgulho, autoritarismo, teatralidade e necessidade de validação',
+  },
+  {
+    id: 'venus', symbol: '♀', name: 'Vênus', sephirah: 'Netzach', archangel: 'Haniel',
+    weekday: 'Sexta-feira', metal: 'Cobre', color: 'Verde e rosa', letter: 'Daleth', tarot: 'A Imperatriz',
+    domiciles: 'Touro e Libra', exaltation: 'Peixes', detriment: 'Escorpião e Áries', fall: 'Virgem',
+    orbit: 'aprox. 224,7 dias', principle: 'Atração, valor, prazer, beleza, vínculo e conciliação',
+    strengths: 'Afeto, diplomacia, criatividade, receptividade e senso estético',
+    shadow: 'Complacência, ciúme, vaidade, dependência e hedonismo',
+  },
+  {
+    id: 'mercury', symbol: '☿', name: 'Mercúrio', sephirah: 'Hod', archangel: 'Michael',
+    weekday: 'Quarta-feira', metal: 'Mercúrio', color: 'Laranja e amarelo', letter: 'Beth', tarot: 'O Mago',
+    domiciles: 'Gêmeos e Virgem', exaltation: 'Virgem', detriment: 'Sagitário e Peixes', fall: 'Peixes',
+    orbit: 'aprox. 88 dias', principle: 'Linguagem, raciocínio, comércio, tradução e movimento',
+    strengths: 'Curiosidade, adaptação, técnica, comunicação e análise',
+    shadow: 'Dispersão, trapaça, nervosismo, superficialidade e excesso de cálculo',
+  },
+  {
+    id: 'moon_p', symbol: '☽', name: 'Lua', sephirah: 'Yesod', archangel: 'Gabriel',
+    weekday: 'Segunda-feira', metal: 'Prata', color: 'Prata, branco e violeta', letter: 'Gimel', tarot: 'A Sacerdotisa',
+    domiciles: 'Câncer', exaltation: 'Touro', detriment: 'Capricórnio', fall: 'Escorpião',
+    orbit: '27,3 dias siderais; 29,5 dias entre fases iguais', principle: 'Memória, hábito, corpo emocional, cuidado e imaginação',
+    strengths: 'Intuição, acolhimento, sensibilidade, adaptação e vínculo',
+    shadow: 'Oscilação, regressão, apego, projeção e reatividade',
+  },
+];
+
+planetProfiles.forEach((planet) => add(planet.id, {
+  title: `${planet.symbol} ${planet.name}`,
+  subtitle: planet.principle,
+  description: `Na astrologia tradicional, ${planet.name} simboliza ${planet.principle.toLowerCase()}. Na Cabala hermética corresponde a ${planet.sephirah}, sob a regência de ${planet.archangel}.`,
+  highlights: [
+    `Expressão construtiva: ${planet.strengths}.`,
+    `Possível desequilíbrio: ${planet.shadow}.`,
+  ],
+  associations: {
+    Sephirah: planet.sephirah,
+    Arcanjo: planet.archangel,
+    Dia: planet.weekday,
+    Metal: planet.metal,
+    Cores: planet.color,
+    'Letra hebraica': planet.letter,
+    'Arcano maior': planet.tarot,
+    Domicílio: planet.domiciles,
+    Exaltação: planet.exaltation,
+    Detrimento: planet.detriment,
+    Queda: planet.fall,
+    'Ciclo astronômico': planet.orbit,
+  },
+  sections: [
+    {
+      title: 'Astrologia',
+      paragraphs: [
+        `${planet.name} encontra maior familiaridade simbólica em ${planet.domiciles} e é tradicionalmente exaltado em ${planet.exaltation}.`,
+        `Dignidade não significa “bom” e debilidade não significa “mau”: são linguagens para descrever facilidade, tensão e contexto de expressão.`,
+      ],
+    },
+    {
+      title: 'Cabala e magia planetária',
+      paragraphs: [
+        `A cadeia ${planet.name} → ${planet.sephirah} → ${planet.archangel} conecta a esfera celeste a uma função da Árvore da Vida.`,
+        `O dia, metal, cor e arcano são correspondências contemplativas históricas, não relações causais demonstradas pela ciência.`,
+      ],
+    },
+    {
+      title: 'Astronomia',
+      paragraphs: [
+        `${planet.name}: ${planet.orbit}. A astronomia descreve o corpo ou ciclo físico; a astrologia e a Cabala trabalham com seu uso simbólico.`,
+      ],
+    },
+  ],
+  sources: [sources.agrippa, sources.agrippaPlanets, sources.nasa],
+}));
+
+const zodiacProfiles = [
+  ['aries', '♈', 'Áries', 'Fogo', 'Cardinal', 'Ativa', 'Marte', '', '1ª', 'O Imperador', 'Heh', 'Malchidael', 'Cabeça e face', '21 mar – 19 abr', 'iniciar, competir, afirmar', 'coragem, franqueza e impulso pioneiro', 'pressa, confronto e egocentrismo'],
+  ['taurus', '♉', 'Touro', 'Terra', 'Fixa', 'Receptiva', 'Vênus', '', '2ª', 'O Hierofante', 'Vav', 'Asmodel', 'Pescoço e garganta', '20 abr – 20 mai', 'estabilizar, cultivar, conservar', 'constância, sensualidade e confiabilidade', 'teimosia, posse e resistência à mudança'],
+  ['gemini', '♊', 'Gêmeos', 'Ar', 'Mutável', 'Ativa', 'Mercúrio', '', '3ª', 'Os Amantes', 'Zayin', 'Ambriel', 'Braços, mãos e pulmões', '21 mai – 20 jun', 'conectar, perguntar, traduzir', 'curiosidade, versatilidade e comunicação', 'dispersão, duplicidade e superficialidade'],
+  ['cancer', '♋', 'Câncer', 'Água', 'Cardinal', 'Receptiva', 'Lua', '', '4ª', 'O Carro', 'Cheth', 'Muriel', 'Peito e estômago', '21 jun – 22 jul', 'nutrir, proteger, pertencer', 'memória, cuidado e percepção emocional', 'defensividade, apego e oscilação'],
+  ['leo', '♌', 'Leão', 'Fogo', 'Fixa', 'Ativa', 'Sol', '', '5ª', 'A Força', 'Teth', 'Verchiel', 'Coração e coluna', '23 jul – 22 ago', 'criar, irradiar, liderar', 'generosidade, lealdade e expressão', 'orgulho, dramatização e centralização'],
+  ['virgo', '♍', 'Virgem', 'Terra', 'Mutável', 'Receptiva', 'Mercúrio', '', '6ª', 'O Eremita', 'Yod', 'Hamaliel', 'Intestinos e digestão', '23 ago – 22 set', 'analisar, aperfeiçoar, servir', 'discernimento, habilidade e precisão', 'crítica, ansiedade e perfeccionismo'],
+  ['libra', '♎', 'Libra', 'Ar', 'Cardinal', 'Ativa', 'Vênus', '', '7ª', 'A Justiça', 'Lamed', 'Zuriel', 'Rins e região lombar', '23 set – 22 out', 'equilibrar, relacionar, negociar', 'diplomacia, estética e reciprocidade', 'indecisão, agradabilidade excessiva e dependência'],
+  ['scorpio', '♏', 'Escorpião', 'Água', 'Fixa', 'Receptiva', 'Marte', 'Plutão', '8ª', 'A Morte', 'Nun', 'Barchiel', 'Órgãos reprodutivos e eliminação', '23 out – 21 nov', 'aprofundar, transformar, regenerar', 'intensidade, lealdade e poder de recuperação', 'controle, obsessão e ressentimento'],
+  ['sagittarius', '♐', 'Sagitário', 'Fogo', 'Mutável', 'Ativa', 'Júpiter', '', '9ª', 'A Temperança', 'Samekh', 'Advachiel', 'Quadris e coxas', '22 nov – 21 dez', 'explorar, compreender, ampliar', 'fé, humor, síntese e aventura', 'exagero, dogmatismo e imprudência'],
+  ['capricorn', '♑', 'Capricórnio', 'Terra', 'Cardinal', 'Receptiva', 'Saturno', '', '10ª', 'O Diabo', 'Ayin', 'Hanael', 'Joelhos, ossos e pele', '22 dez – 19 jan', 'estruturar, realizar, responsabilizar', 'ambição, resistência e estratégia', 'frieza, dureza e identificação com status'],
+  ['aquarius', '♒', 'Aquário', 'Ar', 'Fixa', 'Ativa', 'Saturno', 'Urano', '11ª', 'A Estrela', 'Tzaddi', 'Cambiel', 'Tornozelos e circulação', '20 jan – 18 fev', 'inovar, sistematizar, coletivizar', 'independência, visão social e inventividade', 'distanciamento, rebeldia automática e rigidez ideológica'],
+  ['pisces', '♓', 'Peixes', 'Água', 'Mutável', 'Receptiva', 'Júpiter', 'Netuno', '12ª', 'A Lua', 'Qoph', 'Pés e sistema linfático', '19 fev – 20 mar', 'imaginar, dissolver, compadecer', 'empatia, inspiração e sensibilidade espiritual', 'evasão, confusão e limites frágeis'],
+];
+
+const decanCards = [
+  ['2 de Bastões', '3 de Bastões', '4 de Bastões'],
+  ['5 de Ouros', '6 de Ouros', '7 de Ouros'],
+  ['8 de Espadas', '9 de Espadas', '10 de Espadas'],
+  ['2 de Copas', '3 de Copas', '4 de Copas'],
+  ['5 de Bastões', '6 de Bastões', '7 de Bastões'],
+  ['8 de Ouros', '9 de Ouros', '10 de Ouros'],
+  ['2 de Espadas', '3 de Espadas', '4 de Espadas'],
+  ['5 de Copas', '6 de Copas', '7 de Copas'],
+  ['8 de Bastões', '9 de Bastões', '10 de Bastões'],
+  ['2 de Ouros', '3 de Ouros', '4 de Ouros'],
+  ['5 de Espadas', '6 de Espadas', '7 de Espadas'],
+  ['8 de Copas', '9 de Copas', '10 de Copas'],
+];
+
+const decanPlanets = [
+  ['Marte', 'Sol', 'Vênus'], ['Mercúrio', 'Lua', 'Saturno'],
+  ['Júpiter', 'Marte', 'Sol'], ['Vênus', 'Mercúrio', 'Lua'],
+  ['Saturno', 'Júpiter', 'Marte'], ['Sol', 'Vênus', 'Mercúrio'],
+  ['Lua', 'Saturno', 'Júpiter'], ['Marte', 'Sol', 'Vênus'],
+  ['Mercúrio', 'Lua', 'Saturno'], ['Júpiter', 'Marte', 'Sol'],
+  ['Vênus', 'Mercúrio', 'Lua'], ['Saturno', 'Júpiter', 'Marte'],
+];
+
+zodiacProfiles.forEach((profile, signIndex) => {
+  const [id, symbol, name, element, modality, polarity, ruler, modernRuler, house, tarot, letter, angel, body, dates, verbs, strengths, shadow] = profile;
+  const modern = modernRuler ? `${ruler} (tradicional); ${modernRuler} (moderno)` : ruler;
+  add(id, {
+    title: `${symbol} ${name}`,
+    subtitle: `${element} · ${modality} · polaridade ${polarity.toLowerCase()}`,
+    description: `${name} combina o elemento ${element} com a modalidade ${modality.toLowerCase()}. Sua dinâmica procura ${verbs}.`,
+    highlights: [
+      `Potenciais: ${strengths}.`,
+      `Desequilíbrios: ${shadow}.`,
+    ],
+    associations: {
+      Elemento: element,
+      Modalidade: modality,
+      Polaridade: polarity,
+      Regente: modern,
+      'Casa associada': house,
+      'Arcano maior': tarot,
+      'Letra hebraica': letter,
+      'Anjo do signo em Agrippa': angel,
+      'Região corporal tradicional': body,
+      'Período tropical aproximado': dates,
+    },
+    sections: [
+      {
+        title: 'Estrutura do signo',
+        paragraphs: [
+          `${element} descreve a substância simbólica do signo; a modalidade ${modality.toLowerCase()} descreve como essa energia começa, mantém ou adapta processos.`,
+          `A associação com a ${house} casa é uma convenção moderna do “zodíaco natural” e não substitui a leitura das casas reais de um mapa natal.`,
+        ],
+      },
+      {
+        title: 'Três decanatos',
+        items: decanCards[signIndex].map((card, index) => `${index * 10}°–${(index + 1) * 10}°: ${card}, regido por ${decanPlanets[signIndex][index]}`),
+      },
+      {
+        title: 'Tarot e Cabala hermética',
+        paragraphs: [
+          `${tarot} e a letra ${letter} são atribuições da tradição hermética moderna. Agrippa registra ${angel} como inteligência associada ao signo.`,
+        ],
+      },
+    ],
+    sources: [sources.agrippa, sources.shemPaper],
+  });
+});
+
+const cardEsotericTitles = [
+  ['Domínio', 'Virtude estabelecida', 'Conclusão'],
+  ['Dificuldade material', 'Sucesso material', 'Sucesso não realizado'],
+  ['Força abreviada', 'Crueldade', 'Ruína'],
+  ['Amor', 'Abundância', 'Luxo'],
+  ['Conflito', 'Vitória', 'Valor'],
+  ['Prudência', 'Ganho material', 'Riqueza'],
+  ['Paz restaurada', 'Dor', 'Trégua'],
+  ['Perda no prazer', 'Prazer', 'Êxito ilusório'],
+  ['Rapidez', 'Grande força', 'Opressão'],
+  ['Mudança harmoniosa', 'Obras materiais', 'Poder terreno'],
+  ['Derrota', 'Sucesso conquistado', 'Esforço instável'],
+  ['Êxito abandonado', 'Felicidade material', 'Êxito aperfeiçoado'],
+];
+
+const numberSephiroth = {
+  2: 'Chokmah', 3: 'Binah', 4: 'Chesed', 5: 'Geburah',
+  6: 'Tiphareth', 7: 'Netzach', 8: 'Hod', 9: 'Yesod', 10: 'Malkuth',
+};
+
+decanCards.forEach((cards, signIndex) => cards.forEach((card, decanIndex) => {
+  const zodiac = zodiacProfiles[signIndex];
+  const signName = zodiac[2];
+  const element = zodiac[3];
+  const planet = decanPlanets[signIndex][decanIndex];
+  const number = Number(card.match(/\d+/)?.[0]);
+  const degrees = `${decanIndex * 10}°–${(decanIndex + 1) * 10}° de ${signName}`;
+  const firstAngel = signIndex * 6 + decanIndex * 2 + 1;
+  add(`dec_${signIndex}_${decanIndex}`, {
+    title: card,
+    subtitle: `${cardEsotericTitles[signIndex][decanIndex]} · ${degrees}`,
+    description: `Este decanato combina ${signName}, ${planet} e o ${card}. Na leitura hermética, o número ${number} relaciona a carta a ${numberSephiroth[number]}.`,
+    associations: {
+      Signo: signName,
+      Elemento: element,
+      Graus: degrees,
+      'Planeta regente': planet,
+      'Naipe e carta': card,
+      Sephirah: numberSephiroth[number],
+      'Anjos do quinário': `${firstAngel} e ${firstAngel + 1}`,
+      Decanato: `${decanIndex + 1}º`,
+    },
+    sections: [
+      {
+        title: 'Síntese',
+        paragraphs: [
+          `${planet} modifica a expressão de ${signName} neste trecho do zodíaco, enquanto o ${card} oferece sua imagem oracular.`,
+          `O título “${cardEsotericTitles[signIndex][decanIndex]}” resume uma leitura tradicional da carta, não uma previsão fixa.`,
+        ],
+      },
+    ],
+    sources: [sources.shemPaper, sources.agrippaPlanets],
+  });
+}));
+
+const psalmRefs = [
+  'Salmos 3:3', 'Salmos 22:19', 'Salmos 91:2', 'Salmos 6:4', 'Salmos 34:4', 'Salmos 9:11',
+  'Salmos 103:8', 'Salmos 95:6', 'Salmos 25:6', 'Salmos 33:22', 'Salmos 18:46', 'Salmos 110:1',
+  'Salmos 98:4', 'Salmos 9:9', 'Salmos 94:22', 'Salmos 88:1', 'Salmos 8:9', 'Salmos 35:24',
+  'Salmos 40:1', 'Salmos 120:1-2', 'Salmos 31:14', 'Salmos 121:5', 'Salmos 121:8', 'Salmos 33:18',
+  'Salmos 9:1', 'Salmos 119:145', 'Salmos 140:1', 'Salmos 71:12', 'Salmos 54:4', 'Salmos 71:5',
+  'Salmos 71:16', 'Salmos 33:4', 'Salmos 94:11', 'Salmos 131:3', 'Salmos 116:1', 'Salmos 26:8',
+  'Salmos 80:3', 'Salmos 91:9', 'Salmos 30:10', 'Salmos 88:14', 'Salmos 120:2', 'Salmos 121:7',
+  'Salmos 88:13', 'Salmos 119:108', 'Salmos 94:18', 'Salmos 145:9', 'Salmos 92:5', 'Salmos 98:2',
+  'Salmos 145:3', 'Salmos 145:8', 'Salmos 104:31', 'Salmos 7:17', 'Salmos 119:75', 'Salmos 103:19',
+  'Salmos 102:12', 'Salmos 145:14', 'Salmos 115:11', 'Salmos 6:3', 'Salmos 113:3', 'Salmos 145:17',
+  'Salmos 113:2', 'Salmos 119:159', 'Salmos 100:2', 'Salmos 33:18', 'Salmos 90:13', 'Salmos 38:21',
+  'Salmos 37:4', 'Salmos 106:1', 'Salmos 16:5', 'Gênesis 1:1', 'Salmos 109:30', 'Salmos 116:7',
+];
+
+const ruddCounterparts = [
+  'Bael', 'Agares', 'Vassago', 'Samigina', 'Marbas', 'Valefor', 'Amon', 'Barbatos',
+  'Paimon', 'Buer', 'Gusion', 'Sitri', 'Beleth', 'Leraje', 'Eligos', 'Zepar',
+  'Botis', 'Bathin', 'Sallos', 'Purson', 'Morax', 'Ipos', 'Aim', 'Naberius',
+  'Glasya-Labolas', 'Bune', 'Ronove', 'Berith', 'Astaroth', 'Forneus', 'Foras', 'Asmoday',
+  'Gaap', 'Furfur', 'Marchosias', 'Stolas', 'Phenex', 'Halphas', 'Malphas', 'Raum',
+  'Focalor', 'Vepar', 'Sabnock', 'Shax', 'Vine', 'Bifrons', 'Vual', 'Haagenti',
+  'Crocell', 'Furcas', 'Balam', 'Alloces', 'Caim', 'Murmur', 'Orobas', 'Gremory',
+  'Ose', 'Amy', 'Orias', 'Vapula', 'Zagan', 'Valac', 'Andras', 'Haures',
+  'Andrealphus', 'Kimaris', 'Amdusias', 'Belial', 'Decarabia', 'Seere', 'Dantalion', 'Andromalius',
+];
+
+const angelThemes = [
+  'vontade, iniciativa e realização', 'amor, fidelidade e pacificação', 'proteção, construção e palavra honrada',
+  'viagens, descoberta de adversários e iniciativa profissional', 'aprendizado, retificação e convivência pacífica',
+  'luz, cura, arte e reconhecimento', 'paciência, estudo e compreensão da natureza', 'gratidão, agricultura e abundância',
+  'misericórdia, reconciliação e cumprimento de promessas', 'regeneração, saúde e superação de faltas ocultas',
+  'vitória, talento e proteção contra tempestades', 'refúgio interior, sonhos e discrição',
+  'amizade, memória e fidelidade nos vínculos', 'justiça, liberdade e defesa dos oprimidos',
+  'purificação, ciência e integridade moral', 'lealdade, coragem e liderança responsável',
+  'revelação por sonhos, música e filosofia', 'verdade, justiça e auxílio rápido',
+  'memória, inteligência e resignação consciente', 'vocação, ética e disciplina espiritual',
+  'matemática, astronomia e superação de enganos', 'renome, comércio, diplomacia e viagens',
+  'plantas medicinais, coragem e segurança no caminho', 'proteção, misericórdia e verdade',
+  'sabedoria, mistérios e contemplação', 'política, diplomacia e busca imparcial da verdade',
+  'propagação do conhecimento, cultura e libertação', 'saúde, longevidade e prevenção de acidentes',
+  'libertação, zelo e defesa da verdade', 'paciência, fecundidade e ciências da vida',
+  'agricultura, matemática, geometria e talento prático', 'justiça, memória e eloquência',
+  'discernimento de deslealdades e organização', 'calma, obediência consciente e confiança',
+  'reconciliação, heranças e acordos', 'trabalho, subsistência e libertação de acusações',
+  'coragem, ciência, arte e segredos da natureza', 'ritual, integridade e proteção contra fraude',
+  'cura, longevidade e vínculos familiares', 'consolo, literatura, arte e libertação',
+  'missão, coragem moral e dedicação', 'ordem, estratégia, viagens e percepção de conspirações',
+  'prosperidade, libertação e valor', 'coragem, aprendizagem e êxito em empreendimentos úteis',
+  'motivação, recuperação e elevação dos abatidos', 'revelação, natureza e descoberta do oculto',
+  'contemplação, justiça e conhecimento secreto', 'paz conjugal, fecundidade e inspiração',
+  'elevação, generosidade, literatura e diplomacia', 'eloquência, justiça, decisão e consolo',
+  'medicina, física, química e investigação', 'resiliência, trabalho, viagem e libertação',
+  'meditação, abstração e conhecimento superior', 'legitimidade, longevidade, escrita e reputação',
+  'moral, boas obras e compensação', 'fortuna, modéstia, filosofia e realização de pedidos',
+  'estratégia, liderança e prosperidade', 'força mental, cura e trabalho com metais',
+  'livros, finanças, fecundidade e aprendizagem', 'reparação, saúde psíquica e longevidade',
+  'amizade, afinidade e viagem', 'sabedoria, retiro, filosofia e serenidade',
+  'comércio, comunicação, engenho e recuperação', 'escrita, ensino, oratória e proteção',
+  'oceanos, fontes, navegação e sabedoria', 'sonhos, serenidade, vegetação e equilíbrio',
+  'transformação, consolação e ciências ocultas', 'saúde, agricultura e fecundidade',
+  'restituição, objetos perdidos e investigação', 'alquimia, regeneração e progresso espiritual',
+  'proteção, coragem e libertação da opressão', 'conclusão, renascimento, medicina e longevidade',
+];
+
+const angelSegments = ringStructure.find((ring) => ring.ringId === 'angels').segments;
+
+angelSegments.forEach((segment, index) => {
+  const number = index + 1;
+  const signIndex = Math.floor(index / 6);
+  const withinSign = index % 6;
+  const startDegree = withinSign * 5;
+  const endDegree = startDegree + 5;
+  const sign = zodiacProfiles[signIndex];
+  const decanIndex = Math.floor(withinSign / 2);
+  const card = decanCards[signIndex][decanIndex];
+  const planet = decanPlanets[signIndex][decanIndex];
+  const sphereIndex = Math.floor(index / 8);
+  const sphere = sphereProfiles[sphereIndex];
+  const pair = number % 2 ? number + 1 : number - 1;
+  const quinance = number % 2 ? 'primeira quinância do decanato' : 'segunda quinância do decanato';
+  const name = segment.subLabel
+    .toLowerCase()
+    .replace(/(^|-)(\p{L})/gu, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
+
+  add(segment.id, {
+    title: `${number}. ${name}`,
+    subtitle: angelThemes[index],
+    description: `${name} é um dos 72 nomes angélicos formados, na tradição cabalística e cristã cabalista, a partir de Êxodo 14:19-21. Seu tríplice ${segment.hebrew} ocupa ${startDegree}°–${endDegree}° de ${sign[2]}.`,
+    highlights: [
+      `Campo contemplativo: ${angelThemes[index]}.`,
+      `Verso tradicional: ${psalmRefs[index]}.`,
+      `Par do decanato: anjo ${pair}; carta ${card}.`,
+    ],
+    associations: {
+      Número: number,
+      Nome: name,
+      'Tríplice hebraico': segment.hebrew,
+      Transliteração: segment.letters,
+      Signo: sign[2],
+      Graus: `${startDegree}°–${endDegree}°`,
+      Quinância: quinance,
+      Decanato: `${decanIndex + 1}º de ${sign[2]}`,
+      'Carta do decanato': card,
+      'Planeta do decanato': planet,
+      Coro: sphere.choir,
+      Arcanjo: sphere.archangel,
+      Sephirah: sphere.sephirah,
+      'Verso tradicional': psalmRefs[index],
+      'Par angélico': `Anjo ${pair}`,
+      'Contraparte em Thomas Rudd': ruddCounterparts[index],
+    },
+    sections: [
+      {
+        title: 'Influência tradicional',
+        paragraphs: [
+          `Textos esotéricos posteriores relacionam ${name} a ${angelThemes[index]}. Essa linguagem pode ser usada como tema de contemplação, oração, escrita reflexiva ou estudo histórico.`,
+          `O equilíbrio desse campo pede a expressão consciente das qualidades indicadas, evitando transformar uma virtude em rigidez, fuga, domínio ou grandiosidade.`,
+        ],
+      },
+      {
+        title: 'Posição no sistema',
+        paragraphs: [
+          `${name} pertence ao coro dos ${sphere.choir}, associado a ${sphere.sephirah} e ao arcanjo ${sphere.archangel}. No zodíaco quinário, ocupa ${startDegree}°–${endDegree}° de ${sign[2]}.`,
+          `Com o anjo ${pair}, completa o decanato de ${card}, regido por ${planet}. A associação por graus é mais precisa que calendários populares de “anjo do nascimento”, pois datas de ingresso solar variam por ano e fuso.`,
+        ],
+      },
+      {
+        title: 'Origem do nome',
+        paragraphs: [
+          'Os 72 tríplices são obtidos dispondo os três versículos de Êxodo 14:19-21 em direções alternadas e combinando uma letra de cada linha.',
+          `As terminações que tornam o tríplice pronunciável como nome angélico foram desenvolvidas na Cabala cristã. A forma exibida na roda preserva o núcleo de três letras: ${segment.hebrew}.`,
+        ],
+      },
+      {
+        title: 'Camadas posteriores',
+        paragraphs: [
+          `A correspondência com ${ruddCounterparts[index]} pertence ao sistema de Thomas Rudd e à recepção goética moderna; não faz parte do texto bíblico nem da formulação judaica original dos 72 nomes.`,
+        ],
+      },
+    ],
+    sources: [sources.exodus, sources.shemPaper, sources.shemTable],
+  });
+});
+
+const choirDescriptions = [
+  ['serafins', 'Serafins', 'ardor, purificação e proximidade da fonte divina', 'primeira ordem da primeira tríade'],
+  ['querubins', 'Querubins', 'conhecimento, plenitude de sabedoria e guarda do sagrado', 'segunda ordem da primeira tríade'],
+  ['tronos', 'Tronos', 'estabilidade, receptividade ao juízo e contemplação', 'terceira ordem da primeira tríade'],
+  ['dominacoes', 'Dominações', 'governo, liberdade interior e ordenação das funções', 'primeira ordem da segunda tríade'],
+  ['potencias', 'Potências', 'coragem, contenção e resistência às forças desagregadoras', 'segunda ordem da segunda tríade'],
+  ['virtudes', 'Virtudes', 'força realizadora, milagres e transmissão de potência', 'terceira ordem da segunda tríade'],
+  ['principados', 'Principados', 'orientação de comunidades, povos e responsabilidades coletivas', 'primeira ordem da terceira tríade'],
+  ['arcanjos', 'Arcanjos', 'mensagens de alcance coletivo e mediação de grandes tarefas', 'segunda ordem da terceira tríade'],
+  ['anjos', 'Anjos', 'mensagens, cuidado e mediação mais próxima da vida humana', 'terceira ordem da terceira tríade'],
+];
+
+choirDescriptions.forEach(([id, name, functionText, triad], index) => {
+  const sphere = sphereProfiles[index];
+  add(id, {
+    title: `${name} · ${sphere.archangel}`,
+    subtitle: `${triad} — ${sphere.sephirah}`,
+    description: `Na hierarquia atribuída a Pseudo-Dionísio, os ${name} representam ${functionText}. Na síntese hermética desta roda, correspondem a ${sphere.sephirah} e a ${sphere.archangel}.`,
+    highlights: [
+      `Função simbólica: ${functionText}.`,
+      `Anjos do Shem: ${index * 8 + 1}–${index * 8 + 8}.`,
+    ],
+    associations: {
+      Ordem: `${index + 1}ª`,
+      Tríade: triad,
+      Sephirah: sphere.sephirah,
+      Arcanjo: sphere.archangel,
+      Esfera: sphere.planet,
+      'Nome divino': sphere.divineName,
+      'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
+      Qualidade: sphere.virtue,
+    },
+    sections: [
+      {
+        title: 'Hierarquia celeste',
+        paragraphs: [
+          `Os ${name} integram a ${triad}. Pseudo-Dionísio apresenta as ordens como modos de participação e transmissão da luz divina, não como uma burocracia material do céu.`,
+          'A associação direta entre cada coro, uma Sephirah e um arcanjo é uma síntese posterior desenvolvida em correntes cristãs cabalistas e herméticas.',
+        ],
+      },
+    ],
+    sources: [sources.dionysius, sources.agrippa, sources.shemTable],
+  });
+});
+
+export const contentData = content;
 
 export function getContent(id) {
-    return contentData[id] || {
-        title: id.replace(/_/g,' ').toUpperCase(),
-        subtitle: "Dados em tradução",
-        description: "O conteúdo para este segmento do Lamen ainda está sendo compilado. O conhecimento antigo aguarda manifestação.",
-        associations: { Status:"Pendente", Nota:`Defina a chave '${id}' em content.js.` }
-    };
+  return contentData[id] || {
+    title: id.replace(/_/g, ' ').toUpperCase(),
+    subtitle: 'Conteúdo em preparação',
+    description: 'Este segmento ainda não possui uma ficha editorial.',
+    associations: { Status: 'Pendente', Chave: id },
+    sources: [],
+    traditionNote,
+  };
 }
