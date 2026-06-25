@@ -11,6 +11,11 @@
     border-left: 1px solid var(--panel-border);
     display: flex;
     flex-direction: column;
+    background:
+        linear-gradient(180deg, rgba(25, 28, 39, 0.99), rgba(12, 14, 21, 0.99));
+    backdrop-filter: blur(24px) saturate(115%);
+    -webkit-backdrop-filter: blur(24px) saturate(115%);
+    box-shadow: -18px 0 50px rgba(0, 0, 0, 0.58);
 }
 
 .info-panel.open {
@@ -96,8 +101,8 @@
 .description {
     font-size: 1.05rem;
     line-height: 1.7;
-    color: var(--text-secondary);
-    font-weight: 300;
+    color: #cbd5e1;
+    font-weight: 400;
 }
 
 .highlights-list,
@@ -114,10 +119,10 @@
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem;
     margin-top: 2rem;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.48);
     border-radius: 16px;
     padding: 1.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info-section,
@@ -135,7 +140,7 @@
 }
 
 .section-text {
-    color: var(--text-secondary);
+    color: #cbd5e1;
     font-size: 0.98rem;
     line-height: 1.7;
 }
@@ -143,8 +148,8 @@
 .tradition-note {
     padding: 1rem;
     border-left: 3px solid var(--accent-gold);
-    background: rgba(212, 175, 55, 0.08);
-    color: var(--text-secondary);
+    background: rgba(212, 175, 55, 0.12);
+    color: #cbd5e1;
     font-size: 0.86rem;
     line-height: 1.55;
 }
