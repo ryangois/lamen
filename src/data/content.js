@@ -1,5 +1,10 @@
 import { ringStructure } from './rings.js';
-import { angelScripture, scriptureSource } from './scripture.js';
+import {
+  angelScripture,
+  hebrewScriptureSource,
+  scriptureSource,
+  transliterateHebrew,
+} from './scripture.js';
 
 const content = {};
 
@@ -543,8 +548,12 @@ angelSegments.forEach((segment, index) => {
     description: `${name} é um dos 72 nomes angélicos formados, na tradição cabalística e cristã cabalista, a partir de Êxodo 14:19-21. Seu tríplice ${segment.hebrew} ocupa ${startDegree}°–${endDegree}° de ${sign[2]}.`,
     psalm: {
       reference: psalmRefs[index],
+      hebrewReference: angelScripture[segment.id]?.hebrewReference,
+      hebrew: angelScripture[segment.id]?.hebrew,
+      transliteration: transliterateHebrew(angelScripture[segment.id]?.hebrew),
       text: angelScripture[segment.id]?.text,
       source: scriptureSource.label,
+      hebrewSource: hebrewScriptureSource.label,
       title: `Salmo tradicional de ${name}`,
       note: `Este é o verso salmódico tradicionalmente associado a ${name} nas tabelas do Shem HaMephorash. Use a referência para leitura, oração, meditação ou estudo comparado entre traduções bíblicas.`,
       meditation: `Tema de contemplação: ${angelThemes[index]}.`,
@@ -601,7 +610,7 @@ angelSegments.forEach((segment, index) => {
         ],
       },
     ],
-    sources: [sources.exodus, sources.shemPaper, sources.shemTable, scriptureSource],
+    sources: [sources.exodus, sources.shemPaper, sources.shemTable, hebrewScriptureSource, scriptureSource],
   });
 });
 

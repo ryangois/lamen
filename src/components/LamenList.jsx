@@ -31,7 +31,6 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
   const [planet, setPlanet] = useState('all');
   const [element, setElement] = useState('all');
   const [sephirah, setSephirah] = useState('all');
-  const [collapsedGroups, setCollapsedGroups] = useState(() => new Set());
 
   const filteredCatalog = useMemo(() => {
     const normalizedQuery = normalize(query.trim());
@@ -74,15 +73,6 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
     setPlanet('all');
     setElement('all');
     setSephirah('all');
-  };
-
-  const toggleGroup = (groupId) => {
-    setCollapsedGroups((current) => {
-      const next = new Set(current);
-      if (next.has(groupId)) next.delete(groupId);
-      else next.add(groupId);
-      return next;
-    });
   };
 
   return (
@@ -139,23 +129,17 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
 
       <div className="catalog-content">
         {filteredCatalog.length > 0 ? filteredCatalog.map((group) => (
-          <section className={`catalog-group ${collapsedGroups.has(group.id) ? 'collapsed' : ''}`} key={group.id}>
-            <button
-              type="button"
-              className="group-heading"
-              aria-expanded={!collapsedGroups.has(group.id)}
-              onClick={() => toggleGroup(group.id)}
-            >
+          <section className="catalog-group" key={group.id}>
+            <div className="group-heading">
               <span className="group-icon" aria-hidden="true">{CATEGORY_ICONS[group.id]}</span>
               <span className="folder-copy">
                 <strong className="brand-font">{group.name}</strong>
                 <small>{group.items.length} {group.items.length === 1 ? 'item' : 'itens'}</small>
               </span>
               <span className="folder-count">{group.items.length}</span>
-              <span className="folder-chevron" aria-hidden="true">⌄</span>
-            </button>
+            </div>
 
-            <div className="catalog-grid" hidden={collapsedGroups.has(group.id)}>
+            <div className="catalog-grid">
               {group.items.map((item) => (
                 <button
                   type="button"
@@ -169,7 +153,7 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
                     <strong>{item.content.title}</strong>
                     <small>{item.content.subtitle}</small>
                     {item.content.psalm && (
-                      <em>Salmo: {item.content.psalm.reference}</em>
+                      <em>{item.content.psalm.hebrewReference || item.content.psalm.reference}</em>
                     )}
                   </span>
                   <span className="card-arrow" aria-hidden="true">›</span>

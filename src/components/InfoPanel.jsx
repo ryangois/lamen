@@ -44,6 +44,7 @@ export default function InfoPanel({
 }) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const [copyState, setCopyState] = useState({ segmentId: null, copied: false });
+    const [psalmView, setPsalmView] = useState('hebrew');
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -59,6 +60,14 @@ export default function InfoPanel({
         ? tabState.tab
         : 'summary';
     const copied = copyState.segmentId === activeSegmentId && copyState.copied;
+    const psalmText = {
+        hebrew: content?.psalm?.hebrew,
+        transliteration: content?.psalm?.transliteration,
+        portuguese: content?.psalm?.text,
+    }[psalmView] || content?.psalm?.hebrew || content?.psalm?.text;
+    const psalmReference = psalmView === 'hebrew'
+        ? content?.psalm?.hebrewReference || content?.psalm?.reference
+        : content?.psalm?.reference;
 
     if (!activeSegmentId) return null;
 
@@ -153,8 +162,12 @@ export default function InfoPanel({
                                     {content.psalm && (
                                         <article className="psalm-card compact">
                                             <p>Salmo tradicional</p>
-                                            <strong>{content.psalm.reference}</strong>
-                                            {content.psalm.text && <blockquote>{content.psalm.text}</blockquote>}
+                                            <strong>{psalmReference}</strong>
+                                            {psalmText && (
+                                                <blockquote dir={psalmView === 'hebrew' ? 'rtl' : 'ltr'}>
+                                                    {psalmText}
+                                                </blockquote>
+                                            )}
                                             <span>{content.psalm.meditation}</span>
                                         </article>
                                     )}
@@ -165,12 +178,42 @@ export default function InfoPanel({
                                 <section className="tab-section">
                                     <article className="psalm-card">
                                         <p>{content.psalm.title}</p>
-                                        <strong>{content.psalm.reference}</strong>
-                                        {content.psalm.text && <blockquote>{content.psalm.text}</blockquote>}
+                                        <strong>{psalmReference}</strong>
+                                        <div className="scripture-switcher" role="group" aria-label="Escolher forma do salmo">
+                                            <button
+                                                type="button"
+                                                className={psalmView === 'hebrew' ? 'active' : ''}
+                                                onClick={() => setPsalmView('hebrew')}
+                                            >
+                                                Hebraico
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={psalmView === 'transliteration' ? 'active' : ''}
+                                                onClick={() => setPsalmView('transliteration')}
+                                            >
+                                                Transliterado
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={psalmView === 'portuguese' ? 'active' : ''}
+                                                onClick={() => setPsalmView('portuguese')}
+                                            >
+                                                Português
+                                            </button>
+                                        </div>
+                                        {psalmText && (
+                                            <blockquote dir={psalmView === 'hebrew' ? 'rtl' : 'ltr'}>
+                                                {psalmText}
+                                            </blockquote>
+                                        )}
                                         <span>{content.psalm.note}</span>
                                     </article>
                                     <section className="info-section">
                                         <h3 className="section-title brand-font">Fonte do texto</h3>
+                                        {content.psalm.hebrewSource && (
+                                            <p className="section-text">{content.psalm.hebrewSource}</p>
+                                        )}
                                         {content.psalm.source && (
                                             <p className="section-text">{content.psalm.source}</p>
                                         )}

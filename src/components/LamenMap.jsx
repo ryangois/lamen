@@ -447,17 +447,6 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     }
   }, [requestDraw, zoomFromCenter]);
 
-  const rotateBy = useCallback((degrees) => {
-    rotationRef.current += degrees;
-    requestDraw();
-  }, [requestDraw]);
-
-  const resetView = useCallback(() => {
-    viewportRef.current = { ...BASE_VIEW };
-    rotationRef.current = 0;
-    requestDraw();
-  }, [requestDraw]);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
@@ -493,31 +482,22 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
   }, []);
 
   return (
-    <div className="lamen-stage">
-      <canvas
-        ref={canvasRef}
-        className="lamen-canvas"
-        tabIndex={0}
-        aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar. Pelo teclado, use setas para girar, mais e menos para zoom, e zero para resetar."
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endPointer}
-        onPointerCancel={endPointer}
-        onKeyDown={onKeyDown}
-        onPointerLeave={() => {
-          if (pointersRef.current.size === 0 && hoveredRef.current) {
-            hoveredRef.current = null;
-            requestDraw();
-          }
-        }}
-      />
-      <div className="wheel-controls" aria-label="Controles rápidos da roda">
-        <button type="button" onClick={() => rotateBy(-15)} aria-label="Girar roda para a esquerda">←</button>
-        <button type="button" onClick={() => zoomFromCenter(1 / 1.2)} aria-label="Aproximar roda">+</button>
-        <button type="button" onClick={resetView} aria-label="Centralizar roda">◎</button>
-        <button type="button" onClick={() => zoomFromCenter(1.2)} aria-label="Afastar roda">−</button>
-        <button type="button" onClick={() => rotateBy(15)} aria-label="Girar roda para a direita">→</button>
-      </div>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="lamen-canvas"
+      tabIndex={0}
+      aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar. Pelo teclado, use setas para girar, mais e menos para zoom, e zero para resetar."
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endPointer}
+      onPointerCancel={endPointer}
+      onKeyDown={onKeyDown}
+      onPointerLeave={() => {
+        if (pointersRef.current.size === 0 && hoveredRef.current) {
+          hoveredRef.current = null;
+          requestDraw();
+        }
+      }}
+    />
   );
 }
