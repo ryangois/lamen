@@ -197,14 +197,16 @@ export default function InfoPanel({
 
                                     {content.psalm && (
                                         <article className="psalm-card compact">
-                                            <p>Salmo tradicional</p>
-                                            <strong>{psalmReference}</strong>
+                                            <div className="psalm-header">
+                                                <span className="psalm-kicker">Salmo tradicional</span>
+                                                <strong>{psalmReference}</strong>
+                                            </div>
                                             {psalmText && (
                                                 <blockquote dir={psalmView === 'hebrew' ? 'rtl' : 'ltr'}>
                                                     {psalmText}
                                                 </blockquote>
                                             )}
-                                            <span>{content.psalm.meditation}</span>
+                                            <p className="psalm-note">{content.psalm.meditation}</p>
                                         </article>
                                     )}
                                 </section>
@@ -213,8 +215,13 @@ export default function InfoPanel({
                             {activeTab === 'psalm' && content.psalm && (
                                 <section className="tab-section">
                                     <article className="psalm-card">
-                                        <p>{content.psalm.title}</p>
-                                        <strong>{psalmReference}</strong>
+                                        <header className="psalm-header">
+                                            <div>
+                                                <span className="psalm-kicker">{content.psalm.title}</span>
+                                                <h3 className="psalm-title brand-font">Texto do salmo</h3>
+                                            </div>
+                                            <strong className="psalm-reference">{psalmReference}</strong>
+                                        </header>
                                         <div className="scripture-switcher" role="group" aria-label="Escolher forma do salmo">
                                             <button
                                                 type="button"
@@ -243,7 +250,7 @@ export default function InfoPanel({
                                                 {psalmText}
                                             </blockquote>
                                         )}
-                                        <span>{content.psalm.note}</span>
+                                        <p className="psalm-note">{content.psalm.note}</p>
                                     </article>
                                     <section className="info-section">
                                         <h3 className="section-title brand-font">Fonte do texto</h3>
