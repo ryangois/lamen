@@ -154,6 +154,7 @@ export default function InfoPanel({
                                         <article className="psalm-card compact">
                                             <p>Salmo tradicional</p>
                                             <strong>{content.psalm.reference}</strong>
+                                            {content.psalm.text && <blockquote>{content.psalm.text}</blockquote>}
                                             <span>{content.psalm.meditation}</span>
                                         </article>
                                     )}
@@ -165,8 +166,15 @@ export default function InfoPanel({
                                     <article className="psalm-card">
                                         <p>{content.psalm.title}</p>
                                         <strong>{content.psalm.reference}</strong>
+                                        {content.psalm.text && <blockquote>{content.psalm.text}</blockquote>}
                                         <span>{content.psalm.note}</span>
                                     </article>
+                                    <section className="info-section">
+                                        <h3 className="section-title brand-font">Fonte do texto</h3>
+                                        {content.psalm.source && (
+                                            <p className="section-text">{content.psalm.source}</p>
+                                        )}
+                                    </section>
                                     <section className="info-section">
                                         <h3 className="section-title brand-font">Como usar</h3>
                                         <p className="section-text">

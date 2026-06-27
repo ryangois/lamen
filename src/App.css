@@ -196,9 +196,21 @@
   }
   .view-toolbar {
     top: 0.65rem;
-    width: calc(100% - 1rem);
-    justify-content: center;
+    left: 0;
+    width: 100%;
+    justify-content: flex-start;
     gap: 0.45rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 0.65rem 0.45rem;
+    transform: none;
+    scrollbar-width: none;
+  }
+  .view-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .view-switcher {
+    flex: 0 0 auto;
   }
   .view-button {
     min-width: 82px;

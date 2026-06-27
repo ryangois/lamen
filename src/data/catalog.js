@@ -68,9 +68,11 @@ export const catalog = ringStructure.map((ring) => ({
       content.subtitle,
       content.description,
       content.psalm?.reference,
+      content.psalm?.text,
       content.psalm?.title,
       content.psalm?.note,
       content.psalm?.meditation,
+      content.psalm?.source,
       ...Object.keys(associations),
       ...Object.values(associations),
     ].join(' '));

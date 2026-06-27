@@ -1,3 +1,9 @@
+.lamen-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .lamen-canvas {
   width: 100%;
   height: 100%;
@@ -18,9 +24,64 @@
   outline-offset: -6px;
 }
 
+.wheel-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.45rem;
+  background: rgba(9, 11, 17, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+  transform: translateX(-50%);
+  backdrop-filter: blur(14px);
+}
+
+.wheel-controls button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  cursor: pointer;
+  font: 800 1rem 'Inter', sans-serif;
+}
+
+.wheel-controls button:hover,
+.wheel-controls button:focus-visible {
+  color: #111318;
+  background: var(--accent-gold);
+  outline: none;
+}
+
 @media (max-width: 768px) {
   .lamen-canvas {
     width: 100vw;
     max-height: 70vh;
+  }
+
+  .wheel-controls {
+    position: fixed;
+    bottom: 0.8rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .wheel-controls {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+  }
+
+  .lamen-stage:hover .wheel-controls,
+  .lamen-stage:focus-within .wheel-controls {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
