@@ -1,0 +1,76 @@
+.hero-intro {
+  position: absolute;
+  left: clamp(1rem, 4vw, 3rem);
+  bottom: clamp(1rem, 5vh, 3rem);
+  z-index: 12;
+  width: min(560px, calc(100% - 2rem));
+  padding: clamp(1.25rem, 4vw, 2rem);
+  color: var(--text-primary);
+  background: linear-gradient(145deg, rgba(18, 20, 30, 0.94), rgba(8, 10, 16, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 28px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(18px);
+}
+
+.hero-eyebrow {
+  color: var(--accent-gold);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-intro h1 {
+  margin-top: 0.55rem;
+  font-size: clamp(2rem, 6vw, 3.7rem);
+  line-height: 1.03;
+}
+
+.hero-intro p:not(.hero-eyebrow) {
+  max-width: 46rem;
+  margin-top: 0.9rem;
+  color: #c0cad8;
+  line-height: 1.65;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.hero-actions button {
+  min-height: 44px;
+  padding: 0 1rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 800 0.86rem 'Inter', sans-serif;
+}
+
+.hero-actions button:first-child {
+  color: #111318;
+  background: var(--accent-gold);
+  border-color: transparent;
+}
+
+.hero-actions button:hover,
+.hero-actions button:focus-visible {
+  filter: brightness(1.08);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .hero-intro {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: auto;
+    border-radius: 22px;
+  }
+}
