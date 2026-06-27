@@ -86,7 +86,12 @@ export default function AngelFinder({ onClose, onSelectAngel }) {
         {mode === 'date' ? (
           <label className="finder-field">
             <span>Data de nascimento</span>
-            <input type="date" value={birthDate} onChange={(event) => setBirthDate(event.target.value)} />
+            <input
+              type="date"
+              value={birthDate}
+              onInput={(event) => setBirthDate(event.currentTarget.value)}
+              onChange={(event) => setBirthDate(event.currentTarget.value)}
+            />
           </label>
         ) : (
           <div className="finder-grid">
