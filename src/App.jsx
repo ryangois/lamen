@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import LamenMap from './components/LamenMap';
+import { findCatalogItem } from './data/catalog';
 import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
@@ -11,14 +12,46 @@ function getInitialView() {
   return savedView === 'list' ? 'list' : 'wheel';
 }
 
+function getInitialSegmentId() {
+  const params = new URLSearchParams(window.location.search);
+  const item = findCatalogItem(params.get('item'));
+  return item?.id || null;
+}
+
+function writeSegmentToUrl(segmentId) {
+  const url = new URL(window.location.href);
+  const item = findCatalogItem(segmentId);
+
+  if (item) {
+    url.searchParams.set('item', item.slug || item.id);
+  } else {
+    url.searchParams.delete('item');
+  }
+
+  window.history.replaceState({}, '', url);
+}
+
 function App() {
-  const [activeSegmentId, setActiveSegmentId] = useState(null);
+  const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
   const [showAngelFinder, setShowAngelFinder] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
   }, [view]);
+
+  useEffect(() => {
+    writeSegmentToUrl(activeSegmentId);
+  }, [activeSegmentId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveSegmentId(getInitialSegmentId());
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
