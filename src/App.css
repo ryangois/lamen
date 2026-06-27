@@ -60,7 +60,8 @@
 }
 
 .finder-launch,
-.saved-launch {
+.saved-launch,
+.help-launch {
   min-height: 42px;
   padding: 0 1rem;
   color: var(--text-primary);
@@ -82,7 +83,9 @@
 .finder-launch:hover,
 .finder-launch:focus-visible,
 .saved-launch:hover,
-.saved-launch:focus-visible {
+.saved-launch:focus-visible,
+.help-launch:hover,
+.help-launch:focus-visible {
   filter: brightness(1.06);
   outline: 2px solid #fff;
   outline-offset: 2px;
@@ -179,7 +182,8 @@
     padding: 0 0.8rem;
   }
   .finder-launch,
-  .saved-launch {
+  .saved-launch,
+  .help-launch {
     min-height: 38px;
     padding: 0 0.65rem;
     font-size: 0.78rem;

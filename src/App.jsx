@@ -7,6 +7,7 @@ const InfoPanel = lazy(() => import('./components/InfoPanel'));
 const LamenList = lazy(() => import('./components/LamenList'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
+const HelpModal = lazy(() => import('./components/HelpModal'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -46,6 +47,7 @@ function App() {
   const [view, setView] = useState(getInitialView);
   const [showAngelFinder, setShowAngelFinder] = useState(false);
   const [showSavedItems, setShowSavedItems] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
 
@@ -136,6 +138,13 @@ function App() {
         >
           ★ Salvos
         </button>
+        <button
+          type="button"
+          className="help-launch"
+          onClick={() => setShowHelp(true)}
+        >
+          ? Ajuda
+        </button>
       </header>
 
       <main className={`main-content ${view === 'list' ? 'list-mode' : ''}`}>
@@ -184,6 +193,12 @@ function App() {
               setShowSavedItems(false);
             }}
           />
+        </Suspense>
+      )}
+
+      {showHelp && (
+        <Suspense fallback={null}>
+          <HelpModal onClose={() => setShowHelp(false)} />
         </Suspense>
       )}
     </div>
