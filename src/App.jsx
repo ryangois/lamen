@@ -4,6 +4,7 @@ import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
 const LamenList = lazy(() => import('./components/LamenList'));
+const AngelFinder = lazy(() => import('./components/AngelFinder'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -13,6 +14,7 @@ function getInitialView() {
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(null);
   const [view, setView] = useState(getInitialView);
+  const [showAngelFinder, setShowAngelFinder] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
@@ -43,7 +45,7 @@ function App() {
             aria-pressed={view === 'wheel'}
             onClick={() => handleViewChange('wheel')}
           >
-            <span aria-hidden="true">◉</span>
+            <span aria-hidden="true">◎</span>
             Roda
           </button>
           <button
@@ -56,6 +58,14 @@ function App() {
             Lista
           </button>
         </div>
+
+        <button
+          type="button"
+          className="finder-launch"
+          onClick={() => setShowAngelFinder(true)}
+        >
+          ✦ Meu anjo
+        </button>
       </header>
 
       <main className={`main-content ${view === 'list' ? 'list-mode' : ''}`}>
@@ -78,6 +88,15 @@ function App() {
           <InfoPanel
             activeSegmentId={activeSegmentId}
             onClose={handleClosePanel}
+          />
+        </Suspense>
+      )}
+
+      {showAngelFinder && (
+        <Suspense fallback={null}>
+          <AngelFinder
+            onClose={() => setShowAngelFinder(false)}
+            onSelectAngel={handleSegmentClick}
           />
         </Suspense>
       )}
