@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import LamenMap from './components/LamenMap';
-import { findCatalogItem } from './data/catalog';
+import { findRouteItem } from './data/routes';
 import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
@@ -17,13 +17,13 @@ function getInitialView() {
 
 function getInitialSegmentId() {
   const params = new URLSearchParams(window.location.search);
-  const item = findCatalogItem(params.get('item'));
+  const item = findRouteItem(params.get('item'));
   return item?.id || null;
 }
 
 function writeSegmentToUrl(segmentId) {
   const url = new URL(window.location.href);
-  const item = findCatalogItem(segmentId);
+  const item = findRouteItem(segmentId);
 
   if (item) {
     url.searchParams.set('item', item.slug || item.id);
