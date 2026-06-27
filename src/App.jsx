@@ -91,6 +91,20 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+
+      if (showHelp) setShowHelp(false);
+      else if (showSavedItems) setShowSavedItems(false);
+      else if (showAngelFinder) setShowAngelFinder(false);
+      else if (activeSegmentId) setActiveSegmentId(null);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeSegmentId, showAngelFinder, showHelp, showSavedItems]);
+
   const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
     setRecentIds((current) => [id, ...current.filter((item) => item !== id)].slice(0, 12));
@@ -147,6 +161,7 @@ function App() {
         <button
           type="button"
           className="finder-launch"
+          aria-label="Abrir calculadora Meu Anjo"
           onClick={() => setShowAngelFinder(true)}
         >
           ✦ Meu anjo
@@ -154,6 +169,7 @@ function App() {
         <button
           type="button"
           className="saved-launch"
+          aria-label="Abrir favoritos e histórico"
           onClick={() => setShowSavedItems(true)}
         >
           ★ Salvos
@@ -161,6 +177,7 @@ function App() {
         <button
           type="button"
           className="help-launch"
+          aria-label="Abrir ajuda de uso"
           onClick={() => setShowHelp(true)}
         >
           ? Ajuda
@@ -169,6 +186,7 @@ function App() {
           type="button"
           className="read-launch"
           aria-pressed={readMode}
+          aria-label="Alternar modo de leitura"
           onClick={() => setReadMode((current) => !current)}
         >
           {readMode ? '◐ Visual' : '◑ Leitura'}

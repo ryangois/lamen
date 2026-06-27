@@ -65,6 +65,8 @@ export default function InfoPanel({
                                 <button
                                     type="button"
                                     role="tab"
+                                    id={`tab-${tab.id}`}
+                                    aria-controls={`panel-${tab.id}`}
                                     aria-selected={activeTab === tab.id}
                                     className={activeTab === tab.id ? 'active' : ''}
                                     onClick={() => setTabState({ segmentId: activeSegmentId, tab: tab.id })}
@@ -75,7 +77,12 @@ export default function InfoPanel({
                             ))}
                         </div>
 
-                        <div className="tab-content" role="tabpanel">
+                        <div
+                            className="tab-content"
+                            role="tabpanel"
+                            id={`panel-${activeTab}`}
+                            aria-labelledby={`tab-${activeTab}`}
+                        >
                             {activeTab === 'summary' && (
                                 <section className="tab-section">
                                     <p className="description">{content.description}</p>

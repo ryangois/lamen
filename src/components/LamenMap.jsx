@@ -416,6 +416,37 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     }
   }, [hitTest, onSegmentClick, stopLowDetail]);
 
+  const zoomFromCenter = useCallback((factor) => {
+    const current = viewportRef.current;
+    const width = Math.min(925, Math.max(740 / 6, current.w * factor));
+    viewportRef.current = {
+      x: current.x + (current.w - width) / 2,
+      y: current.y + (current.h - width) / 2,
+      w: width,
+      h: width,
+    };
+    requestDraw();
+  }, [requestDraw]);
+
+  const onKeyDown = useCallback((event) => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      rotationRef.current += event.key === 'ArrowLeft' ? -5 : 5;
+      requestDraw();
+    } else if (event.key === '+' || event.key === '=') {
+      event.preventDefault();
+      zoomFromCenter(1 / 1.12);
+    } else if (event.key === '-' || event.key === '_') {
+      event.preventDefault();
+      zoomFromCenter(1.12);
+    } else if (event.key === '0') {
+      event.preventDefault();
+      viewportRef.current = { ...BASE_VIEW };
+      rotationRef.current = 0;
+      requestDraw();
+    }
+  }, [requestDraw, zoomFromCenter]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
@@ -454,11 +485,13 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
     <canvas
       ref={canvasRef}
       className="lamen-canvas"
-      aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar."
+      tabIndex={0}
+      aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar. Pelo teclado, use setas para girar, mais e menos para zoom, e zero para resetar."
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endPointer}
       onPointerCancel={endPointer}
+      onKeyDown={onKeyDown}
       onPointerLeave={() => {
         if (pointersRef.current.size === 0 && hoveredRef.current) {
           hoveredRef.current = null;

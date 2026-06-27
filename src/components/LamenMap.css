@@ -13,6 +13,11 @@
   cursor: grabbing;
 }
 
+.lamen-canvas:focus-visible {
+  outline: 3px solid var(--accent-gold);
+  outline-offset: -6px;
+}
+
 @media (max-width: 768px) {
   .lamen-canvas {
     width: 100vw;
