@@ -1,105 +1,36 @@
 import { useMemo, useState } from 'react';
-import { getContent } from '../data/content';
-import { ringStructure } from '../data/rings';
+import {
+  catalog,
+  CATEGORY_ICONS,
+  choirs,
+  elements,
+  normalize,
+  planets,
+  sephiroth,
+  signs,
+} from '../data/catalog';
 import './LamenList.css';
 
-const CATEGORY_NAMES = {
-  elements: 'Elementos',
-  planets: 'Planetas',
-  zodiac: 'Signos',
-  decanates: 'Decanatos',
-  angels: '72 Anjos',
-  archangels: 'Arcanjos e esferas',
-  choirs: 'Coros angélicos',
-};
-
-const CATEGORY_ICONS = {
-  elements: '🜁',
-  planets: '☉',
-  zodiac: '♈',
-  decanates: '✦',
-  angels: '𓆩✧𓆪',
-  archangels: '✥',
-  choirs: '◈',
-};
-
-const ZODIAC_NAMES = {
-  aries: 'Áries',
-  taurus: 'Touro',
-  gemini: 'Gêmeos',
-  cancer: 'Câncer',
-  leo: 'Leão',
-  virgo: 'Virgem',
-  libra: 'Libra',
-  scorpio: 'Escorpião',
-  sagittarius: 'Sagitário',
-  capricorn: 'Capricórnio',
-  aquarius: 'Aquário',
-  pisces: 'Peixes',
-};
-
-const CHOIR_NAMES = {
-  serafins: 'Serafins',
-  querubins: 'Querubins',
-  tronos: 'Tronos',
-  dominacoes: 'Dominações',
-  potencias: 'Potências',
-  virtudes: 'Virtudes',
-  principados: 'Principados',
-  arcanjos: 'Arcanjos',
-  anjos: 'Anjos',
-};
-
-function normalize(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase();
+function SelectFilter({ label, value, onChange, options }) {
+  return (
+    <label>
+      <span>{label}</span>
+      <select value={value} onChange={(event) => onChange(event.target.value)}>
+        <option value="all">Todos</option>
+        {options.map((item) => <option value={item} key={item}>{item}</option>)}
+      </select>
+    </label>
+  );
 }
-
-const catalog = ringStructure.map((ring) => ({
-  id: ring.ringId,
-  name: CATEGORY_NAMES[ring.ringId],
-  items: ring.segments.map((segment) => {
-    const content = getContent(segment.id);
-    const associations = content.associations || {};
-    const searchable = normalize([
-      segment.id,
-      segment.label,
-      segment.subLabel,
-      segment.letters,
-      segment.hebrew,
-      content.title,
-      content.subtitle,
-      content.description,
-      ...Object.keys(associations),
-      ...Object.values(associations),
-    ].join(' '));
-
-    return {
-      ...segment,
-      category: ring.ringId,
-      content,
-      searchable,
-      sign: associations.Signo || ZODIAC_NAMES[segment.id] || '',
-      choir: associations.Coro || CHOIR_NAMES[segment.id] || '',
-    };
-  }),
-}));
-
-const signs = [...new Set(
-  catalog.flatMap((category) => category.items.map((item) => item.sign).filter(Boolean)),
-)];
-
-const choirs = [...new Set(
-  catalog.flatMap((category) => category.items.map((item) => item.choir).filter(Boolean)),
-)];
 
 export default function LamenList({ onSegmentClick, activeSegmentId }) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [sign, setSign] = useState('all');
   const [choir, setChoir] = useState('all');
+  const [planet, setPlanet] = useState('all');
+  const [element, setElement] = useState('all');
+  const [sephirah, setSephirah] = useState('all');
 
   const filteredCatalog = useMemo(() => {
     const normalizedQuery = normalize(query.trim());
@@ -111,20 +42,37 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
           const matchesQuery = !normalizedQuery || item.searchable.includes(normalizedQuery);
           const matchesSign = sign === 'all' || item.sign === sign;
           const matchesChoir = choir === 'all' || item.choir === choir;
-          return matchesQuery && matchesSign && matchesChoir;
+          const matchesPlanet = planet === 'all' || item.planet === planet;
+          const matchesElement = element === 'all' || item.element === element;
+          const matchesSephirah = sephirah === 'all' || item.sephirah === sephirah;
+          return matchesQuery
+            && matchesSign
+            && matchesChoir
+            && matchesPlanet
+            && matchesElement
+            && matchesSephirah;
         }),
       }))
       .filter((group) => group.items.length > 0);
-  }, [category, choir, query, sign]);
+  }, [category, choir, element, planet, query, sephirah, sign]);
 
   const totalResults = filteredCatalog.reduce((total, group) => total + group.items.length, 0);
-  const filtersActive = query || category !== 'all' || sign !== 'all' || choir !== 'all';
+  const filtersActive = query
+    || category !== 'all'
+    || sign !== 'all'
+    || choir !== 'all'
+    || planet !== 'all'
+    || element !== 'all'
+    || sephirah !== 'all';
 
   const clearFilters = () => {
     setQuery('');
     setCategory('all');
     setSign('all');
     setChoir('all');
+    setPlanet('all');
+    setElement('all');
+    setSephirah('all');
   };
 
   return (
@@ -134,7 +82,7 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
           <p className="catalog-eyebrow">Enciclopédia do Lamen</p>
           <h1 className="catalog-title brand-font">Explorar em lista</h1>
           <p className="catalog-intro">
-            Pesquise os 149 símbolos e abra qualquer item para ver suas correspondências.
+            Pesquise os 149 símbolos e refine por signo, coro, planeta, elemento ou esfera.
           </p>
         </div>
 
@@ -164,21 +112,11 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
           </select>
         </label>
 
-        <label>
-          <span>Signo</span>
-          <select value={sign} onChange={(event) => setSign(event.target.value)}>
-            <option value="all">Todos</option>
-            {signs.map((item) => <option value={item} key={item}>{item}</option>)}
-          </select>
-        </label>
-
-        <label>
-          <span>Coro</span>
-          <select value={choir} onChange={(event) => setChoir(event.target.value)}>
-            <option value="all">Todos</option>
-            {choirs.map((item) => <option value={item} key={item}>{item}</option>)}
-          </select>
-        </label>
+        <SelectFilter label="Signo" value={sign} onChange={setSign} options={signs} />
+        <SelectFilter label="Coro" value={choir} onChange={setChoir} options={choirs} />
+        <SelectFilter label="Planeta" value={planet} onChange={setPlanet} options={planets} />
+        <SelectFilter label="Elemento" value={element} onChange={setElement} options={elements} />
+        <SelectFilter label="Sephirah" value={sephirah} onChange={setSephirah} options={sephiroth} />
 
         <div className="result-summary" aria-live="polite">
           <strong>{totalResults}</strong>
