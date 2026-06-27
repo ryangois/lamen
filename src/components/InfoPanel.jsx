@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { getContent } from '../data/content';
+import { ringStructure } from '../data/rings';
 import './InfoPanel.css';
 
 const ICONS = {
@@ -9,27 +10,66 @@ const ICONS = {
     libra: '♎', scorpio: '♏', sagittarius: '♐', capricorn: '♑', aquarius: '♒', pisces: '♓',
 };
 
+const flatSegments = ringStructure.flatMap((ring) => (
+    ring.segments.map((segment, index) => ({
+        id: segment.id,
+        ringId: ring.ringId,
+        ringName: ring.ringId,
+        index,
+        total: ring.segments.length,
+    }))
+));
+
+function getNeighborSegments(activeSegmentId) {
+    const current = flatSegments.find((segment) => segment.id === activeSegmentId);
+    if (!current) return { previous: null, next: null, position: null };
+
+    const siblings = flatSegments.filter((segment) => segment.ringId === current.ringId);
+    const previous = siblings[(current.index - 1 + siblings.length) % siblings.length];
+    const next = siblings[(current.index + 1) % siblings.length];
+
+    return {
+        previous,
+        next,
+        position: `${current.index + 1}/${current.total}`,
+    };
+}
+
 export default function InfoPanel({
     activeSegmentId,
     onClose,
     isFavorite = false,
     onToggleFavorite,
+    onNavigateSegment,
 }) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
+    const [copyState, setCopyState] = useState({ segmentId: null, copied: false });
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
         { id: 'summary', label: 'Resumo', available: true },
+        { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
         { id: 'associations', label: 'Correspondências', available: Boolean(content?.associations || content?.highlights?.length) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
+    const neighbors = useMemo(() => getNeighborSegments(activeSegmentId), [activeSegmentId]);
     const activeTab = tabState.segmentId === activeSegmentId
         && tabs.some((tab) => tab.id === tabState.tab)
         ? tabState.tab
         : 'summary';
+    const copied = copyState.segmentId === activeSegmentId && copyState.copied;
 
     if (!activeSegmentId) return null;
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            setCopyState({ segmentId: activeSegmentId, copied: true });
+        } catch {
+            setCopyState({ segmentId: activeSegmentId, copied: false });
+        }
+    };
 
     return (
         <aside
@@ -57,7 +97,22 @@ export default function InfoPanel({
                                 <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
                                 {isFavorite ? 'Favorito salvo' : 'Salvar favorito'}
                             </button>
+                            <button type="button" onClick={handleCopyLink}>
+                                <span aria-hidden="true">⛓</span>
+                                {copied ? 'Link copiado' : 'Copiar link'}
+                            </button>
                         </div>
+                        {neighbors.previous && neighbors.next && (
+                            <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
+                                <button type="button" onClick={() => onNavigateSegment?.(neighbors.previous.id)}>
+                                    ← Anterior
+                                </button>
+                                <span>{neighbors.position}</span>
+                                <button type="button" onClick={() => onNavigateSegment?.(neighbors.next.id)}>
+                                    Próximo →
+                                </button>
+                            </nav>
+                        )}
                         <div className="divider"></div>
 
                         <div className="panel-tabs" role="tablist" aria-label="Seções da ficha">
@@ -94,6 +149,33 @@ export default function InfoPanel({
                                             ))}
                                         </ul>
                                     )}
+
+                                    {content.psalm && (
+                                        <article className="psalm-card compact">
+                                            <p>Salmo tradicional</p>
+                                            <strong>{content.psalm.reference}</strong>
+                                            <span>{content.psalm.meditation}</span>
+                                        </article>
+                                    )}
+                                </section>
+                            )}
+
+                            {activeTab === 'psalm' && content.psalm && (
+                                <section className="tab-section">
+                                    <article className="psalm-card">
+                                        <p>{content.psalm.title}</p>
+                                        <strong>{content.psalm.reference}</strong>
+                                        <span>{content.psalm.note}</span>
+                                    </article>
+                                    <section className="info-section">
+                                        <h3 className="section-title brand-font">Como usar</h3>
+                                        <p className="section-text">
+                                            Abra a referência em sua tradução bíblica de preferência e leia o verso junto
+                                            das correspondências do anjo: signo, grau, coro, arcanjo, Sephirah e tema de
+                                            contemplação.
+                                        </p>
+                                        <p className="tradition-note">{content.psalm.meditation}</p>
+                                    </section>
                                 </section>
                             )}
 

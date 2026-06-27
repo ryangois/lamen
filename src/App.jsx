@@ -231,6 +231,7 @@ function App() {
             onClose={handleClosePanel}
             isFavorite={favoriteIds.includes(activeSegmentId)}
             onToggleFavorite={() => toggleFavorite(activeSegmentId)}
+            onNavigateSegment={handleSegmentClick}
           />
         </Suspense>
       )}

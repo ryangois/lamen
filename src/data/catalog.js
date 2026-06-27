@@ -67,6 +67,10 @@ export const catalog = ringStructure.map((ring) => ({
       content.title,
       content.subtitle,
       content.description,
+      content.psalm?.reference,
+      content.psalm?.title,
+      content.psalm?.note,
+      content.psalm?.meditation,
       ...Object.keys(associations),
       ...Object.values(associations),
     ].join(' '));
@@ -105,4 +109,3 @@ export function findCatalogItem(idOrSlug) {
 export function getAngelByNumber(number) {
   return flatItems.find((item) => item.category === 'angels' && item.number === number) || null;
 }
-

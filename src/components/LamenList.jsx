@@ -149,6 +149,9 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
                   <span className="card-copy">
                     <strong>{item.content.title}</strong>
                     <small>{item.content.subtitle}</small>
+                    {item.content.psalm && (
+                      <em>Salmo: {item.content.psalm.reference}</em>
+                    )}
                   </span>
                   <span className="card-arrow" aria-hidden="true">›</span>
                 </button>

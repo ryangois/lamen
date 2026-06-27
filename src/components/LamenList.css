@@ -249,6 +249,17 @@
   -webkit-line-clamp: 2;
 }
 
+.card-copy em {
+  width: fit-content;
+  padding: 0.2rem 0.45rem;
+  color: #111318;
+  background: var(--accent-gold);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
 .card-arrow {
   align-self: center;
   color: #667181;

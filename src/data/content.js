@@ -540,6 +540,12 @@ angelSegments.forEach((segment, index) => {
     title: `${number}. ${name}`,
     subtitle: angelThemes[index],
     description: `${name} é um dos 72 nomes angélicos formados, na tradição cabalística e cristã cabalista, a partir de Êxodo 14:19-21. Seu tríplice ${segment.hebrew} ocupa ${startDegree}°–${endDegree}° de ${sign[2]}.`,
+    psalm: {
+      reference: psalmRefs[index],
+      title: `Salmo tradicional de ${name}`,
+      note: `Este é o verso salmódico tradicionalmente associado a ${name} nas tabelas do Shem HaMephorash. Use a referência para leitura, oração, meditação ou estudo comparado entre traduções bíblicas.`,
+      meditation: `Tema de contemplação: ${angelThemes[index]}.`,
+    },
     highlights: [
       `Campo contemplativo: ${angelThemes[index]}.`,
       `Verso tradicional: ${psalmRefs[index]}.`,
