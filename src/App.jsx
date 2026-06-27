@@ -47,10 +47,6 @@ function shouldShowIntro() {
   return window.localStorage.getItem('lamen-intro-dismissed') !== 'true' && !getInitialSegmentId();
 }
 
-function getInitialReadMode() {
-  return window.localStorage.getItem('lamen-read-mode') === 'true';
-}
-
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
@@ -58,17 +54,12 @@ function App() {
   const [showSavedItems, setShowSavedItems] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showIntro, setShowIntro] = useState(shouldShowIntro);
-  const [readMode, setReadMode] = useState(getInitialReadMode);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
   }, [view]);
-
-  useEffect(() => {
-    window.localStorage.setItem('lamen-read-mode', String(readMode));
-  }, [readMode]);
 
   useEffect(() => {
     writeSegmentToUrl(activeSegmentId);
@@ -133,7 +124,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`app-container ${readMode ? 'read-mode' : ''}`}>
+    <div className="app-container">
       <div className="ambient-glow"></div>
 
       <header className="view-toolbar" aria-label="Modo de visualização">
@@ -180,16 +171,7 @@ function App() {
           aria-label="Abrir ajuda de uso"
           onClick={() => setShowHelp(true)}
         >
-          ? Ajuda
-        </button>
-        <button
-          type="button"
-          className="read-launch"
-          aria-pressed={readMode}
-          aria-label="Alternar modo de leitura"
-          onClick={() => setReadMode((current) => !current)}
-        >
-          {readMode ? '◐ Visual' : '◑ Leitura'}
+          <span aria-hidden="true">?</span>
         </button>
       </header>
 

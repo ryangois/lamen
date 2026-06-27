@@ -55,6 +55,10 @@ export default function InfoPanel({
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
     const neighbors = useMemo(() => getNeighborSegments(activeSegmentId), [activeSegmentId]);
+    const neighborContent = useMemo(() => ({
+        previous: neighbors.previous ? getContent(neighbors.previous.id) : null,
+        next: neighbors.next ? getContent(neighbors.next.id) : null,
+    }), [neighbors]);
     const activeTab = tabState.segmentId === activeSegmentId
         && tabs.some((tab) => tab.id === tabState.tab)
         ? tabState.tab
@@ -102,23 +106,55 @@ export default function InfoPanel({
                         <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
                         <div className="panel-actions" aria-label="Ações da ficha">
-                            <button type="button" onClick={onToggleFavorite}>
-                                <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
-                                {isFavorite ? 'Favorito salvo' : 'Salvar favorito'}
+                            <button
+                                type="button"
+                                className={`panel-action favorite-action ${isFavorite ? 'active' : ''}`}
+                                onClick={onToggleFavorite}
+                            >
+                                <span className="action-icon" aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+                                <span className="action-copy">
+                                    <strong>{isFavorite ? 'Salvo' : 'Salvar'}</strong>
+                                    <small>{isFavorite ? 'Nos seus favoritos' : 'Guardar esta ficha'}</small>
+                                </span>
                             </button>
-                            <button type="button" onClick={handleCopyLink}>
-                                <span aria-hidden="true">⛓</span>
-                                {copied ? 'Link copiado' : 'Copiar link'}
+                            <button
+                                type="button"
+                                className={`panel-action share-action ${copied ? 'active' : ''}`}
+                                onClick={handleCopyLink}
+                            >
+                                <span className="action-icon" aria-hidden="true">{copied ? '✓' : '↗'}</span>
+                                <span className="action-copy">
+                                    <strong>{copied ? 'Copiado' : 'Compartilhar'}</strong>
+                                    <small>{copied ? 'Link pronto' : 'Copiar link direto'}</small>
+                                </span>
                             </button>
                         </div>
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
-                                <button type="button" onClick={() => onNavigateSegment?.(neighbors.previous.id)}>
-                                    ← Anterior
+                                <button
+                                    type="button"
+                                    className="nav-card nav-card-prev"
+                                    onClick={() => onNavigateSegment?.(neighbors.previous.id)}
+                                    aria-label={`Abrir anterior: ${neighborContent.previous?.title || 'item anterior'}`}
+                                >
+                                    <span className="nav-arrow" aria-hidden="true">←</span>
+                                    <span className="nav-copy">
+                                        <small>Anterior</small>
+                                        <strong>{neighborContent.previous?.title || 'Anterior'}</strong>
+                                    </span>
                                 </button>
-                                <span>{neighbors.position}</span>
-                                <button type="button" onClick={() => onNavigateSegment?.(neighbors.next.id)}>
-                                    Próximo →
+                                <span className="nav-position">{neighbors.position}</span>
+                                <button
+                                    type="button"
+                                    className="nav-card nav-card-next"
+                                    onClick={() => onNavigateSegment?.(neighbors.next.id)}
+                                    aria-label={`Abrir próximo: ${neighborContent.next?.title || 'próximo item'}`}
+                                >
+                                    <span className="nav-copy">
+                                        <small>Próximo</small>
+                                        <strong>{neighborContent.next?.title || 'Próximo'}</strong>
+                                    </span>
+                                    <span className="nav-arrow" aria-hidden="true">→</span>
                                 </button>
                             </nav>
                         )}
