@@ -14,6 +14,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
   transform: translateX(-50%);
 }
 
@@ -61,7 +63,8 @@
 
 .finder-launch,
 .saved-launch,
-.help-launch {
+.help-launch,
+.read-launch {
   min-height: 42px;
   padding: 0 1rem;
   color: var(--text-primary);
@@ -85,7 +88,9 @@
 .saved-launch:hover,
 .saved-launch:focus-visible,
 .help-launch:hover,
-.help-launch:focus-visible {
+.help-launch:focus-visible,
+.read-launch:hover,
+.read-launch:focus-visible {
   filter: brightness(1.06);
   outline: 2px solid #fff;
   outline-offset: 2px;
@@ -111,6 +116,25 @@
   position: relative;
   z-index: 1;
   padding: 1.5rem;
+}
+
+.read-mode {
+  background: #07090f;
+}
+
+.read-mode .ambient-glow {
+  opacity: 0.22;
+}
+
+.read-mode .view-switcher,
+.read-mode .saved-launch,
+.read-mode .help-launch,
+.read-mode .read-launch {
+  background: rgba(2, 3, 8, 0.98);
+}
+
+.read-mode .map-container {
+  filter: saturate(0.9) brightness(0.82);
 }
 
 .main-content.list-mode {
@@ -183,7 +207,8 @@
   }
   .finder-launch,
   .saved-launch,
-  .help-launch {
+  .help-launch,
+  .read-launch {
     min-height: 38px;
     padding: 0 0.65rem;
     font-size: 0.78rem;

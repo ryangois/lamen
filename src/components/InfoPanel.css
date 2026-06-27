@@ -235,6 +235,23 @@
     color: var(--accent-gold);
 }
 
+.read-mode .info-panel {
+    background: #080a10;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.read-mode .description,
+.read-mode .section-text,
+.read-mode .tradition-note {
+    color: #e2e8f0;
+    font-size: 1.04rem;
+}
+
+.read-mode .associations-grid {
+    background: rgba(255, 255, 255, 0.055);
+}
+
 .assoc-item {
     display: flex;
     flex-direction: column;
