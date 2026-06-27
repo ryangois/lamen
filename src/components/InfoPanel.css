@@ -91,6 +91,30 @@
     letter-spacing: 1px;
 }
 
+.panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.panel-actions button {
+    min-height: 38px;
+    padding: 0 0.85rem;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.065);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 999px;
+    cursor: pointer;
+    font: 700 0.82rem 'Inter', sans-serif;
+}
+
+.panel-actions button:hover,
+.panel-actions button:focus-visible {
+    color: #111318;
+    background: var(--accent-gold);
+    outline: none;
+}
+
 .divider {
     height: 1px;
     width: 100%;

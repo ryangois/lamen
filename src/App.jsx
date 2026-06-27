@@ -6,6 +6,7 @@ import './App.css';
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
 const LamenList = lazy(() => import('./components/LamenList'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
+const SavedItems = lazy(() => import('./components/SavedItems'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -31,10 +32,22 @@ function writeSegmentToUrl(segmentId) {
   window.history.replaceState({}, '', url);
 }
 
+function readStoredIds(key) {
+  try {
+    const value = JSON.parse(window.localStorage.getItem(key) || '[]');
+    return Array.isArray(value) ? value.filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
   const [showAngelFinder, setShowAngelFinder] = useState(false);
+  const [showSavedItems, setShowSavedItems] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
+  const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
@@ -43,6 +56,14 @@ function App() {
   useEffect(() => {
     writeSegmentToUrl(activeSegmentId);
   }, [activeSegmentId]);
+
+  useEffect(() => {
+    window.localStorage.setItem('lamen-favorites', JSON.stringify(favoriteIds));
+  }, [favoriteIds]);
+
+  useEffect(() => {
+    window.localStorage.setItem('lamen-recent', JSON.stringify(recentIds));
+  }, [recentIds]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -55,6 +76,7 @@ function App() {
 
   const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
+    setRecentIds((current) => [id, ...current.filter((item) => item !== id)].slice(0, 12));
   }, []);
 
   const handleClosePanel = useCallback(() => {
@@ -64,6 +86,14 @@ function App() {
   const handleViewChange = useCallback((nextView) => {
     setView(nextView);
     setActiveSegmentId(null);
+  }, []);
+
+  const toggleFavorite = useCallback((id) => {
+    setFavoriteIds((current) => (
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [id, ...current]
+    ));
   }, []);
 
   return (
@@ -99,6 +129,13 @@ function App() {
         >
           ✦ Meu anjo
         </button>
+        <button
+          type="button"
+          className="saved-launch"
+          onClick={() => setShowSavedItems(true)}
+        >
+          ★ Salvos
+        </button>
       </header>
 
       <main className={`main-content ${view === 'list' ? 'list-mode' : ''}`}>
@@ -121,6 +158,8 @@ function App() {
           <InfoPanel
             activeSegmentId={activeSegmentId}
             onClose={handleClosePanel}
+            isFavorite={favoriteIds.includes(activeSegmentId)}
+            onToggleFavorite={() => toggleFavorite(activeSegmentId)}
           />
         </Suspense>
       )}
@@ -130,6 +169,20 @@ function App() {
           <AngelFinder
             onClose={() => setShowAngelFinder(false)}
             onSelectAngel={handleSegmentClick}
+          />
+        </Suspense>
+      )}
+
+      {showSavedItems && (
+        <Suspense fallback={null}>
+          <SavedItems
+            favoriteIds={favoriteIds}
+            recentIds={recentIds}
+            onClose={() => setShowSavedItems(false)}
+            onSelect={(id) => {
+              handleSegmentClick(id);
+              setShowSavedItems(false);
+            }}
           />
         </Suspense>
       )}

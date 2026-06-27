@@ -9,7 +9,12 @@ const ICONS = {
     libra: '♎', scorpio: '♏', sagittarius: '♐', capricorn: '♑', aquarius: '♒', pisces: '♓',
 };
 
-export default function InfoPanel({ activeSegmentId, onClose }) {
+export default function InfoPanel({
+    activeSegmentId,
+    onClose,
+    isFavorite = false,
+    onToggleFavorite,
+}) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
@@ -47,6 +52,12 @@ export default function InfoPanel({ activeSegmentId, onClose }) {
                     <div className="info-body">
                         <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
+                        <div className="panel-actions" aria-label="Ações da ficha">
+                            <button type="button" onClick={onToggleFavorite}>
+                                <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+                                {isFavorite ? 'Favorito salvo' : 'Salvar favorito'}
+                            </button>
+                        </div>
                         <div className="divider"></div>
 
                         <div className="panel-tabs" role="tablist" aria-label="Seções da ficha">
