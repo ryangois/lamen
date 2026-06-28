@@ -2,6 +2,7 @@
   display: flex;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   overflow: hidden;
 }
@@ -196,21 +197,23 @@
     flex-direction: column;
   }
   .main-content {
-    padding: 0.5rem;
     height: 100%;
+    padding: calc(4.75rem + env(safe-area-inset-top, 0px)) 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    min-height: 0;
   }
   .main-content.list-mode {
-    padding: 0;
+    padding: calc(4.75rem + env(safe-area-inset-top, 0px)) 0 0;
   }
   .view-toolbar {
-    top: 0.65rem;
+    top: calc(0.65rem + env(safe-area-inset-top, 0px));
     left: 0;
     width: 100%;
     justify-content: flex-start;
     gap: 0.45rem;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 0 0.65rem 0.45rem;
+    padding: 0 0.65rem 0.45rem calc(0.65rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(0.65rem + env(safe-area-inset-right, 0px));
     transform: none;
     scrollbar-width: none;
   }
@@ -233,8 +236,8 @@
     font-size: 0.78rem;
   }
   .help-launch {
-    right: 0.85rem;
-    bottom: 0.85rem;
+    right: calc(0.85rem + env(safe-area-inset-right, 0px));
+    bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
     width: 54px;
     height: 54px;
     min-height: 54px;

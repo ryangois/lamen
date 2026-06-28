@@ -4,7 +4,7 @@
   z-index: 2450;
   display: grid;
   place-items: center;
-  padding: 1.25rem;
+  padding: max(1.25rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px)) max(1.25rem, env(safe-area-inset-bottom, 0px)) max(1.25rem, env(safe-area-inset-left, 0px));
   background: rgba(4, 5, 9, 0.64);
   backdrop-filter: blur(9px);
 }
@@ -12,6 +12,10 @@
 .help-modal {
   position: relative;
   width: min(720px, 100%);
+  max-height: min(88vh, 760px);
+  max-height: min(88dvh, 760px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 2rem;
   color: var(--text-primary);
   background: linear-gradient(160deg, rgba(28, 31, 43, 0.98), rgba(10, 12, 19, 0.99));
@@ -92,9 +96,28 @@
 }
 
 @media (max-width: 560px) {
+  .help-backdrop {
+    align-items: stretch;
+    padding: max(0.75rem, env(safe-area-inset-top, 0px)) max(0.75rem, env(safe-area-inset-right, 0px)) max(0.75rem, env(safe-area-inset-bottom, 0px)) max(0.75rem, env(safe-area-inset-left, 0px));
+  }
+
   .help-modal {
-    padding: 1.5rem;
+    width: 100%;
+    max-height: calc(100dvh - 1.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    padding: 1.35rem;
     border-radius: 22px;
+  }
+
+  .help-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .help-modal h2 {
+    max-width: calc(100% - 3rem);
+    line-height: 1.05;
   }
 
   .help-steps {

@@ -21,6 +21,6 @@
 @media (max-width: 768px) {
   .lamen-canvas {
     width: 100vw;
-    max-height: 70vh;
+    max-height: min(72svh, calc(100dvh - 5.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)));
   }
 }

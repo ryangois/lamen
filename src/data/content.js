@@ -41,6 +41,84 @@ const sources = {
 
 const traditionNote = 'As correspondências abaixo pertencem a sistemas históricos de astrologia, Cabala hermética e magia cerimonial. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
 
+const hebrewGematriaValues = {
+  א: 1, ב: 2, ג: 3, ד: 4, ה: 5, ו: 6, ז: 7, ח: 8, ט: 9,
+  י: 10, כ: 20, ך: 20, ל: 30, מ: 40, ם: 40, נ: 50, ן: 50,
+  ס: 60, ע: 70, פ: 80, ף: 80, צ: 90, ץ: 90, ק: 100, ר: 200,
+  ש: 300, ת: 400,
+};
+
+const gematriaRoots = {
+  1: 'unidade, impulso inicial e direção da vontade',
+  2: 'polaridade, vínculo e cooperação entre forças',
+  3: 'formação, entendimento e expressão criativa',
+  4: 'estrutura, estabilidade e manifestação concreta',
+  5: 'movimento, correção, travessia e mudança',
+  6: 'harmonia, beleza, cura e integração',
+  7: 'busca interior, refinamento e vitória pela perseverança',
+  8: 'ordem, linguagem, estratégia e circulação de forças',
+  9: 'síntese, conclusão, compaixão e maturação espiritual',
+};
+
+function normalizeHebrewLetters(value = '') {
+  return [...value.normalize('NFD').replace(/[\u0591-\u05C7]/g, '')]
+    .filter((letter) => hebrewGematriaValues[letter])
+    .join('');
+}
+
+function reduceGematria(value) {
+  let current = Number(value || 0);
+  while (current > 9) {
+    current = String(current).split('').reduce((sum, digit) => sum + Number(digit), 0);
+  }
+  return current || 0;
+}
+
+function getGematriaBreakdown(value) {
+  const letters = [...normalizeHebrewLetters(value)].map((letter) => ({
+    letter,
+    value: hebrewGematriaValues[letter],
+  }));
+  const total = letters.reduce((sum, item) => sum + item.value, 0);
+
+  return {
+    text: letters.map((item) => item.letter).join(''),
+    value: total,
+    root: reduceGematria(total),
+    formula: letters.map((item) => `${item.letter}=${item.value}`).join(' + '),
+    letters,
+  };
+}
+
+function getAngelNameSuffix(name) {
+  return name.replace(/[^A-Z]/gi, '').toUpperCase().endsWith('EL') ? 'אל' : 'יה';
+}
+
+function getGematriaTone(value) {
+  if (value >= 500) return 'valor amplo, associado a síntese, maturidade e integração de muitas camadas simbólicas';
+  if (value >= 300) return 'valor elevado, associado a consolidação, força espiritual e expressão coletiva';
+  if (value >= 100) return 'valor intermediário, associado a construção, passagem do abstrato ao concreto e trabalho consciente';
+  return 'valor concentrado, associado à raiz essencial do nome e ao impulso inicial de sua função';
+}
+
+function buildAngelGematria(segment, name) {
+  const core = getGematriaBreakdown(segment.hebrew);
+  const suffix = getAngelNameSuffix(name);
+  const full = getGematriaBreakdown(`${segment.hebrew}${suffix}`);
+
+  return {
+    core,
+    full,
+    suffix,
+    method: 'Mispar Hechrechi: א=1, ב=2 … י=10 … ק=100, ר=200, ש=300, ת=400; letras finais mantêm o mesmo valor das formas comuns.',
+    interpretations: [
+      `Tríplice ${core.text}: ${core.value}, reduzido a ${core.root}. Esta raiz sugere ${gematriaRoots[core.root]}.`,
+      `Nome completo ${full.text}: ${full.value}, reduzido a ${full.root}. A leitura simbólica enfatiza ${gematriaRoots[full.root]}.`,
+      `Como síntese, ${name} combina um núcleo de ${getGematriaTone(core.value)} com um nome completo de ${getGematriaTone(full.value)}.`,
+    ],
+  };
+}
+
 function add(id, data) {
   content[id] = {
     traditionNote,
@@ -541,6 +619,7 @@ angelSegments.forEach((segment, index) => {
   const name = segment.subLabel
     .toLowerCase()
     .replace(/(^|-)(\p{L})/gu, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
+  const gematria = buildAngelGematria(segment, name);
 
   add(segment.id, {
     title: `${number}. ${name}`,
@@ -558,9 +637,11 @@ angelSegments.forEach((segment, index) => {
       note: `Este é o verso salmódico tradicionalmente associado a ${name} nas tabelas do Shem HaMephorash. Use a referência para leitura, oração, meditação ou estudo comparado entre traduções bíblicas.`,
       meditation: `Tema de contemplação: ${angelThemes[index]}.`,
     },
+    gematria,
     highlights: [
       `Campo contemplativo: ${angelThemes[index]}.`,
       `Verso tradicional: ${psalmRefs[index]}.`,
+      `Gematria: tríplice ${gematria.core.value}; nome completo ${gematria.full.value}.`,
       `Par do decanato: anjo ${pair}; carta ${card}.`,
     ],
     associations: {
@@ -568,6 +649,8 @@ angelSegments.forEach((segment, index) => {
       Nome: name,
       'Tríplice hebraico': segment.hebrew,
       Transliteração: segment.letters,
+      'Gematria do tríplice': gematria.core.value,
+      'Gematria do nome completo': gematria.full.value,
       Signo: sign[2],
       Graus: `${startDegree}°–${endDegree}°`,
       Quinância: quinance,

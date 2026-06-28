@@ -319,7 +319,7 @@
 
 @media (max-width: 650px) {
   .catalog-view {
-    padding: 4rem 0.75rem 0;
+    padding: 0.75rem 0.75rem calc(2rem + env(safe-area-inset-bottom, 0px));
   }
 
   .catalog-header {
@@ -334,6 +334,7 @@
   .catalog-filters {
     grid-template-columns: 1fr 1fr;
     padding: 0.8rem;
+    top: 0.5rem;
   }
 
   .catalog-filters label:first-child {

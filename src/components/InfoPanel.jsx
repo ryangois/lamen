@@ -49,6 +49,7 @@ export default function InfoPanel({
     const tabs = useMemo(() => [
         { id: 'summary', label: 'Resumo', available: true },
         { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
+        { id: 'gematria', label: 'Gematria', available: Boolean(content?.gematria) },
         { id: 'associations', label: 'Correspondências', available: Boolean(content?.associations || content?.highlights?.length) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
@@ -239,6 +240,52 @@ export default function InfoPanel({
                                         </p>
                                         <p className="tradition-note">{content.psalm.meditation}</p>
                                     </section>
+                                </section>
+                            )}
+
+                            {activeTab === 'gematria' && content.gematria && (
+                                <section className="tab-section">
+                                    <article className="gematria-card">
+                                        <header className="gematria-header">
+                                            <span>Gematria hebraica</span>
+                                            <h3 className="brand-font">Valores do nome</h3>
+                                            <p>{content.gematria.method}</p>
+                                        </header>
+
+                                        <div className="gematria-grid">
+                                            {[
+                                                ['Tríplice', content.gematria.core],
+                                                ['Nome completo', content.gematria.full],
+                                            ].map(([label, item]) => (
+                                                <section className="gematria-value" key={label}>
+                                                    <div>
+                                                        <span>{label}</span>
+                                                        <strong dir="rtl">{item.text}</strong>
+                                                    </div>
+                                                    <b>{item.value}</b>
+                                                    <small>Redução: {item.root}</small>
+                                                    <p>{item.formula}</p>
+                                                    <div className="gematria-letters" dir="rtl" aria-label={`${label}: letras e valores`}>
+                                                        {item.letters.map((letter, index) => (
+                                                            <span key={`${label}-${letter.letter}-${index}`}>
+                                                                <b>{letter.letter}</b>
+                                                                <small>{letter.value}</small>
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </section>
+                                            ))}
+                                        </div>
+
+                                        <section className="gematria-interpretation">
+                                            <h4 className="brand-font">Interpretação simbólica</h4>
+                                            <ul>
+                                                {content.gematria.interpretations.map((item) => (
+                                                    <li key={item}>{item}</li>
+                                                ))}
+                                            </ul>
+                                        </section>
+                                    </article>
                                 </section>
                             )}
 

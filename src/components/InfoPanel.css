@@ -5,6 +5,7 @@
     right: -450px;
     width: 450px;
     height: 100vh;
+    height: 100dvh;
     z-index: 1000; /* Higher than wheel */
     transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
     overflow-y: auto;
@@ -455,6 +456,138 @@
     line-height: 1.6;
 }
 
+.gematria-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.15rem;
+    background:
+        radial-gradient(circle at 12% 0%, rgba(212, 175, 55, 0.16), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 22px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.gematria-header {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.gematria-header > span {
+    color: var(--accent-gold);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.gematria-header h3 {
+    color: var(--text-primary);
+    font-size: clamp(1.45rem, 4vw, 2rem);
+}
+
+.gematria-header p,
+.gematria-value p {
+    color: #aeb9c8;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+
+.gematria-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.gematria-value {
+    display: grid;
+    gap: 0.65rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+}
+
+.gematria-value > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.gematria-value > div:first-child span,
+.gematria-value > small {
+    color: #aeb9c8;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.gematria-value strong {
+    color: var(--accent-gold);
+    font-family: 'Times New Roman', 'Noto Serif Hebrew', serif;
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+.gematria-value > b {
+    color: var(--text-primary);
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 1;
+}
+
+.gematria-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.gematria-letters span {
+    display: grid;
+    min-width: 42px;
+    padding: 0.45rem 0.5rem;
+    place-items: center;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 12px;
+}
+
+.gematria-letters b {
+    color: var(--accent-gold);
+    font-family: 'Times New Roman', 'Noto Serif Hebrew', serif;
+    font-size: 1.25rem;
+}
+
+.gematria-letters small {
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.gematria-interpretation {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+    background: rgba(212, 175, 55, 0.09);
+    border: 1px solid rgba(212, 175, 55, 0.14);
+    border-radius: 16px;
+}
+
+.gematria-interpretation h4 {
+    color: var(--accent-gold);
+    font-size: 1rem;
+}
+
+.gematria-interpretation ul {
+    display: grid;
+    gap: 0.55rem;
+    padding-left: 1.15rem;
+    color: #cbd5e1;
+    line-height: 1.55;
+}
+
 .associations-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -538,12 +671,26 @@
         right: -100vw;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         border-left: none;
         z-index: 2000;
+        overscroll-behavior: contain;
     }
 
     .info-panel.open {
         right: 0;
+    }
+
+    .close-btn {
+        top: calc(0.85rem + env(safe-area-inset-top, 0px));
+        right: calc(0.85rem + env(safe-area-inset-right, 0px));
+        width: 42px;
+        height: 42px;
+    }
+
+    .content-container {
+        min-height: 100%;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .image-wrapper {
@@ -552,7 +699,7 @@
 
     .info-body {
         gap: 1rem;
-        padding: 1.55rem;
+        padding: 1.35rem max(1.15rem, env(safe-area-inset-right, 0px)) calc(2rem + env(safe-area-inset-bottom, 0px)) max(1.15rem, env(safe-area-inset-left, 0px));
     }
 
     .panel-title-row {
@@ -650,6 +797,45 @@
 
     .nav-copy strong {
         font-size: 0.82rem;
+    }
+
+    .psalm-card {
+        padding: 0.95rem;
+        border-radius: 18px;
+    }
+
+    .psalm-card blockquote {
+        padding: 0.95rem;
+        font-size: 0.98rem;
+    }
+
+    .psalm-card blockquote[dir="rtl"] {
+        font-size: clamp(1.2rem, 7vw, 1.5rem);
+    }
+
+    .scripture-select select {
+        min-height: 42px;
+    }
+
+    .gematria-card {
+        padding: 0.95rem;
+        border-radius: 18px;
+    }
+
+    .gematria-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gematria-value {
+        padding: 0.9rem;
+    }
+
+    .gematria-value strong {
+        font-size: 1.4rem;
+    }
+
+    .gematria-letters span {
+        min-width: 38px;
     }
 
     .title {
