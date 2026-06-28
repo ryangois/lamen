@@ -8,7 +8,6 @@ const LamenList = lazy(() => import('./components/LamenList'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
-const HeroIntro = lazy(() => import('./components/HeroIntro'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -43,17 +42,12 @@ function readStoredIds(key) {
   }
 }
 
-function shouldShowIntro() {
-  return window.localStorage.getItem('lamen-intro-dismissed') !== 'true' && !getInitialSegmentId();
-}
-
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
   const [showAngelFinder, setShowAngelFinder] = useState(false);
   const [showSavedItems, setShowSavedItems] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [showIntro, setShowIntro] = useState(shouldShowIntro);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
 
@@ -110,11 +104,6 @@ function App() {
     setActiveSegmentId(null);
   }, []);
 
-  const dismissIntro = useCallback(() => {
-    window.localStorage.setItem('lamen-intro-dismissed', 'true');
-    setShowIntro(false);
-  }, []);
-
   const toggleFavorite = useCallback((id) => {
     setFavoriteIds((current) => (
       current.includes(id)
@@ -165,15 +154,16 @@ function App() {
         >
           ★ Salvos
         </button>
-        <button
-          type="button"
-          className="help-launch"
-          aria-label="Abrir ajuda de uso"
-          onClick={() => setShowHelp(true)}
-        >
-          <span aria-hidden="true">?</span>
-        </button>
       </header>
+
+      <button
+        type="button"
+        className="help-launch"
+        aria-label="Abrir ajuda de uso"
+        onClick={() => setShowHelp(true)}
+      >
+        <span aria-hidden="true">?</span>
+      </button>
 
       <main className={`main-content ${view === 'list' ? 'list-mode' : ''}`}>
         {view === 'wheel' ? (
@@ -189,22 +179,6 @@ function App() {
           </Suspense>
         )}
       </main>
-
-      {showIntro && !activeSegmentId && (
-        <Suspense fallback={null}>
-          <HeroIntro
-            onExploreWheel={dismissIntro}
-            onExploreList={() => {
-              dismissIntro();
-              handleViewChange('list');
-            }}
-            onOpenAngelFinder={() => {
-              dismissIntro();
-              setShowAngelFinder(true);
-            }}
-          />
-        </Suspense>
-      )}
 
       {activeSegmentId && (
         <Suspense fallback={null}>

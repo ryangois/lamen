@@ -60,17 +60,6 @@
   font-size: 0.86rem;
 }
 
-.finder-mode {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-  margin: 1.4rem 0;
-  padding: 0.35rem;
-  background: rgba(0, 0, 0, 0.38);
-  border-radius: 999px;
-}
-
-.finder-mode button,
 .open-angel-btn {
   min-height: 42px;
   color: var(--text-primary);
@@ -81,7 +70,6 @@
   font: 700 0.86rem 'Inter', sans-serif;
 }
 
-.finder-mode button.active,
 .open-angel-btn {
   color: #111318;
   background: var(--accent-gold);
@@ -91,6 +79,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.9rem;
+  margin-top: 1.35rem;
 }
 
 .finder-field {
@@ -188,7 +177,6 @@
     border-radius: 22px;
   }
 
-  .finder-mode,
   .finder-grid,
   .finder-result,
   .finder-result dl {

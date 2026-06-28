@@ -43,8 +43,7 @@ export default function InfoPanel({
     onNavigateSegment,
 }) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
-    const [copyState, setCopyState] = useState({ segmentId: null, copied: false });
-    const [psalmView, setPsalmView] = useState('hebrew');
+    const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -63,26 +62,17 @@ export default function InfoPanel({
         && tabs.some((tab) => tab.id === tabState.tab)
         ? tabState.tab
         : 'summary';
-    const copied = copyState.segmentId === activeSegmentId && copyState.copied;
+    const psalmView = psalmViewState.segmentId === activeSegmentId ? psalmViewState.view : 'portuguese';
     const psalmText = {
         hebrew: content?.psalm?.hebrew,
         transliteration: content?.psalm?.transliteration,
         portuguese: content?.psalm?.text,
-    }[psalmView] || content?.psalm?.hebrew || content?.psalm?.text;
+    }[psalmView] || content?.psalm?.text || content?.psalm?.hebrew;
     const psalmReference = psalmView === 'hebrew'
         ? content?.psalm?.hebrewReference || content?.psalm?.reference
         : content?.psalm?.reference;
 
     if (!activeSegmentId) return null;
-
-    const handleCopyLink = async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-            setCopyState({ segmentId: activeSegmentId, copied: true });
-        } catch {
-            setCopyState({ segmentId: activeSegmentId, copied: false });
-        }
-    };
 
     return (
         <aside
@@ -103,32 +93,19 @@ export default function InfoPanel({
                     )}
 
                     <div className="info-body">
-                        <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
-                        {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
-                        <div className="panel-actions" aria-label="Ações da ficha">
+                        <div className="panel-title-row">
+                            <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
                             <button
                                 type="button"
-                                className={`panel-action favorite-action ${isFavorite ? 'active' : ''}`}
+                                className={`favorite-orb ${isFavorite ? 'active' : ''}`}
+                                aria-label={isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+                                aria-pressed={isFavorite}
                                 onClick={onToggleFavorite}
                             >
-                                <span className="action-icon" aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
-                                <span className="action-copy">
-                                    <strong>{isFavorite ? 'Salvo' : 'Salvar'}</strong>
-                                    <small>{isFavorite ? 'Nos seus favoritos' : 'Guardar esta ficha'}</small>
-                                </span>
-                            </button>
-                            <button
-                                type="button"
-                                className={`panel-action share-action ${copied ? 'active' : ''}`}
-                                onClick={handleCopyLink}
-                            >
-                                <span className="action-icon" aria-hidden="true">{copied ? '✓' : '↗'}</span>
-                                <span className="action-copy">
-                                    <strong>{copied ? 'Copiado' : 'Compartilhar'}</strong>
-                                    <small>{copied ? 'Link pronto' : 'Copiar link direto'}</small>
-                                </span>
+                                <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
                             </button>
                         </div>
+                        {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
                                 <button
@@ -222,29 +199,21 @@ export default function InfoPanel({
                                             </div>
                                             <strong className="psalm-reference">{psalmReference}</strong>
                                         </header>
-                                        <div className="scripture-switcher" role="group" aria-label="Escolher forma do salmo">
-                                            <button
-                                                type="button"
-                                                className={psalmView === 'hebrew' ? 'active' : ''}
-                                                onClick={() => setPsalmView('hebrew')}
+                                        <label className="scripture-select">
+                                            <span>Idioma do texto</span>
+                                            <select
+                                                value={psalmView}
+                                                onChange={(event) => setPsalmViewState({
+                                                    segmentId: activeSegmentId,
+                                                    view: event.target.value,
+                                                })}
+                                                aria-label="Escolher idioma do salmo"
                                             >
-                                                Hebraico
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={psalmView === 'transliteration' ? 'active' : ''}
-                                                onClick={() => setPsalmView('transliteration')}
-                                            >
-                                                Transliterado
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={psalmView === 'portuguese' ? 'active' : ''}
-                                                onClick={() => setPsalmView('portuguese')}
-                                            >
-                                                Português
-                                            </button>
-                                        </div>
+                                                <option value="portuguese">Português</option>
+                                                <option value="hebrew">Hebraico</option>
+                                                <option value="transliteration">Transliteração</option>
+                                            </select>
+                                        </label>
                                         {psalmText && (
                                             <blockquote dir={psalmView === 'hebrew' ? 'rtl' : 'ltr'}>
                                                 {psalmText}
