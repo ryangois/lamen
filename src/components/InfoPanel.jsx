@@ -35,6 +35,37 @@ function getNeighborSegments(activeSegmentId) {
     };
 }
 
+function CloseIcon() {
+    return (
+        <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6.75 6.75L17.25 17.25M17.25 6.75L6.75 17.25" />
+        </svg>
+    );
+}
+
+function StarIcon({ filled = false }) {
+    return (
+        <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                className={filled ? 'star-fill' : ''}
+                d="M12 3.85l2.45 4.95 5.46.8-3.95 3.85.93 5.44L12 16.32l-4.89 2.57.93-5.44L4.09 9.6l5.46-.8L12 3.85z"
+            />
+        </svg>
+    );
+}
+
+function ArrowIcon({ direction = 'right' }) {
+    return (
+        <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            {direction === 'left' ? (
+                <path d="M14.5 6.5L9 12l5.5 5.5M9.75 12H20" />
+            ) : (
+                <path d="M9.5 6.5L15 12l-5.5 5.5M4 12h10.25" />
+            )}
+        </svg>
+    );
+}
+
 export default function InfoPanel({
     activeSegmentId,
     onClose,
@@ -80,7 +111,9 @@ export default function InfoPanel({
             className={`info-panel glass-panel ${activeSegmentId ? 'open' : ''}`}
             aria-labelledby="info-panel-title"
         >
-            <button className="close-btn" onClick={onClose} aria-label="Fechar painel">&times;</button>
+            <button className="close-btn" onClick={onClose} aria-label="Fechar painel">
+                <CloseIcon />
+            </button>
 
             {content && (
                 <div className="content-container animate-fade-in">
@@ -103,7 +136,7 @@ export default function InfoPanel({
                                 aria-pressed={isFavorite}
                                 onClick={onToggleFavorite}
                             >
-                                <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+                                <StarIcon filled={isFavorite} />
                             </button>
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
@@ -115,7 +148,9 @@ export default function InfoPanel({
                                     onClick={() => onNavigateSegment?.(neighbors.previous.id)}
                                     aria-label={`Abrir anterior: ${neighborContent.previous?.title || 'item anterior'}`}
                                 >
-                                    <span className="nav-arrow" aria-hidden="true">←</span>
+                                    <span className="nav-arrow" aria-hidden="true">
+                                        <ArrowIcon direction="left" />
+                                    </span>
                                     <span className="nav-copy">
                                         <small>Anterior</small>
                                         <strong>{neighborContent.previous?.title || 'Anterior'}</strong>
@@ -132,7 +167,9 @@ export default function InfoPanel({
                                         <small>Próximo</small>
                                         <strong>{neighborContent.next?.title || 'Próximo'}</strong>
                                     </span>
-                                    <span className="nav-arrow" aria-hidden="true">→</span>
+                                    <span className="nav-arrow" aria-hidden="true">
+                                        <ArrowIcon direction="right" />
+                                    </span>
                                 </button>
                             </nav>
                         )}
