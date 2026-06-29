@@ -87,9 +87,6 @@
 }
 
 .catalog-filters {
-  position: sticky;
-  top: 0;
-  z-index: 4;
   display: grid;
   grid-template-columns: repeat(4, minmax(130px, 1fr));
   gap: 0.85rem;
