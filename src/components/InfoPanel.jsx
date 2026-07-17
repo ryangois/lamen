@@ -338,6 +338,30 @@ export default function InfoPanel({
                                             ))}
                                         </div>
                                     )}
+                                    {content.tarotDecks?.length > 0 && (
+                                        <section className="tarot-gallery" aria-label="Cartas de Tarot associadas">
+                                            <header>
+                                                <span>Tarot comparado</span>
+                                                <h3 className="brand-font">Marselha, Rider-Waite e Thoth</h3>
+                                            </header>
+                                            <div className="tarot-grid">
+                                                {content.tarotDecks.map((card) => (
+                                                    <article className="tarot-card" key={card.deck}>
+                                                        {card.image ? (
+                                                            <img src={card.image} alt={`${card.deck}: ${card.title}`} loading="lazy" />
+                                                        ) : (
+                                                            <div className="tarot-placeholder" aria-hidden="true">
+                                                                <span>{card.title}</span>
+                                                            </div>
+                                                        )}
+                                                        <strong>{card.deck}</strong>
+                                                        <small>{card.source}</small>
+                                                        <p>{card.note}</p>
+                                                    </article>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    )}
                                 </section>
                             )}
 

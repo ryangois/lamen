@@ -56,6 +56,7 @@
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 30px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  overflow: visible;
 }
 
 .tree-svg {
@@ -138,24 +139,11 @@
 }
 
 .tree-node-disc {
-  fill:
-    color-mix(in srgb, var(--accent-gold) 22%, #10131b);
+  fill: var(--tree-node-color, #20222a);
   stroke: rgba(244, 211, 111, 0.62);
   stroke-width: 2;
   filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.38));
   transition: fill 160ms ease, stroke 160ms ease, filter 160ms ease;
-}
-
-.tree-node-mercy .tree-node-disc {
-  fill: #142c23;
-}
-
-.tree-node-severity .tree-node-disc {
-  fill: #2b1a22;
-}
-
-.tree-node-middle .tree-node-disc {
-  fill: #20222a;
 }
 
 .tree-node-number,
@@ -239,9 +227,12 @@
 
 @media (max-width: 900px) {
   .tree-shell {
+    height: auto;
+    min-height: 100%;
     grid-template-columns: 1fr;
     align-content: start;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .tree-intro {
@@ -263,8 +254,26 @@
 
 @media (max-width: 768px) {
   .tree-shell {
-    padding: calc(5.2rem + env(safe-area-inset-top, 0px)) 0.55rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    padding: calc(7.6rem + env(safe-area-inset-top, 0px)) 0.55rem calc(1rem + env(safe-area-inset-bottom, 0px));
     gap: 0.8rem;
+  }
+
+  .tree-intro {
+    padding: 1rem;
+  }
+
+  .tree-intro .eyebrow {
+    font-size: 0.66rem;
+  }
+
+  .tree-intro h1 {
+    font-size: clamp(1.75rem, 9vw, 2.55rem);
+    line-height: 1;
+  }
+
+  .tree-intro p {
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 
   .tree-intro,
@@ -274,6 +283,11 @@
 
   .tree-stage {
     padding: 0.45rem;
+  }
+
+  .tree-svg {
+    width: min(100%, 460px);
+    max-height: none;
   }
 
   .tree-path-hit {

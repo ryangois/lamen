@@ -191,11 +191,11 @@
   }
   .main-content {
     height: 100%;
-    padding: calc(4.75rem + env(safe-area-inset-top, 0px)) 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    padding: calc(6.8rem + env(safe-area-inset-top, 0px)) 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
     min-height: 0;
   }
   .main-content.list-mode {
-    padding: calc(4.75rem + env(safe-area-inset-top, 0px)) 0 0;
+    padding: calc(6.8rem + env(safe-area-inset-top, 0px)) 0 0;
   }
   .main-content.tree-mode {
     padding: 0;
@@ -204,25 +204,28 @@
     top: calc(0.65rem + env(safe-area-inset-top, 0px));
     left: 0;
     width: 100%;
-    justify-content: flex-start;
-    gap: 0.45rem;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    overflow: visible;
     padding: 0 0.65rem 0.45rem calc(0.65rem + env(safe-area-inset-left, 0px));
     padding-right: calc(0.65rem + env(safe-area-inset-right, 0px));
     transform: none;
-    scrollbar-width: none;
-  }
-  .view-toolbar::-webkit-scrollbar {
-    display: none;
   }
   .view-switcher {
-    flex: 0 0 auto;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.28rem;
+    padding: 0.32rem;
+    border-radius: 24px;
   }
   .view-button {
-    min-width: 84px;
+    min-width: 0;
     min-height: 36px;
-    padding: 0 0.8rem;
+    padding: 0 0.45rem;
+    gap: 0.3rem;
+    font-size: 0.76rem;
   }
   .help-launch {
     min-height: 38px;

@@ -42,6 +42,18 @@ const sources = {
 
 const traditionNote = 'As correspondências abaixo pertencem a sistemas históricos de astrologia, Cabala hermética e magia cerimonial. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
 
+const treeSephirahDetails = {
+  arc_metatron: ['Brilho branco; em escalas herméticas, branco puro e iridescência', 'Um antigo rei coroado visto de perfil', 'União com a fonte e percepção da unidade', 'Realização da Grande Obra', 'não se atribui vício direto; o risco simbólico é inflação espiritual', 'No Sepher Yetzirah, a primeira emanação é contemplada como sopro/espírito do Deus vivo, anterior à diferenciação plena.', 'כתר expressa coroa, culminação e princípio; sua soma é lida como síntese elevada no topo da Árvore.'],
+  arc_raziel: ['Cinza luminoso, branco-azulado e pérola', 'Figura masculina barbada', 'Visão de Deus face a face em chave contemplativa', 'Devoção e abertura à sabedoria', 'impulso sem forma e excesso de força não estruturada', 'Chokmah corresponde à sabedoria dinâmica, o jorro primordial que antecede a forma.', 'חכמה reúne vida, contenção e abertura; sua leitura favorece sabedoria como potência ativa.'],
+  arc_tzaphkiel: ['Preto, índigo escuro e carmesim profundo', 'Mulher madura entronizada', 'Visão da tristeza e da estrutura do tempo', 'Silêncio, compreensão e disciplina', 'avareza, rigidez e esterilidade interior', 'Binah é entendimento: a matriz que limita, mede e torna inteligível a emanação.', 'בינה sugere construção do entendimento; a palavra combina casa, vida e abertura formativa.'],
+  arc_tzadkiel: ['Azul profundo e majestoso', 'Rei poderoso coroado e entronizado', 'Visão do amor e da ordem benevolente', 'Obediência à medida justa, generosidade e magnanimidade', 'hipocrisia, tirania benevolente e excesso', 'Chesed organiza expansão, lei, misericórdia e estabilidade das forças superiores.', 'חסד é misericórdia e graça; a gematria enfatiza fluxo, sustentação e vínculo ético.'],
+  arc_kamael: ['Vermelho escarlate', 'Guerreiro poderoso em seu carro', 'Visão do poder e da severidade', 'Coragem e energia disciplinada', 'crueldade, destruição e violência sem propósito', 'Geburah é força, corte e juízo; equilibra a expansão com limite e correção.', 'גבורה indica força ou potência; sua leitura aponta para contenção ativa.'],
+  arc_raphael: ['Amarelo dourado, ouro solar e rosa no centro', 'Criança, rei sacrificado ou deus ressuscitado', 'Visão da harmonia das coisas', 'Devoção à Grande Obra, beleza e integração', 'orgulho, vaidade e falsa centralidade', 'Tiphareth é beleza e mediação: o coração que reconcilia alto e baixo, rigor e misericórdia.', 'תפארת expressa beleza adornada; sua soma sugere integração complexa no centro da Árvore.'],
+  arc_haniel: ['Verde esmeralda', 'Mulher bela e desnuda', 'Visão da beleza triunfante', 'Altruísmo, amor e criatividade', 'luxúria, vaidade e apego ao prazer', 'Netzach manifesta vitória, desejo, arte, afeto e persistência da força vital.', 'נצח combina duração e vitória; a leitura aponta para permanência do desejo refinado.'],
+  arc_michael: ['Laranja e brilho mercurial', 'Hermafrodita ou figura intelectual radiante', 'Visão do esplendor', 'Veracidade, clareza e método', 'falsidade, manipulação e excesso de análise', 'Hod estrutura linguagem, símbolos, cálculo e o esplendor das formas mentais.', 'הוד significa esplendor; a gematria favorece leitura de linguagem, reflexo e precisão.'],
+  arc_gabriel: ['Violeta, prata e azul lunar', 'Homem belo e forte, ou figura lunar portadora de imagens', 'Visão do mecanismo do universo', 'Independência, imaginação disciplinada e confiança', 'ociosidade, fantasia desordenada e instabilidade', 'Yesod é fundamento: recolhe imagens e padrões antes que desçam à manifestação.', 'יסוד é base e fundamento; a soma sustenta leitura de mediação, sonho e corpo sutil.'],
+};
+
 const hebrewGematriaValues = {
   א: 1, ב: 2, ג: 3, ד: 4, ה: 5, ו: 6, ז: 7, ח: 8, ט: 9,
   י: 10, כ: 20, ך: 20, ל: 30, מ: 40, ם: 40, נ: 50, ן: 50,
@@ -89,6 +101,81 @@ function getGematriaBreakdown(value) {
     formula: letters.map((item) => `${item.letter}=${item.value}`).join(' + '),
     letters,
   };
+}
+
+function buildHebrewWordGematria(label, hebrew, note) {
+  const core = getGematriaBreakdown(hebrew);
+
+  return {
+    core,
+    full: core,
+    method: 'Mispar Hechrechi aplicado ao nome hebraico da esfera ou caminho. Letras finais mantêm o valor comum.',
+    interpretations: [
+      `${label} (${core.text}) soma ${core.value}, reduzido a ${core.root}.`,
+      note || `A redução ${core.root} sugere ${gematriaRoots[core.root] || 'uma síntese simbólica própria do termo'}.`,
+      `Fórmula: ${core.formula}.`,
+    ],
+  };
+}
+
+function tarotAssetKey(title) {
+  const lookup = {
+    'O Louco': ['00_Fool', '00'],
+    'O Mago': ['01_Magician', '01'],
+    'A Sacerdotisa': ['02_High_Priestess', '02'],
+    'A Imperatriz': ['03_Empress', '03'],
+    'O Imperador': ['04_Emperor', '04'],
+    'O Hierofante': ['05_Hierophant', '05'],
+    'Os Enamorados': ['06_Lovers', '06'],
+    'O Carro': ['07_Chariot', '07'],
+    'A Força': ['08_Strength', '08'],
+    'O Eremita': ['09_Hermit', '09'],
+    'A Roda da Fortuna': ['10_Wheel_of_Fortune', '10'],
+    'A Justiça': ['11_Justice', '11'],
+    'O Enforcado': ['12_Hanged_Man', '12'],
+    'A Morte': ['13_Death', '13'],
+    'A Temperança': ['14_Temperance', '14'],
+    'O Diabo': ['15_Devil', '15'],
+    'A Torre': ['16_Tower', '16'],
+    'A Estrela': ['17_Star', '17'],
+    'A Lua': ['18_Moon', '18'],
+    'O Sol': ['19_Sun', '19'],
+    'O Julgamento': ['20_Judgement', '20'],
+    'O Mundo': ['21_World', '21'],
+  };
+
+  return lookup[title] || null;
+}
+
+function buildTarotDecks(path) {
+  const keys = tarotAssetKey(path.tarot);
+  if (!keys) return [];
+
+  const [rws, marseille] = keys;
+
+  return [
+    {
+      deck: 'Rider-Waite-Smith',
+      title: path.tarot,
+      image: `https://commons.wikimedia.org/wiki/Special:FilePath/RWS_Tarot_${rws}.jpg`,
+      source: 'Wikimedia Commons — Rider-Waite tarot deck',
+      note: 'Imagem histórica em domínio público segundo a ficha do Commons; algumas recolorizações modernas podem ter restrições.',
+    },
+    {
+      deck: 'Tarot de Marseille',
+      title: path.tarot,
+      image: `https://commons.wikimedia.org/wiki/Special:FilePath/T${marseille}_Tarot.png`,
+      source: 'Wikimedia Commons — Tarot de Marseille',
+      note: 'Imagem de baralhos antigos/derivados hospedados no Commons quando disponível.',
+    },
+    {
+      deck: 'Thoth',
+      title: path.tarot,
+      image: '',
+      source: 'Imagem não incluída por cautela de copyright',
+      note: 'O deck Thoth de Crowley/Harris possui histórico de licenciamento moderno; mantive a associação sem incorporar imagem protegida.',
+    },
+  ];
 }
 
 function getAngelNameSuffix(name) {
@@ -253,42 +340,61 @@ const sphereProfiles = [
   },
 ];
 
-sphereProfiles.forEach((sphere, index) => add(sphere.id, {
-  title: `${sphere.archangel} · ${sphere.sephirah}`,
-  subtitle: `${sphere.number}ª esfera — ${sphere.meaning}`,
-  description: sphere.description,
-  highlights: [
-    `Virtude central: ${sphere.virtue}.`,
-    `Desequilíbrio simbólico: ${sphere.imbalance}.`,
-  ],
-  associations: {
-    Sephirah: `${sphere.sephirah} (${sphere.hebrew})`,
-    Número: sphere.number,
-    Significado: sphere.meaning,
-    Esfera: sphere.planet,
-    Arcanjo: sphere.archangel,
-    Coro: sphere.choir,
-    'Nome divino': sphere.divineName,
-    Cor: sphere.color,
-    'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
-  },
-  sections: [
-    {
-      title: 'Função na Árvore da Vida',
-      paragraphs: [
-        `${sphere.sephirah} articula ${sphere.virtue.toLowerCase()} no esquema hermético da Árvore da Vida.`,
-        `A esfera não deve ser entendida como lugar físico: é um mapa simbólico usado para contemplar relações entre consciência, ética, natureza e cosmologia.`,
-      ],
+sphereProfiles.forEach((sphere, index) => {
+  const detail = treeSephirahDetails[sphere.id] || [];
+  const [treeColor, magicalImage, spiritualExperience, treeVirtue, vice, yetzirah, gematriaNote] = detail;
+
+  add(sphere.id, {
+    title: `${sphere.archangel} · ${sphere.sephirah}`,
+    subtitle: `${sphere.number}ª esfera — ${sphere.meaning}`,
+    description: sphere.description,
+    highlights: [
+      `Virtude central: ${treeVirtue || sphere.virtue}.`,
+      `Desequilíbrio simbólico: ${sphere.imbalance}.`,
+      `Cor tradicional na Árvore: ${treeColor || sphere.color}.`,
+    ],
+    associations: {
+      Sephirah: `${sphere.sephirah} (${sphere.hebrew})`,
+      Número: sphere.number,
+      Significado: sphere.meaning,
+      'Cor padrão da Árvore': treeColor || sphere.color,
+      'Imagem mágica': magicalImage || 'Imagem tradicional varia por escola',
+      'Experiência espiritual': spiritualExperience || sphere.virtue,
+      Virtude: treeVirtue || sphere.virtue,
+      Vício: vice || sphere.imbalance,
+      Esfera: sphere.planet,
+      Arcanjo: sphere.archangel,
+      Coro: sphere.choir,
+      'Nome divino': sphere.divineName,
+      'Nome hebraico': sphere.hebrew,
+      'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
+      'Sepher Yetzirah': yetzirah || 'Associação contemplativa por esfera conforme leituras herméticas posteriores.',
     },
-    {
-      title: 'Arcanjo regente',
-      paragraphs: [
-        `${sphere.archangel} é associado a ${sphere.sephirah} e ao coro dos ${sphere.choir}. Grafias e regências variam entre fontes judaicas, cristãs e ordens herméticas.`,
-      ],
-    },
-  ],
-  sources: [sources.agrippa, sources.dionysius],
-}));
+    gematria: buildHebrewWordGematria(sphere.sephirah, sphere.hebrew, gematriaNote),
+    sections: [
+      {
+        title: 'Função na Árvore da Vida',
+        paragraphs: [
+          `${sphere.sephirah} articula ${(treeVirtue || sphere.virtue).toLowerCase()} no esquema hermético da Árvore da Vida.`,
+          `A esfera não deve ser entendida como lugar físico: é um mapa simbólico usado para contemplar relações entre consciência, ética, natureza e cosmologia.`,
+        ],
+      },
+      {
+        title: 'Sepher Yetzirah',
+        paragraphs: [
+          yetzirah || 'O Sepher Yetzirah fala das emanações e letras como estruturas simbólicas da criação; a associação detalhada por esfera é desenvolvida em leituras herméticas posteriores.',
+        ],
+      },
+      {
+        title: 'Arcanjo regente',
+        paragraphs: [
+          `${sphere.archangel} é associado a ${sphere.sephirah} e ao coro dos ${sphere.choir}. Grafias e regências variam entre fontes judaicas, cristãs e ordens herméticas.`,
+        ],
+      },
+    ],
+    sources: [sources.agrippa, sources.dionysius],
+  });
+});
 
 add('arc_sandalphon', {
   title: 'Sandalphon · Malkuth',
@@ -302,19 +408,32 @@ add('arc_sandalphon', {
     Sephirah: 'Malkuth (מלכות)',
     Número: 10,
     Significado: 'Reino',
+    'Cor padrão da Árvore': 'Citrino, oliva, castanho avermelhado e preto',
+    'Imagem mágica': 'Jovem mulher coroada e entronizada',
+    'Experiência espiritual': 'Visão do Santo Anjo Guardião em chave de presença encarnada',
+    Virtude: 'Discriminação, presença e realização concreta',
+    Vício: 'Avareza, inércia e materialismo estreito',
     Esfera: 'Terra / mundo manifestado',
     Arcanjo: 'Sandalphon',
     Coro: 'Almas, elementos e presença angélica próxima da matéria',
     'Nome divino': 'Adonai ha-Aretz',
-    Cor: 'Citrino, oliva, castanho e preto',
+    'Nome hebraico': 'מלכות',
     'Anjos do Shem': 'síntese e aterramento das 72 forças',
+    'Sepher Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
   },
+  gematria: buildHebrewWordGematria('Malkuth', 'מלכות', 'מלכות soma a ideia de Reino: a força simbólica que recebe, sela e manifesta as demais emanações.'),
   sections: [
     {
       title: 'Função na Árvore da Vida',
       paragraphs: [
         'Malkuth recebe as emanações das demais esferas e as apresenta como corpo, natureza, tempo, circunstância e mundo vivido.',
         'Na prática contemplativa, é a esfera que pergunta como uma ideia, virtude ou visão se torna gesto, cuidado e presença real.',
+      ],
+    },
+    {
+      title: 'Sepher Yetzirah',
+      paragraphs: [
+        'Embora a linguagem do Sepher Yetzirah seja concisa e não use sempre o vocabulário hermético posterior, Malkuth pode ser contemplada como o campo onde número, letra e mundo formado se tornam experiência.',
       ],
     },
     {
@@ -343,13 +462,24 @@ treePathProfiles.forEach((path) => add(path.id, {
     Atribuição: path.attribution,
     Tarot: path.tarot,
     Função: path.meaning,
+    'Nome hebraico': path.hebrew,
+    'Sepher Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
   },
+  tarotDecks: buildTarotDecks(path),
+  gematria: buildHebrewWordGematria(path.letter, path.hebrew, `A letra ${path.letter} reduz sua força ao valor ${getGematriaBreakdown(path.hebrew).value}, usado como chave contemplativa do caminho ${path.number}.`),
   sections: [
     {
       title: 'Leitura do caminho',
       paragraphs: [
         `Entre ${path.fromName} e ${path.toName}, ${path.letter} descreve uma passagem simbólica: ${path.meaning}.`,
         'Os caminhos não são apenas linhas entre pontos; funcionam como operações de consciência, ligando qualidades que precisam conversar entre si.',
+      ],
+    },
+    {
+      title: 'Sepher Yetzirah',
+      paragraphs: [
+        `O Sepher Yetzirah apresenta as letras hebraicas como elementos formativos da criação. Aqui, ${path.letter} é lida como ponte entre ${path.fromName} e ${path.toName}.`,
+        `A atribuição a ${path.attribution} e ao arcano ${path.tarot} pertence à tradição hermética posterior, especialmente à leitura dos 22 caminhos da Árvore.`,
       ],
     },
     {

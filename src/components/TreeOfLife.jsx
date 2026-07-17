@@ -69,6 +69,7 @@ export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
                 <g
                   key={sephirah.id}
                   className={`tree-node tree-node-${sephirah.pillar} ${isActive ? 'active' : ''}`}
+                  style={{ '--tree-node-color': sephirah.color }}
                   role="button"
                   tabIndex={0}
                   aria-label={`Abrir ${content.title}`}

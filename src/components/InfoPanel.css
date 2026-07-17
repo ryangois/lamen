@@ -717,6 +717,86 @@
     color: var(--text-primary);
 }
 
+.tarot-gallery {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background:
+        radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.12), transparent 34%),
+        rgba(0, 0, 0, 0.32);
+    border: 1px solid rgba(212, 175, 55, 0.14);
+    border-radius: 18px;
+}
+
+.tarot-gallery header {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.tarot-gallery header span {
+    color: var(--accent-gold);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.tarot-gallery header h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+}
+
+.tarot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.tarot-card {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.65rem;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.tarot-card img,
+.tarot-placeholder {
+    width: 100%;
+    aspect-ratio: 2 / 3.25;
+    object-fit: cover;
+    background:
+        linear-gradient(145deg, rgba(212, 175, 55, 0.18), rgba(255, 255, 255, 0.035));
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 12px;
+}
+
+.tarot-placeholder {
+    display: grid;
+    place-items: center;
+    padding: 0.7rem;
+    color: var(--accent-gold);
+    text-align: center;
+    font: 900 0.72rem 'Inter', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tarot-card strong {
+    color: var(--text-primary);
+    font-size: 0.82rem;
+}
+
+.tarot-card small,
+.tarot-card p {
+    color: #aeb9c8;
+    font-size: 0.68rem;
+    line-height: 1.35;
+}
+
 /* ─── Mobile: Full Screen Panel ─── */
 @media (max-width: 768px) {
     .info-panel {
@@ -895,6 +975,25 @@
 
     .gematria-letters span {
         min-width: 38px;
+    }
+
+    .tarot-gallery {
+        padding: 0.85rem;
+        border-radius: 16px;
+    }
+
+    .tarot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tarot-card {
+        grid-template-columns: 88px minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .tarot-card img,
+    .tarot-placeholder {
+        grid-row: span 4;
     }
 
     .title {
