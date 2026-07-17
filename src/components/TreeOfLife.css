@@ -1,0 +1,294 @@
+.tree-shell {
+  width: min(1180px, 100%);
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(360px, 1fr);
+  gap: clamp(1rem, 3vw, 2.4rem);
+  align-items: center;
+  padding: clamp(5.4rem, 8vw, 6.3rem) clamp(1rem, 3vw, 2rem) 1.2rem;
+}
+
+.tree-intro {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(20, 23, 32, 0.84), rgba(12, 14, 21, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.tree-intro .eyebrow {
+  color: var(--accent-gold);
+  font: 900 0.72rem 'Inter', sans-serif;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.tree-intro h1 {
+  max-width: 8.8em;
+  color: var(--text-primary);
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 0.95;
+}
+
+.tree-intro p {
+  max-width: 36rem;
+  color: #c3ccda;
+  font-size: clamp(0.98rem, 1.8vw, 1.12rem);
+  line-height: 1.7;
+}
+
+.tree-stage {
+  min-height: 0;
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+  padding: clamp(0.7rem, 2vw, 1.2rem);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(212, 175, 55, 0.1), transparent 46%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.78), rgba(8, 10, 16, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 30px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.tree-svg {
+  width: min(100%, 620px);
+  height: min(76vh, 740px);
+  min-height: 520px;
+  overflow: visible;
+}
+
+.tree-pillars line {
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 1;
+  stroke-dasharray: 5 10;
+}
+
+.tree-path {
+  cursor: pointer;
+  outline: none;
+}
+
+.tree-path-hit {
+  stroke: transparent;
+  stroke-width: 24;
+}
+
+.tree-path-line {
+  stroke: rgba(212, 175, 55, 0.46);
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.18));
+  transition: stroke 160ms ease, stroke-width 160ms ease, filter 160ms ease;
+}
+
+.tree-path-label-bg {
+  fill: rgba(11, 13, 19, 0.92);
+  stroke: rgba(212, 175, 55, 0.4);
+  stroke-width: 1;
+  transition: fill 160ms ease, stroke 160ms ease;
+}
+
+.tree-path-label {
+  fill: #f1d77a;
+  font: 800 1rem 'Times New Roman', serif;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.tree-path:hover .tree-path-line,
+.tree-path:focus-visible .tree-path-line,
+.tree-path.active .tree-path-line {
+  stroke: #f4d36f;
+  stroke-width: 6;
+  filter: drop-shadow(0 0 14px rgba(244, 211, 111, 0.48));
+}
+
+.tree-path:hover .tree-path-label-bg,
+.tree-path:focus-visible .tree-path-label-bg,
+.tree-path.active .tree-path-label-bg {
+  fill: #d7b733;
+  stroke: rgba(255, 255, 255, 0.38);
+}
+
+.tree-path:hover .tree-path-label,
+.tree-path:focus-visible .tree-path-label,
+.tree-path.active .tree-path-label {
+  fill: #111318;
+}
+
+.tree-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.tree-node-aura {
+  fill: rgba(212, 175, 55, 0.08);
+  opacity: 0;
+  transition: opacity 160ms ease, transform 160ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.tree-node-disc {
+  fill:
+    color-mix(in srgb, var(--accent-gold) 22%, #10131b);
+  stroke: rgba(244, 211, 111, 0.62);
+  stroke-width: 2;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.38));
+  transition: fill 160ms ease, stroke 160ms ease, filter 160ms ease;
+}
+
+.tree-node-mercy .tree-node-disc {
+  fill: #142c23;
+}
+
+.tree-node-severity .tree-node-disc {
+  fill: #2b1a22;
+}
+
+.tree-node-middle .tree-node-disc {
+  fill: #20222a;
+}
+
+.tree-node-number,
+.tree-node-name {
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.tree-node-number {
+  fill: #f4d36f;
+  font: 900 1rem 'Inter', sans-serif;
+}
+
+.tree-node-name {
+  fill: #f3f6fb;
+  font: 800 0.56rem 'Inter', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tree-node:hover .tree-node-aura,
+.tree-node:focus-visible .tree-node-aura,
+.tree-node.active .tree-node-aura {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.tree-node:hover .tree-node-disc,
+.tree-node:focus-visible .tree-node-disc,
+.tree-node.active .tree-node-disc {
+  fill: #d7b733;
+  stroke: rgba(255, 255, 255, 0.5);
+  filter: drop-shadow(0 0 18px rgba(244, 211, 111, 0.42));
+}
+
+.tree-node:hover .tree-node-number,
+.tree-node:hover .tree-node-name,
+.tree-node:focus-visible .tree-node-number,
+.tree-node:focus-visible .tree-node-name,
+.tree-node.active .tree-node-number,
+.tree-node.active .tree-node-name {
+  fill: #111318;
+}
+
+.tree-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  color: #aeb9c8;
+  font: 750 0.72rem 'Inter', sans-serif;
+}
+
+.tree-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.legend-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+}
+
+.legend-dot.mercy {
+  background: #35b779;
+}
+
+.legend-dot.middle {
+  background: #d7b733;
+}
+
+.legend-dot.severity {
+  background: #d75a5a;
+}
+
+@media (max-width: 900px) {
+  .tree-shell {
+    grid-template-columns: 1fr;
+    align-content: start;
+    overflow-y: auto;
+  }
+
+  .tree-intro {
+    gap: 0.65rem;
+  }
+
+  .tree-intro h1 {
+    max-width: none;
+    font-size: clamp(2rem, 10vw, 3.1rem);
+  }
+
+  .tree-svg {
+    width: min(100%, 520px);
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 420 / 660;
+  }
+}
+
+@media (max-width: 768px) {
+  .tree-shell {
+    padding: calc(5.2rem + env(safe-area-inset-top, 0px)) 0.55rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.8rem;
+  }
+
+  .tree-intro,
+  .tree-stage {
+    border-radius: 22px;
+  }
+
+  .tree-stage {
+    padding: 0.45rem;
+  }
+
+  .tree-path-hit {
+    stroke-width: 30;
+  }
+
+  .tree-path-line {
+    stroke-width: 4.5;
+  }
+
+  .tree-path-label-bg {
+    r: 14px;
+  }
+
+  .tree-legend {
+    font-size: 0.66rem;
+  }
+}

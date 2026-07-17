@@ -5,13 +5,14 @@ import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
 const LamenList = lazy(() => import('./components/LamenList'));
+const TreeOfLife = lazy(() => import('./components/TreeOfLife'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
-  return savedView === 'list' ? 'list' : 'wheel';
+  return ['wheel', 'list', 'tree'].includes(savedView) ? savedView : 'wheel';
 }
 
 function getInitialSegmentId() {
@@ -116,7 +117,7 @@ function App() {
     <div className="app-container">
       <div className="ambient-glow"></div>
 
-      <header className="view-toolbar" aria-label="Modo de visualização">
+      <header className="view-toolbar" aria-label="Navegação principal">
         <div className="view-switcher" role="group" aria-label="Escolher visualização">
           <button
             type="button"
@@ -136,24 +137,34 @@ function App() {
             <span aria-hidden="true">☷</span>
             Lista
           </button>
+          <button
+            type="button"
+            className={`view-button ${view === 'tree' ? 'active' : ''}`}
+            aria-pressed={view === 'tree'}
+            onClick={() => handleViewChange('tree')}
+          >
+            <span aria-hidden="true">✦</span>
+            Árvore
+          </button>
+          <button
+            type="button"
+            className="view-button"
+            aria-label="Abrir calculadora Meu Anjo"
+            onClick={() => setShowAngelFinder(true)}
+          >
+            <span aria-hidden="true">✧</span>
+            Meu anjo
+          </button>
+          <button
+            type="button"
+            className="view-button"
+            aria-label="Abrir favoritos e histórico"
+            onClick={() => setShowSavedItems(true)}
+          >
+            <span aria-hidden="true">★</span>
+            Salvos
+          </button>
         </div>
-
-        <button
-          type="button"
-          className="finder-launch"
-          aria-label="Abrir calculadora Meu Anjo"
-          onClick={() => setShowAngelFinder(true)}
-        >
-          ✦ Meu anjo
-        </button>
-        <button
-          type="button"
-          className="saved-launch"
-          aria-label="Abrir favoritos e histórico"
-          onClick={() => setShowSavedItems(true)}
-        >
-          ★ Salvos
-        </button>
       </header>
 
       <button
@@ -165,14 +176,21 @@ function App() {
         <span aria-hidden="true">?</span>
       </button>
 
-      <main className={`main-content ${view === 'list' ? 'list-mode' : ''}`}>
+      <main className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''}`}>
         {view === 'wheel' ? (
           <div className="map-container">
             <LamenMap onSegmentClick={handleSegmentClick} activeSegmentId={activeSegmentId} />
           </div>
-        ) : (
+        ) : view === 'list' ? (
           <Suspense fallback={<div className="view-loading">Carregando catálogo…</div>}>
             <LamenList
+              onSegmentClick={handleSegmentClick}
+              activeSegmentId={activeSegmentId}
+            />
+          </Suspense>
+        ) : (
+          <Suspense fallback={<div className="view-loading">Carregando Árvore…</div>}>
+            <TreeOfLife
               onSegmentClick={handleSegmentClick}
               activeSegmentId={activeSegmentId}
             />

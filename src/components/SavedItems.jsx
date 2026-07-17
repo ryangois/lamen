@@ -1,9 +1,25 @@
 import { flatItems } from '../data/catalog';
+import { getContent } from '../data/content';
+import { treePaths, treeSephiroth } from '../data/treeOfLife';
 import './SavedItems.css';
 
 function itemsFromIds(ids) {
   return ids
-    .map((id) => flatItems.find((item) => item.id === id))
+    .map((id) => {
+      const catalogItem = flatItems.find((item) => item.id === id);
+      if (catalogItem) return catalogItem;
+
+      const sephirah = treeSephiroth.find((item) => item.id === id);
+      const path = treePaths.find((item) => item.id === id);
+      if (!sephirah && !path) return null;
+
+      return {
+        id,
+        color: sephirah ? '#d4af37' : '#9ca8b9',
+        categoryName: sephirah ? 'Árvore · Sephirah' : 'Árvore · Caminho',
+        content: getContent(id),
+      };
+    })
     .filter(Boolean);
 }
 

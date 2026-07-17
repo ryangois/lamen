@@ -5,6 +5,7 @@ import {
   scriptureSource,
   transliterateHebrew,
 } from './scripture.js';
+import { treePathProfiles } from './treeOfLife.js';
 
 const content = {};
 
@@ -287,6 +288,78 @@ sphereProfiles.forEach((sphere, index) => add(sphere.id, {
     },
   ],
   sources: [sources.agrippa, sources.dionysius],
+}));
+
+add('arc_sandalphon', {
+  title: 'Sandalphon · Malkuth',
+  subtitle: '10ª esfera — Reino',
+  description: 'Malkuth é o Reino, a esfera da manifestação concreta. Na síntese hermética, Sandalphon é associado ao limiar entre o mundo espiritual e a experiência encarnada.',
+  highlights: [
+    'Virtude central: presença, aterramento e realização concreta.',
+    'Desequilíbrio simbólico: inércia, materialismo estreito ou desconexão do sentido.',
+  ],
+  associations: {
+    Sephirah: 'Malkuth (מלכות)',
+    Número: 10,
+    Significado: 'Reino',
+    Esfera: 'Terra / mundo manifestado',
+    Arcanjo: 'Sandalphon',
+    Coro: 'Almas, elementos e presença angélica próxima da matéria',
+    'Nome divino': 'Adonai ha-Aretz',
+    Cor: 'Citrino, oliva, castanho e preto',
+    'Anjos do Shem': 'síntese e aterramento das 72 forças',
+  },
+  sections: [
+    {
+      title: 'Função na Árvore da Vida',
+      paragraphs: [
+        'Malkuth recebe as emanações das demais esferas e as apresenta como corpo, natureza, tempo, circunstância e mundo vivido.',
+        'Na prática contemplativa, é a esfera que pergunta como uma ideia, virtude ou visão se torna gesto, cuidado e presença real.',
+      ],
+    },
+    {
+      title: 'Arcanjo regente',
+      paragraphs: [
+        'Sandalphon aparece em tradições judaicas e herméticas como figura ligada à oração, à terra e à passagem entre mundos. Em alguns esquemas, Uriel também é relacionado a Malkuth.',
+      ],
+    },
+  ],
+  sources: [sources.agrippa, sources.dionysius],
+});
+
+treePathProfiles.forEach((path) => add(path.id, {
+  title: `${path.number}. ${path.letter} · ${path.fromName}–${path.toName}`,
+  subtitle: `${path.hebrew} · ${path.attribution} · ${path.tarot}`,
+  description: `O caminho de ${path.letter} liga ${path.fromName} a ${path.toName}. Na Cabala hermética, é lido como uma via de ${path.meaning}.`,
+  highlights: [
+    `Ligação: ${path.fromName} ↔ ${path.toName}.`,
+    `Atribuição: ${path.attribution}; arcano: ${path.tarot}.`,
+  ],
+  associations: {
+    Caminho: path.number,
+    Letra: `${path.letter} (${path.hebrew})`,
+    'De': path.fromName,
+    'Para': path.toName,
+    Atribuição: path.attribution,
+    Tarot: path.tarot,
+    Função: path.meaning,
+  },
+  sections: [
+    {
+      title: 'Leitura do caminho',
+      paragraphs: [
+        `Entre ${path.fromName} e ${path.toName}, ${path.letter} descreve uma passagem simbólica: ${path.meaning}.`,
+        'Os caminhos não são apenas linhas entre pontos; funcionam como operações de consciência, ligando qualidades que precisam conversar entre si.',
+      ],
+    },
+    {
+      title: 'Uso contemplativo',
+      paragraphs: [
+        `Meditar este caminho é observar como ${path.attribution.toLowerCase()} e ${path.tarot} podem traduzir a relação entre as duas esferas.`,
+      ],
+    },
+  ],
+  sources: [sources.agrippa],
 }));
 
 const planetProfiles = [

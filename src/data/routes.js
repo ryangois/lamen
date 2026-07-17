@@ -1,4 +1,5 @@
 import { ringStructure } from './rings';
+import { treePaths, treeSephiroth } from './treeOfLife';
 
 const ZODIAC_NAMES = {
   aries: 'Áries',
@@ -29,7 +30,7 @@ function slugify(value) {
     .replace(/^-|-$/g, '');
 }
 
-const routeItems = ringStructure.flatMap((ring) => ring.segments.map((segment) => {
+const ringRouteItems = ringStructure.flatMap((ring) => ring.segments.map((segment) => {
   const title = segment.subLabel
     || ZODIAC_NAMES[segment.id]
     || segment.label
@@ -40,6 +41,19 @@ const routeItems = ringStructure.flatMap((ring) => ring.segments.map((segment) =
     slug: slugify(title),
   };
 }));
+
+const treeRouteItems = [
+  ...treeSephiroth.map((item) => ({
+    id: item.id,
+    slug: slugify(item.name),
+  })),
+  ...treePaths.map((item) => ({
+    id: item.id,
+    slug: slugify(`${item.number} ${item.letter}`),
+  })),
+];
+
+const routeItems = [...ringRouteItems, ...treeRouteItems];
 
 export function findRouteItem(idOrSlug) {
   if (!idOrSlug) return null;

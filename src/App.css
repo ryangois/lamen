@@ -62,8 +62,6 @@
   outline-offset: 2px;
 }
 
-.finder-launch,
-.saved-launch,
 .help-launch {
   min-height: 42px;
   padding: 0 1rem;
@@ -77,16 +75,6 @@
   white-space: nowrap;
 }
 
-.finder-launch {
-  color: #111318;
-  background: var(--accent-gold);
-  border-color: transparent;
-}
-
-.finder-launch:hover,
-.finder-launch:focus-visible,
-.saved-launch:hover,
-.saved-launch:focus-visible,
 .help-launch:hover,
 .help-launch:focus-visible {
   filter: brightness(1.06);
@@ -151,6 +139,11 @@
   overflow: hidden;
 }
 
+.main-content.tree-mode {
+  padding: 0;
+  overflow: hidden;
+}
+
 .view-loading {
   display: grid;
   height: 100%;
@@ -204,6 +197,9 @@
   .main-content.list-mode {
     padding: calc(4.75rem + env(safe-area-inset-top, 0px)) 0 0;
   }
+  .main-content.tree-mode {
+    padding: 0;
+  }
   .view-toolbar {
     top: calc(0.65rem + env(safe-area-inset-top, 0px));
     left: 0;
@@ -224,12 +220,10 @@
     flex: 0 0 auto;
   }
   .view-button {
-    min-width: 82px;
+    min-width: 84px;
     min-height: 36px;
     padding: 0 0.8rem;
   }
-  .finder-launch,
-  .saved-launch,
   .help-launch {
     min-height: 38px;
     padding: 0 0.65rem;
