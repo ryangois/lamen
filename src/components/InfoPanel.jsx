@@ -43,6 +43,37 @@ function getNeighborSegments(activeSegmentId) {
     };
 }
 
+const BREADCRUMB_CATEGORIES = {
+    Elemento: 'Elementos',
+    Planeta: 'Planetas',
+    Signo: 'Signos',
+    Decanato: 'Decanatos',
+    Anjo: '72 anjos',
+    Coro: 'Coros angélicos',
+    Sephirah: 'Sephiroth',
+    Caminho: 'Caminhos',
+    Daath: 'Não-esfera',
+};
+
+function getBreadcrumbs(activeSegmentId, content) {
+    const category = content?.categoryLabel || 'Símbolo';
+    const isTreeEntry = activeSegmentId?.startsWith('path_')
+        || activeSegmentId?.startsWith('arc_');
+    const parentCategory = category === 'Anjo'
+        ? content?.relations?.find((item) => item.category === 'Signo')
+        : category === 'Decanato'
+            ? content?.relations?.find((item) => item.category === 'Signo')
+            : null;
+
+    return [
+        { label: 'Enciclopédia' },
+        { label: isTreeEntry ? 'Árvore da Vida' : 'Lâmen' },
+        parentCategory && { label: parentCategory.label, id: parentCategory.id },
+        { label: BREADCRUMB_CATEGORIES[category] || `${category}s` },
+        { label: content?.title, current: true },
+    ].filter(Boolean);
+}
+
 function CloseIcon() {
     return (
         <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -209,6 +240,10 @@ export default function InfoPanel({
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
     const neighbors = useMemo(() => getNeighborSegments(activeSegmentId), [activeSegmentId]);
+    const breadcrumbs = useMemo(
+        () => getBreadcrumbs(activeSegmentId, content),
+        [activeSegmentId, content],
+    );
     const neighborContent = useMemo(() => ({
         previous: neighbors.previous ? getContent(neighbors.previous.id) : null,
         next: neighbors.next ? getContent(neighbors.next.id) : null,
@@ -276,6 +311,26 @@ export default function InfoPanel({
                     )}
 
                     <div className="info-body">
+                        <nav className="panel-breadcrumbs" aria-label="Localização na enciclopédia">
+                            <ol>
+                                {breadcrumbs.map((crumb, index) => (
+                                    <li key={`${crumb.label}-${index}`}>
+                                        {crumb.id ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => onNavigateSegment?.(crumb.id)}
+                                            >
+                                                {crumb.label}
+                                            </button>
+                                        ) : (
+                                            <span aria-current={crumb.current ? 'page' : undefined}>
+                                                {crumb.label}
+                                            </span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ol>
+                        </nav>
                         <div className="panel-title-row">
                             <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
                             <button
