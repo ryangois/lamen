@@ -9,7 +9,7 @@ export const glossaryEntries = [
     term: 'Sefirot belimah',
     aliases: ['sefirot belimah', 'sefirot de nada'],
     category: 'Sefer Yetzirah',
-    definition: 'Expressão do Sefer Yetzirah para as dez sefirot “sem coisa” ou “de nada”, anteriores às correspondências herméticas modernas.',
+    definition: 'Expressão hebraica do Sefer Yetzirah para as dez Sephiroth “sem coisa” ou “de nada”, anterior às correspondências herméticas modernas.',
   },
   {
     term: 'Quinário',

@@ -20,28 +20,70 @@ const treeItems = [
     categoryName: 'Árvore · Caminho',
     color: '#d4af37',
   })),
-].map((item) => {
-  const content = getContent(item.id);
+].map((item) => ({ ...item, content: getContent(item.id) }));
+
+const baseSearchItems = [
+  ...flatItems,
+  ...treeItems.filter((treeItem) => !flatItems.some((item) => item.id === treeItem.id)),
+];
+
+const SEARCH_ALIASES = [
+  ['sephirah', 'sephiroth', 'sefirah', 'sefirot', 'sefira', 'esfera', 'emanacao'],
+  ['anjo', 'anjos', 'angel', 'shem', 'nome angelico'],
+  ['salmo', 'salmos', 'psalm', 'verso', 'versiculo'],
+  ['tarot', 'arcano', 'arcanos', 'carta', 'rider waite', 'marselha', 'thoth'],
+  ['gematria', 'valor numerico', 'numero hebraico'],
+  ['hebraico', 'hebrew', 'letra hebraica', 'transliteracao'],
+  ['arvore', 'arvore da vida', 'cabala', 'kabbalah', 'qabalah'],
+  ['caminho', 'caminhos', 'path', 'sefer yetzirah'],
+];
+
+const STARTER_SUGGESTIONS = [
+  'Salmos em hebraico',
+  'Gematria',
+  'Tarot de Marselha',
+  'Tarot Thoth',
+  'Sephiroth',
+  'Anjos de Áries',
+  'Planetas',
+  'Sefer Yetzirah',
+];
+
+function flattenSearchValue(value, key = '') {
+  if (value == null || ['image', 'url', 'sourceUrl'].includes(key)) return [];
+  if (Array.isArray(value)) return value.flatMap((item) => flattenSearchValue(item, key));
+  if (typeof value === 'object') {
+    return Object.entries(value).flatMap(([childKey, childValue]) => [
+      childKey,
+      ...flattenSearchValue(childValue, childKey),
+    ]);
+  }
+  return typeof value === 'string' || typeof value === 'number' ? [String(value)] : [];
+}
+
+function aliasesFor(text) {
+  const normalizedText = normalize(text);
+  return SEARCH_ALIASES
+    .filter((group) => group.some((term) => normalizedText.includes(normalize(term))))
+    .flat();
+}
+
+const searchItems = baseSearchItems.map((item) => {
+  const contentTerms = flattenSearchValue(item.content);
   return {
     ...item,
-    content,
     searchable: normalize([
-      content.title,
-      content.subtitle,
-      content.description,
-      ...Object.keys(content.associations || {}),
-      ...Object.values(content.associations || {}),
-      ...(content.highlights || []),
-      ...(content.history || []).flatMap((section) => section.paragraphs || []),
-      ...(content.variations || []).flatMap((variation) => [variation.name, variation.description]),
+      item.categoryName,
+      ...contentTerms,
+      ...aliasesFor(`${item.categoryName} ${contentTerms.join(' ')}`),
     ].join(' ')),
   };
 });
 
-const searchItems = [
-  ...flatItems,
-  ...treeItems.filter((treeItem) => !flatItems.some((item) => item.id === treeItem.id)),
-];
+function queryVariants(query) {
+  const matchingGroup = SEARCH_ALIASES.find((group) => group.some((term) => normalize(term) === query));
+  return matchingGroup ? matchingGroup.map(normalize) : [query];
+}
 
 function scoreItem(item, query) {
   const title = normalize(item.content.title);
@@ -57,11 +99,25 @@ export default function GlobalSearch({ onClose, onSelect }) {
   const normalizedQuery = normalize(query.trim());
   const results = useMemo(() => {
     if (!normalizedQuery) return searchItems.slice(0, 12);
+    const terms = normalizedQuery.split(/\s+/).filter(Boolean);
     return searchItems
-      .filter((item) => item.searchable.includes(normalizedQuery))
+      .filter((item) => terms.every((term) => (
+        queryVariants(term).some((variant) => item.searchable.includes(variant))
+      )))
       .sort((a, b) => scoreItem(a, normalizedQuery) - scoreItem(b, normalizedQuery))
       .slice(0, 40);
   }, [normalizedQuery]);
+  const suggestions = useMemo(() => {
+    if (!normalizedQuery) return STARTER_SUGGESTIONS.slice(0, 6);
+    const matching = STARTER_SUGGESTIONS.filter((suggestion) => (
+      normalize(suggestion).includes(normalizedQuery)
+      || aliasesFor(suggestion).some((alias) => normalize(alias).includes(normalizedQuery))
+    ));
+    const resultSuggestions = results.slice(0, 4).map((item) => item.content.title);
+    return [...new Set([...matching, ...resultSuggestions])]
+      .filter((suggestion) => normalize(suggestion) !== normalizedQuery)
+      .slice(0, 6);
+  }, [normalizedQuery, results]);
 
   const groupedResults = Object.groupBy
     ? Object.groupBy(results, (item) => item.categoryName)
@@ -105,6 +161,15 @@ export default function GlobalSearch({ onClose, onSelect }) {
           <span>{normalizedQuery ? `${results.length} resultados` : 'Sugestões para começar'}</span>
           <small>Anjos, Árvore, Tarot, signos, planetas e textos</small>
         </div>
+        {suggestions.length > 0 && (
+          <div className="global-search-suggestions" aria-label="Sugestões de busca">
+            {suggestions.map((suggestion) => (
+              <button type="button" onClick={() => setQuery(suggestion)} key={suggestion}>
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="global-search-results">
           {results.length > 0 ? Object.entries(groupedResults).map(([group, items]) => (

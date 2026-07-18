@@ -245,6 +245,8 @@ export default function InfoPanel({
     const [glossaryEntry, setGlossaryEntry] = useState(null);
     const [showCollectionPicker, setShowCollectionPicker] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
+    const [focusMode, setFocusMode] = useState(false);
+    const [saveFeedback, setSaveFeedback] = useState('');
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     useDialogFocus(panelRef, Boolean(activeSegmentId));
     const icon = ICONS[activeSegmentId] || '✦';
@@ -325,12 +327,29 @@ export default function InfoPanel({
         window.requestAnimationFrame(() => document.getElementById(`tab-${nextTab.id}`)?.focus());
     };
 
+    const handleCollectionChange = (collection, checked) => {
+        onToggleCollection?.(collection.id);
+        setShowCollectionPicker(false);
+        setSaveFeedback(
+            checked
+                ? `Removido da coleção ${collection.name}.`
+                : `Adicionado à coleção ${collection.name}.`,
+        );
+        window.setTimeout(() => setSaveFeedback(''), 2400);
+    };
+
+    const toggleFocusMode = () => {
+        setFocusMode((current) => !current);
+        setTabState({ segmentId: activeSegmentId, tab: 'summary' });
+        setShowCollectionPicker(false);
+    };
+
     if (!activeSegmentId) return null;
 
     return (
         <aside
             ref={panelRef}
-            className={`info-panel glass-panel ${activeSegmentId ? 'open' : ''}`}
+            className={`info-panel glass-panel ${activeSegmentId ? 'open' : ''} ${focusMode ? 'focus-mode' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="info-panel-title"
@@ -420,7 +439,7 @@ export default function InfoPanel({
                                                 <input
                                                     type="checkbox"
                                                     checked={checked}
-                                                    onChange={() => onToggleCollection?.(collection.id)}
+                                                    onChange={() => handleCollectionChange(collection, checked)}
                                                 />
                                                 <span>{collection.name}</span>
                                                 <small>{checked ? 'Salvo' : 'Adicionar'}</small>
@@ -431,21 +450,16 @@ export default function InfoPanel({
                             )}
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
+                        <button
+                            type="button"
+                            className={`focus-mode-toggle ${focusMode ? 'active' : ''}`}
+                            aria-pressed={focusMode}
+                            onClick={toggleFocusMode}
+                        >
+                            <span aria-hidden="true">{focusMode ? '◇' : '◉'}</span>
+                            {focusMode ? 'Sair do estudo focado' : 'Estudo focado'}
+                        </button>
                         <MiniContextMap activeId={activeSegmentId} title={content.title} />
-                        {content.evidence?.length > 0 && (
-                            <div className="evidence-strip" aria-label="Classificação das informações">
-                                {content.evidence.map((item) => (
-                                    <span
-                                        className={`evidence-badge ${item.level}`}
-                                        title={item.description}
-                                        key={`${item.level}-${item.label}`}
-                                    >
-                                        <i aria-hidden="true"></i>
-                                        {item.label}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
                         {content.pronunciation && (
                             <article className="pronunciation-card">
                                 <span>Guia de leitura</span>
@@ -962,6 +976,7 @@ export default function InfoPanel({
             {showShareCard && content && (
                 <ShareCard content={content} onClose={() => setShowShareCard(false)} />
             )}
+            {saveFeedback && <div className="save-feedback" role="status">{saveFeedback}</div>}
         </aside>
     );
 }

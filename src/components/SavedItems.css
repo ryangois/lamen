@@ -140,6 +140,29 @@
   font: 800 0.65rem 'Inter', sans-serif;
 }
 
+.collection-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.collection-heading-actions button {
+  min-height: 34px;
+  padding: 0 0.68rem;
+  color: #aeb9c8;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 800 0.62rem 'Inter', sans-serif;
+}
+
+.collection-heading-actions button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
 .saved-group-heading > button:hover,
 .saved-group-heading > button:focus-visible {
   color: var(--text-primary);
@@ -281,6 +304,68 @@
   font-style: normal;
 }
 
+.saved-data-tools {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 0 0, rgba(212, 175, 55, 0.13), transparent 42%),
+    rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px;
+}
+
+.saved-data-tools > div:first-child {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.saved-data-tools span {
+  color: var(--accent-gold);
+  font: 900 0.58rem 'Inter', sans-serif;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.saved-data-tools h3 {
+  font-size: 1.15rem;
+}
+
+.saved-data-tools p {
+  color: #aeb9c8;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.saved-data-tools > div:nth-child(2) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.saved-data-tools button {
+  min-height: 43px;
+  padding: 0 0.7rem;
+  color: #111318;
+  background: linear-gradient(135deg, #f4d36f, #b98518);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font: 850 0.68rem 'Inter', sans-serif;
+}
+
+.saved-data-tools input {
+  display: none;
+}
+
+.saved-data-tools .saved-data-feedback {
+  padding: 0.7rem;
+  color: #dbe3ee;
+  background: rgba(255, 255, 255, 0.055);
+  border-radius: 12px;
+}
+
 @media (max-width: 560px) {
   .saved-panel {
     width: 100vw;
@@ -306,5 +391,13 @@
   .saved-filters .saved-search,
   .saved-filters > button {
     grid-column: 1;
+  }
+
+  .collection-manager {
+    padding: 0.85rem;
+  }
+
+  .saved-data-tools > div:nth-child(2) {
+    grid-template-columns: 1fr;
   }
 }

@@ -3,6 +3,8 @@ import { flatItems } from '../data/catalog';
 import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import { useDialogFocus } from '../hooks/useDialogFocus';
+import { shareCollection } from '../utils/shareCollection';
+import { downloadUserDataBackup, importUserDataBackup } from '../utils/userData';
 import './SavedItems.css';
 
 function itemsFromEntries(entries) {
@@ -103,16 +105,20 @@ export default function SavedItems({
   onCreateCollection,
   onDeleteCollection,
   onClearHistory,
+  onImportedData,
   onClose,
   onSelect,
 }) {
   const panelRef = useRef(null);
+  const importInputRef = useRef(null);
   useDialogFocus(panelRef);
   const [activeCollectionId, setActiveCollectionId] = useState(collections[0]?.id || 'favorites');
   const [newCollectionName, setNewCollectionName] = useState('');
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [order, setOrder] = useState('name');
+  const [dataFeedback, setDataFeedback] = useState('');
+  const [sharing, setSharing] = useState(false);
   const activeCollection = collections.find((collection) => collection.id === activeCollectionId)
     || collections[0];
   const allFavorites = itemsFromEntries(activeCollection?.itemIds || []);
@@ -133,6 +139,31 @@ export default function SavedItems({
   const handleDeleteCollection = () => {
     onDeleteCollection?.(activeCollection.id);
     setActiveCollectionId('favorites');
+  };
+
+  const handleImport = async (event) => {
+    const [file] = event.target.files;
+    event.target.value = '';
+    if (!file) return;
+    try {
+      const restored = await importUserDataBackup(file);
+      onImportedData?.(restored);
+      setActiveCollectionId('favorites');
+      setDataFeedback('Backup restaurado com favoritos, coleções, histórico e notas.');
+    } catch (error) {
+      setDataFeedback(error instanceof SyntaxError ? 'O arquivo não contém um backup válido.' : error.message);
+    }
+  };
+
+  const handleShareCollection = async () => {
+    setSharing(true);
+    try {
+      setDataFeedback(await shareCollection(activeCollection.name, allFavorites));
+    } catch (error) {
+      if (error?.name !== 'AbortError') setDataFeedback(error.message);
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
@@ -185,9 +216,14 @@ export default function SavedItems({
         <section className="saved-group collection-manager">
           <div className="saved-group-heading">
             <h3 className="brand-font">Coleções</h3>
-            {activeCollection?.id !== 'favorites' && (
-              <button type="button" onClick={handleDeleteCollection}>Excluir coleção</button>
-            )}
+            <div className="collection-heading-actions">
+              <button type="button" onClick={handleShareCollection} disabled={sharing || !allFavorites.length}>
+                {sharing ? 'Criando…' : 'Compartilhar'}
+              </button>
+              {activeCollection?.id !== 'favorites' && (
+                <button type="button" onClick={handleDeleteCollection}>Excluir</button>
+              )}
+            </div>
           </div>
           <div className="collection-tabs" role="tablist" aria-label="Coleções de favoritos">
             {collections.map((collection) => (
@@ -232,6 +268,25 @@ export default function SavedItems({
           onSelect={onSelect}
           onClear={onClearHistory}
         />
+        <section className="saved-data-tools" aria-labelledby="saved-data-title">
+          <div>
+            <span>Seus dados</span>
+            <h3 className="brand-font" id="saved-data-title">Backup e restauração</h3>
+            <p>Leve favoritos, coleções, histórico, progresso de estudo e notas para outro navegador.</p>
+          </div>
+          <div>
+            <button type="button" onClick={downloadUserDataBackup}>Exportar backup</button>
+            <button type="button" onClick={() => importInputRef.current?.click()}>Importar backup</button>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept="application/json,.json"
+              onChange={handleImport}
+              aria-label="Selecionar arquivo de backup do Lâmen"
+            />
+          </div>
+          {dataFeedback && <p className="saved-data-feedback" role="status">{dataFeedback}</p>}
+        </section>
       </aside>
     </div>
   );

@@ -26,7 +26,7 @@ function getInitialSegmentId() {
   return item?.id || null;
 }
 
-function writeSegmentToUrl(segmentId) {
+function writeSegmentToUrl(segmentId, method = 'replaceState') {
   const url = new URL(window.location.href);
   const item = findRouteItem(segmentId);
 
@@ -37,8 +37,9 @@ function writeSegmentToUrl(segmentId) {
     url.searchParams.delete('item');
     url.pathname = '/';
   }
+  url.searchParams.delete('acao');
 
-  window.history.replaceState({}, '', url);
+  window.history[method]({ lamenEntry: Boolean(item) }, '', url);
 }
 
 function readStoredIds(key) {
@@ -100,6 +101,7 @@ function App() {
   const [comparisonId, setComparisonId] = useState(null);
   const [showStudy, setShowStudy] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
   const [favoriteCollections, setFavoriteCollections] = useState(readStoredCollections);
   const [recentEntries, setRecentEntries] = useState(readStoredRecent);
   const favoriteIds = useMemo(() => (
@@ -109,10 +111,6 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
   }, [view]);
-
-  useEffect(() => {
-    writeSegmentToUrl(activeSegmentId);
-  }, [activeSegmentId]);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-favorites', JSON.stringify(favoriteIds));
@@ -136,6 +134,20 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const handleInstallPrompt = (event) => {
+      event.preventDefault();
+      setInstallPrompt(event);
+    };
+    const handleInstalled = () => setInstallPrompt(null);
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    window.addEventListener('appinstalled', handleInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      window.removeEventListener('appinstalled', handleInstalled);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
 
@@ -146,7 +158,13 @@ function App() {
       else if (showHelp) setShowHelp(false);
       else if (showSavedItems) setShowSavedItems(false);
       else if (showAngelFinder) setShowAngelFinder(false);
-      else if (activeSegmentId) setActiveSegmentId(null);
+      else if (activeSegmentId) {
+        if (window.history.state?.lamenEntry) window.history.back();
+        else {
+          setActiveSegmentId(null);
+          writeSegmentToUrl(null);
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -167,20 +185,39 @@ function App() {
   }, []);
 
   const handleSegmentClick = useCallback((id) => {
+    if (id !== activeSegmentId) writeSegmentToUrl(id, 'pushState');
     setActiveSegmentId(id);
     setRecentEntries((current) => [
       { id, viewedAt: Date.now() },
       ...current.filter((entry) => entry.id !== id),
     ].slice(0, 20));
-  }, []);
+  }, [activeSegmentId]);
 
   const handleClosePanel = useCallback(() => {
-    setActiveSegmentId(null);
+    if (window.history.state?.lamenEntry) {
+      window.history.back();
+    } else {
+      setActiveSegmentId(null);
+      writeSegmentToUrl(null);
+    }
   }, []);
 
   const handleViewChange = useCallback((nextView) => {
     setView(nextView);
     setActiveSegmentId(null);
+    writeSegmentToUrl(null);
+  }, []);
+
+  const handleInstallApp = useCallback(async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
+  }, [installPrompt]);
+
+  const handleImportedData = useCallback(({ collections, recentEntries: importedRecent }) => {
+    setFavoriteCollections(collections);
+    setRecentEntries(importedRecent);
   }, []);
 
   const toggleCollectionItem = useCallback((collectionId, itemId) => {
@@ -302,8 +339,11 @@ function App() {
         onClose={() => setShowMobileMenu(false)}
         onViewChange={handleViewChange}
         onSearch={() => setShowSearch(true)}
+        onStudy={() => setShowStudy(true)}
         onAngelFinder={() => setShowAngelFinder(true)}
         onSaved={() => setShowSavedItems(true)}
+        canInstall={Boolean(installPrompt)}
+        onInstall={handleInstallApp}
       />
 
       <button
@@ -375,6 +415,7 @@ function App() {
             recentEntries={recentEntries}
             onCreateCollection={createFavoriteCollection}
             onDeleteCollection={deleteFavoriteCollection}
+            onImportedData={handleImportedData}
             onClearHistory={() => setRecentEntries([])}
             onClose={() => setShowSavedItems(false)}
             onSelect={(id) => {

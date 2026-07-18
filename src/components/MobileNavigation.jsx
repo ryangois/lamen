@@ -13,6 +13,8 @@ function MenuIcon({ name }) {
     oracle: <><circle cx="12" cy="12" r="7.5" /><path d="M12 2.5V6m0 12v3.5M2.5 12H6m12 0h3.5M7 7l2 2m6 6 2 2m0-10-2 2m-6 6-2 2" /></>,
     angel: <><path d="M12 5.5c2-3 5.5-2.5 6.5.5.9 2.7-1 5.7-6.5 8.5C6.5 11.7 4.6 8.7 5.5 6 6.5 3 10 2.5 12 5.5Z" /><path d="M9.5 17.5h5M12 14.5v5" /></>,
     saved: <path d="m12 3.8 2.5 5 5.5.8-4 3.9.95 5.5L12 16.4 7.05 19 8 13.5 4 9.6l5.5-.8L12 3.8Z" />,
+    study: <><path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12H7.5A2.5 2.5 0 0 1 5 16.5v-12Z" /><path d="M8 8h7M8 11.5h7M7.5 19A2.5 2.5 0 0 1 5 16.5" /></>,
+    install: <><path d="M12 3v12m-4-4 4 4 4-4" /><path d="M5 18.5h14" /></>,
     chevron: <path d="m8.5 10 3.5 3.5 3.5-3.5" />,
   };
 
@@ -38,8 +40,11 @@ export default function MobileNavigation({
   onClose,
   onViewChange,
   onSearch,
+  onStudy,
   onAngelFinder,
   onSaved,
+  canInstall,
+  onInstall,
 }) {
   const drawerRef = useRef(null);
   const [lamenExpanded, setLamenExpanded] = useState(['wheel', 'list'].includes(view));
@@ -172,11 +177,21 @@ export default function MobileNavigation({
                 <span className="mobile-item-icon"><MenuIcon name="angel" /></span>
                 <span><strong>Meu anjo</strong><small>Descobrir por signo e grau</small></span>
               </button>
+              <button type="button" onClick={() => runAndClose(onStudy)}>
+                <span className="mobile-item-icon"><MenuIcon name="study" /></span>
+                <span><strong>Estudo</strong><small>Trilha guiada em sete módulos</small></span>
+              </button>
               <button type="button" onClick={() => runAndClose(onSaved)}>
                 <span className="mobile-item-icon"><MenuIcon name="saved" /></span>
                 <span><strong>Salvos</strong><small>Coleções e histórico</small></span>
                 {savedCount > 0 && <b className="mobile-saved-count">{savedCount}</b>}
               </button>
+              {canInstall && (
+                <button type="button" className="mobile-install-item" onClick={() => runAndClose(onInstall)}>
+                  <span className="mobile-item-icon"><MenuIcon name="install" /></span>
+                  <span><strong>Instalar Lâmen</strong><small>Usar como aplicativo neste dispositivo</small></span>
+                </button>
+              )}
             </nav>
           </aside>
         </div>

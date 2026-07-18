@@ -35,7 +35,7 @@ const sources = {
     url: 'https://www.esotericarchives.com/agrippa/agrippa2.htm',
   },
   seferYetzirah: {
-    label: 'Sefer Yetzirah — texto hebraico, tradução e notas sobre as 10 Sefirot e 22 letras',
+    label: 'Sefer Yetzirah — texto hebraico, tradução e notas sobre as dez Sephiroth e 22 letras',
     url: 'https://www.sefaria.org/Sefer_Yetzirah.1-6',
   },
   thirtyTwoPaths: {
@@ -72,7 +72,7 @@ const sources = {
   },
 };
 
-const traditionNote = 'As correspondências abaixo pertencem a sistemas históricos de astrologia, Cabala hermética e magia cerimonial. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
+const traditionNote = 'Padrão editorial: “Sephirah” é usado no singular e “Sephiroth” no plural; Sefirah/Sefirot são preservados quando a fonte ou a transliteração exigir. O tríplice hebraico dos anjos é distinguido dos nomes terminados em -el/-iah e das regências zodiacais, que pertencem a recepções cabalísticas cristãs e herméticas posteriores. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
 
 const treeSephirahDetails = {
   arc_metatron: ['Brilho branco; em escalas herméticas, branco puro e iridescência', 'Um antigo rei coroado visto de perfil', 'União com a fonte e percepção da unidade', 'Realização da Grande Obra', 'não se atribui vício direto; o risco simbólico é inflação espiritual', 'No Sefer Yetzirah, a primeira emanação é contemplada como sopro/espírito do Deus vivo, anterior à diferenciação plena.', 'כתר expressa coroa, culminação e princípio; sua soma é lida como síntese elevada no topo da Árvore.'],
@@ -324,43 +324,18 @@ const thothTarotAccents = {
   Shin: '#dd4f3c', Tav: '#776b9c',
 };
 
-const marseilleDodalImages = {
-  Fool: '/tarot/marseille/fool.webp',
-  '01': '/tarot/marseille/01.webp',
-  '02': '/tarot/marseille/02.webp',
-  '03': '/tarot/marseille/03.webp',
-  '04': '/tarot/marseille/04.webp',
-  '05': 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Jean_Dodal_Tarot_trump_05.jpg',
-  '06': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Jean_Dodal_Tarot_trump_06.jpg',
-  '07': 'https://upload.wikimedia.org/wikipedia/commons/b/be/Jean_Dodal_Tarot_trump_07.jpg',
-  '08': 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Jean_Dodal_Tarot_trump_08.jpg',
-  '09': 'https://upload.wikimedia.org/wikipedia/commons/6/69/Jean_Dodal_Tarot_trump_09.jpg',
-  '10': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Jean_Dodal_Tarot_trump_10.jpg',
-  '11': 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Jean_Dodal_Tarot_trump_11.jpg',
-  '12': '/tarot/marseille/12.webp',
-  '13': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Jean_Dodal_Tarot_trump_13.jpg',
-  '14': 'https://upload.wikimedia.org/wikipedia/commons/2/27/Jean_Dodal_Tarot_trump_14.jpg',
-  '15': 'https://upload.wikimedia.org/wikipedia/commons/3/38/Jean_Dodal_Tarot_trump_15.jpg',
-  '16': '/tarot/marseille/16.webp',
-  '17': 'https://upload.wikimedia.org/wikipedia/commons/3/30/Jean_Dodal_Tarot_trump_17.jpg',
-  '18': 'https://upload.wikimedia.org/wikipedia/commons/5/50/Jean_Dodal_Tarot_trump_18.jpg',
-  '19': 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Jean_Dodal_Tarot_trump_19.jpg',
-  '20': 'https://upload.wikimedia.org/wikipedia/commons/4/40/Jean_Dodal_Tarot_trump_20.jpg',
-  '21': 'https://upload.wikimedia.org/wikipedia/commons/1/1d/Jean_Dodal_Tarot_trump_21.jpg',
-};
-
 function buildTarotDecks(path) {
   const keys = tarotAssetKey(path.tarot);
   if (!keys) return [];
 
-  const [rws, marseille] = keys;
+  const [, marseille] = keys;
   const marseilleFilename = `Jean_Dodal_Tarot_trump_${marseille}.jpg`;
 
   return [
     {
       deck: 'Rider-Waite-Smith',
       title: path.tarot,
-      image: `https://commons.wikimedia.org/wiki/Special:FilePath/RWS_Tarot_${rws}.jpg`,
+      image: `/tarot/rws/${path.id.slice(5)}.webp`,
       source: 'Wikimedia Commons — Rider-Waite tarot deck',
       sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck',
       note: 'Imagem histórica em domínio público segundo a ficha do Commons; algumas recolorizações modernas podem ter restrições.',
@@ -368,7 +343,7 @@ function buildTarotDecks(path) {
     {
       deck: 'Tarot de Marselha · Jean Dodal',
       title: path.tarot,
-      image: marseilleDodalImages[marseille],
+      image: `/tarot/marseille/${path.id.slice(5)}.webp`,
       variant: `Arcano ${marseille}`,
       source: 'Jean Dodal, Lyon, 1701–1715 · domínio público',
       sourceUrl: `https://commons.wikimedia.org/wiki/File:${marseilleFilename}`,
@@ -608,7 +583,7 @@ sphereProfiles.forEach((sphere, index) => {
         paragraphs: [
           pathWisdomTexts[sphere.number],
           'A frase acima pertence ao apêndice The Thirty-Two Paths of Wisdom divulgado na edição de W. W. Westcott; não é uma passagem literal do corpo antigo do Sefer Yetzirah.',
-          yetzirah || 'O Sefer Yetzirah fala das dez Sefirot belimah e das 22 letras como estruturas da criação; as atribuições detalhadas da Árvore hermética são desenvolvimentos posteriores.',
+          yetzirah || 'O Sefer Yetzirah fala das dez Sephiroth — sefirot belimah no hebraico — e das 22 letras como estruturas da criação; as atribuições detalhadas da Árvore hermética são desenvolvimentos posteriores.',
         ],
       },
       {
@@ -646,7 +621,7 @@ add('arc_sandalphon', {
     'Nome hebraico': 'מלכות',
     'Anjos do Shem': 'síntese e aterramento das 72 forças',
     'Caminho de Sabedoria': pathWisdomTexts[10],
-    'Sefer Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
+    'Sefer Yetzirah': 'Malkuth recebe a operação das letras e Sephiroth como mundo formado, corpo, circunstância e presença.',
   },
   gematria: buildHebrewWordGematria('Malkuth', 'מלכות', 'מלכות soma a ideia de Reino: a força simbólica que recebe, sela e manifesta as demais emanações.'),
   practice: {
@@ -1515,7 +1490,7 @@ const editorialProfiles = {
   sephirah: {
     label: 'Sephirah',
     history: [
-      'O Sefer Yetzirah apresenta dez sefirot belimah ao lado das 22 letras. A Árvore com posições, caminhos, cores e regências foi elaborada em estágios posteriores.',
+      'O Sefer Yetzirah apresenta dez Sephiroth — chamadas sefirot belimah no hebraico — ao lado das 22 letras. A Árvore com posições, caminhos, cores e regências foi elaborada em estágios posteriores.',
       'As correspondências planetárias, angélicas e tarológicas desta ficha seguem principalmente sínteses herméticas modernas.',
     ],
     variations: [
@@ -1565,49 +1540,6 @@ const editorialProfiles = {
     history: ['Esta ficha reúne camadas históricas diferentes em uma leitura comparativa.'],
     variations: [['Leitura editorial', 'As relações são apresentadas como correspondências simbólicas, não como causalidade científica.']],
   },
-};
-
-const evidenceByCategory = {
-  element: [
-    ['traditional', 'Tradição histórica', 'Qualidades elementares transmitidas por filosofia, medicina e alquimia.'],
-    ['hermetic', 'Correspondência hermética', 'Direções, armas, arcanjos e naipes variam entre escolas.'],
-  ],
-  planet: [
-    ['traditional', 'Astrologia tradicional', 'Dignidades e regências dos sete planetas visíveis.'],
-    ['scientific', 'Referência científica', 'Ciclos físicos são mantidos separados da interpretação astrológica.'],
-  ],
-  zodiac: [
-    ['traditional', 'Astrologia tradicional', 'Elementos, modalidades e regências possuem transmissão histórica.'],
-    ['hermetic', 'Correspondência hermética', 'Tarot e letras hebraicas são atribuições ocultistas modernas.'],
-  ],
-  decan: [
-    ['traditional', 'Tradição histórica', 'Divisão em faces de dez graus.'],
-    ['hermetic', 'Golden Dawn', 'Cartas numeradas e títulos esotéricos seguem síntese hermética.'],
-  ],
-  angel: [
-    ['primary', 'Base textual', 'O tríplice é relacionado a Êxodo 14:19–21.'],
-    ['hermetic', 'Tradição hermética', 'Graus, coros, Salmos e regentes pertencem a recepções posteriores.'],
-    ['contested', 'Associação específica', 'Contrapartes de Rudd não pertencem à formulação judaica original.'],
-  ],
-  sephirah: [
-    ['primary', 'Fonte cabalística', 'As dez sefirot são apresentadas no Sefer Yetzirah.'],
-    ['hermetic', 'Síntese hermética', 'Cores, planetas, Tarot, arcanjos e coros foram sistematizados posteriormente.'],
-  ],
-  daath: [
-    ['traditional', 'Conceito posterior', 'Daath é tratada como função ou limiar, não como esfera numerada.'],
-    ['contested', 'Variação entre escolas', 'Abismo e Choronzon pertencem a sistemas herméticos específicos.'],
-  ],
-  path: [
-    ['primary', 'Letra formativa', 'As 22 letras pertencem à estrutura do Sefer Yetzirah.'],
-    ['hermetic', 'Diagrama hermético', 'Posição na Árvore e ligação com o Tarot são desenvolvimentos posteriores.'],
-  ],
-  choir: [
-    ['primary', 'Fonte cristã histórica', 'A organização em três hierarquias segue Pseudo-Dionísio.'],
-    ['hermetic', 'Síntese cabalística', 'A relação fixa com Sephiroth e grupos do Shem é posterior.'],
-  ],
-  symbol: [
-    ['editorial', 'Síntese editorial', 'A ficha reúne sistemas distintos com indicação de suas fontes.'],
-  ],
 };
 
 const pathPronunciations = {
@@ -1696,8 +1628,6 @@ Object.entries(content).forEach(([id, item]) => {
   const profile = editorialProfiles[category] || editorialProfiles.symbol;
   item.categoryLabel = profile.label;
   item.relations = buildRelations(id);
-  item.evidence = (evidenceByCategory[category] || evidenceByCategory.symbol)
-    .map(([level, label, description]) => ({ level, label, description }));
   item.pronunciation = buildPronunciation(id, category, item);
   item.practice = item.practice || {
     prompt: `Que aspecto de ${item.title} pede atenção, equilíbrio ou expressão consciente agora?`,

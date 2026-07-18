@@ -190,6 +190,11 @@
     border-color: rgba(255, 255, 255, 0.2) !important;
   }
 
+  .mobile-install-item {
+    margin-top: 0.35rem;
+    border-color: rgba(212, 175, 55, 0.2) !important;
+  }
+
   .mobile-drawer-nav button > span:not(.mobile-item-icon) {
     display: grid;
     min-width: 0;

@@ -89,3 +89,23 @@ test('all local visual assets referenced by encyclopedia data exist', () => {
     assert.ok(existsSync(resolve('public', asset.slice(1))), asset);
   });
 });
+
+test('permitted historical Tarot reproductions are stored locally', () => {
+  treePaths.forEach((path) => {
+    const cards = contentData[path.id].tarotDecks;
+    const riderWaite = cards.find((card) => card.deck.startsWith('Rider-Waite'));
+    const marseille = cards.find((card) => card.deck.startsWith('Tarot de Marselha'));
+    const thoth = cards.find((card) => card.deck.startsWith('Thoth'));
+
+    assert.match(riderWaite.image, /^\/tarot\/rws\/.+\.webp$/, path.id);
+    assert.match(marseille.image, /^\/tarot\/marseille\/.+\.webp$/, path.id);
+    assert.ok(thoth.visual, `${path.id} keeps an original reference card instead of protected artwork`);
+  });
+});
+
+test('editorial terminology distinguishes singular and plural Sephiroth forms', () => {
+  const prose = JSON.stringify(contentData);
+  assert.doesNotMatch(prose, /\b10 Sefirot\b/i);
+  assert.match(contentData.arc_metatron.traditionNote, /“Sephirah”.+singular.+“Sephiroth”.+plural/i);
+  assert.match(contentData.angel_1.traditionNote, /tríplice hebraico.+-el\/-iah/i);
+});
