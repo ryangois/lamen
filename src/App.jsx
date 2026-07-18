@@ -12,6 +12,7 @@ const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
 const GlobalSearch = lazy(() => import('./components/GlobalSearch'));
 const ComparePanel = lazy(() => import('./components/ComparePanel'));
+const StudyPath = lazy(() => import('./components/StudyPath'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -72,6 +73,7 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [comparisonId, setComparisonId] = useState(null);
+  const [showStudy, setShowStudy] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentEntries, setRecentEntries] = useState(readStoredRecent);
 
@@ -105,6 +107,7 @@ function App() {
       if (event.key !== 'Escape') return;
 
       if (comparisonId) setComparisonId(null);
+      else if (showStudy) setShowStudy(false);
       else if (showSearch) setShowSearch(false);
       else if (showHelp) setShowHelp(false);
       else if (showSavedItems) setShowSavedItems(false);
@@ -114,7 +117,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showSavedItems, showSearch]);
+  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showSavedItems, showSearch, showStudy]);
 
   useEffect(() => {
     const handleSearchShortcut = (event) => {
@@ -195,6 +198,15 @@ function App() {
           >
             <span aria-hidden="true">✺</span>
             Oráculo
+          </button>
+          <button
+            type="button"
+            className="view-button"
+            aria-label="Abrir trilha de estudo"
+            onClick={() => setShowStudy(true)}
+          >
+            <span aria-hidden="true">◫</span>
+            Estudo
           </button>
           <button
             type="button"
@@ -324,6 +336,18 @@ function App() {
             onOpen={(id) => {
               handleSegmentClick(id);
               setComparisonId(null);
+            }}
+          />
+        </Suspense>
+      )}
+
+      {showStudy && (
+        <Suspense fallback={null}>
+          <StudyPath
+            onClose={() => setShowStudy(false)}
+            onOpen={(id) => {
+              handleSegmentClick(id);
+              setShowStudy(false);
             }}
           />
         </Suspense>

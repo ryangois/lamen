@@ -1,0 +1,210 @@
+.study-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2650;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.6rem, 3vw, 2rem);
+  background: rgba(4, 6, 11, 0.8);
+  backdrop-filter: blur(15px);
+}
+
+.study-panel {
+  display: grid;
+  width: min(880px, 100%);
+  max-height: calc(100dvh - 1.2rem);
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  overflow: hidden;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 12% 0, rgba(212, 175, 55, 0.15), transparent 32%),
+    #121620;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
+}
+
+.study-panel > header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.study-panel > header > div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.study-panel > header span {
+  color: var(--accent-gold);
+  font: 900 0.65rem 'Inter', sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.study-panel > header h2 {
+  font-size: clamp(1.7rem, 5vw, 2.7rem);
+}
+
+.study-panel > header p,
+.study-modules p {
+  color: #b6c1cf;
+  line-height: 1.55;
+}
+
+.study-panel > header > button {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.study-progress {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.study-progress > div:first-child {
+  display: grid;
+}
+
+.study-progress strong,
+.study-progress > b {
+  color: var(--accent-gold);
+}
+
+.study-progress span {
+  color: #98a5b7;
+  font-size: 0.68rem;
+}
+
+.study-progress-track {
+  height: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.study-progress-track span {
+  display: block;
+  width: var(--study-progress);
+  height: 100%;
+  background: var(--accent-gold);
+  border-radius: inherit;
+  transition: width 220ms ease;
+}
+
+.study-modules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  min-height: 0;
+  padding-right: 0.2rem;
+  overflow-y: auto;
+}
+
+.study-modules article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 17px;
+}
+
+.study-modules article > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #111318;
+  background: var(--accent-gold);
+  border-radius: 999px;
+  font: 900 0.7rem 'Inter', sans-serif;
+}
+
+.study-modules article > div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.study-modules small {
+  color: var(--accent-gold);
+  font: 850 0.6rem 'Inter', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.study-modules h3 {
+  font-size: 1.25rem;
+}
+
+.study-modules p {
+  font-size: 0.76rem;
+}
+
+.study-modules article > div > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.study-modules button {
+  min-height: 34px;
+  padding: 0 0.7rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 800 0.64rem 'Inter', sans-serif;
+}
+
+.study-modules button:first-child {
+  color: #111318;
+  background: var(--accent-gold);
+  border-color: transparent;
+}
+
+.study-modules article.completed {
+  border-color: rgba(212, 175, 55, 0.28);
+}
+
+@media (max-width: 620px) {
+  .study-backdrop {
+    padding: max(0.4rem, env(safe-area-inset-top, 0px)) 0.4rem max(0.4rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .study-panel {
+    height: 100%;
+    max-height: none;
+    border-radius: 22px;
+  }
+
+  .study-modules {
+    grid-template-columns: 1fr;
+  }
+
+  .study-progress {
+    grid-template-columns: auto 1fr;
+  }
+
+  .study-progress > b {
+    display: none;
+  }
+}
