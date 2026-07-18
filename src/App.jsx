@@ -90,7 +90,9 @@ function readStoredCollections() {
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
-  const [showAngelFinder, setShowAngelFinder] = useState(false);
+  const [showAngelFinder, setShowAngelFinder] = useState(() => (
+    new URLSearchParams(window.location.search).get('acao') === 'meu-anjo'
+  ));
   const [showSavedItems, setShowSavedItems] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
