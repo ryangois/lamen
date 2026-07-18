@@ -724,6 +724,38 @@ add('arc_daath', {
   sources: [sources.kabbalahUnveiled, sources.liber777],
 });
 
+const motherLetters = new Set(['Aleph', 'Mem', 'Shin']);
+const doubleLetters = new Set(['Beth', 'Gimel', 'Daleth', 'Kaph', 'Peh', 'Resh', 'Tav']);
+const finalLetterForms = {
+  Kaph: 'ך',
+  Mem: 'ם',
+  Nun: 'ן',
+  Peh: 'ף',
+  Tzaddi: 'ץ',
+};
+
+function getHebrewLetterProfile(path) {
+  const classification = motherLetters.has(path.letter)
+    ? 'Letra mãe'
+    : doubleLetters.has(path.letter)
+      ? 'Letra dupla'
+      : 'Letra simples';
+  const classMeaning = motherLetters.has(path.letter)
+    ? 'Integra o grupo das três mães, relacionado a princípios elementares fundamentais.'
+    : doubleLetters.has(path.letter)
+      ? 'Integra o grupo das sete duplas, tradicionalmente ligado aos sete planetas e a pares de qualidades.'
+      : 'Integra o grupo das doze simples, relacionado aos signos e a funções formativas específicas.';
+
+  return {
+    classification,
+    classMeaning,
+    finalForm: finalLetterForms[path.letter] || null,
+    finalFormNote: finalLetterForms[path.letter]
+      ? 'Possui uma forma distinta quando aparece no final de uma palavra.'
+      : 'Não possui forma final distinta.',
+  };
+}
+
 treePathProfiles.forEach((path) => add(path.id, {
   title: `${path.number}. ${path.letter} · ${path.fromName}–${path.toName}`,
   subtitle: `${path.hebrew} · ${path.attribution} · ${path.tarot}`,
@@ -741,8 +773,11 @@ treePathProfiles.forEach((path) => add(path.id, {
     Tarot: path.tarot,
     Função: path.meaning,
     'Nome hebraico': path.hebrew,
+    Classificação: getHebrewLetterProfile(path).classification,
+    'Forma final': getHebrewLetterProfile(path).finalForm || 'não possui',
     'Sefer Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
   },
+  hebrewLetter: getHebrewLetterProfile(path),
   tarotDecks: buildTarotDecks(path),
   gematria: buildHebrewWordGematria(path.letter, path.hebrew, `A letra ${path.letter} reduz sua força ao valor ${getGematriaBreakdown(path.hebrew).value}, usado como chave contemplativa do caminho ${path.number}.`),
   practice: {

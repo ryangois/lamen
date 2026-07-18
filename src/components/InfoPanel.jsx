@@ -326,6 +326,20 @@ export default function InfoPanel({
                                 <p>{content.pronunciation.note}</p>
                             </article>
                         )}
+                        {content.hebrewLetter && (
+                            <article className="letter-class-card">
+                                <div>
+                                    <span>Sefer Yetzirah</span>
+                                    <h3 className="brand-font">{content.hebrewLetter.classification}</h3>
+                                    <p>{content.hebrewLetter.classMeaning}</p>
+                                </div>
+                                <div>
+                                    <span>Forma final</span>
+                                    <strong lang="he" dir="rtl">{content.hebrewLetter.finalForm || '—'}</strong>
+                                    <small>{content.hebrewLetter.finalFormNote}</small>
+                                </div>
+                            </article>
+                        )}
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
                                 <button

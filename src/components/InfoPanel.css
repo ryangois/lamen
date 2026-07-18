@@ -284,6 +284,54 @@
     line-height: 1.45;
 }
 
+.letter-class-card {
+    display: grid;
+    grid-template-columns: 1fr minmax(110px, 0.45fr);
+    gap: 0.7rem;
+}
+
+.letter-class-card > div {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    padding: 0.8rem;
+    background:
+        radial-gradient(circle at 10% 0, rgba(212, 175, 55, 0.12), transparent 42%),
+        rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 15px;
+}
+
+.letter-class-card span {
+    color: var(--accent-gold);
+    font: 900 0.58rem 'Inter', sans-serif;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.letter-class-card h3 {
+    color: var(--text-primary);
+    font-size: 1.15rem;
+}
+
+.letter-class-card p,
+.letter-class-card small {
+    color: #9eabbb;
+    font-size: 0.68rem;
+    line-height: 1.45;
+}
+
+.letter-class-card strong {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+}
+
+@media (max-width: 420px) {
+    .letter-class-card {
+        grid-template-columns: 1fr;
+    }
+}
+
 .nav-card {
     position: relative;
     display: flex;
