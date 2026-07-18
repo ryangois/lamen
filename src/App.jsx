@@ -10,6 +10,7 @@ const Oracle = lazy(() => import('./components/Oracle'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
+const GlobalSearch = lazy(() => import('./components/GlobalSearch'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -50,6 +51,7 @@ function App() {
   const [showAngelFinder, setShowAngelFinder] = useState(false);
   const [showSavedItems, setShowSavedItems] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
 
@@ -82,7 +84,8 @@ function App() {
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
 
-      if (showHelp) setShowHelp(false);
+      if (showSearch) setShowSearch(false);
+      else if (showHelp) setShowHelp(false);
       else if (showSavedItems) setShowSavedItems(false);
       else if (showAngelFinder) setShowAngelFinder(false);
       else if (activeSegmentId) setActiveSegmentId(null);
@@ -90,7 +93,20 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, showAngelFinder, showHelp, showSavedItems]);
+  }, [activeSegmentId, showAngelFinder, showHelp, showSavedItems, showSearch]);
+
+  useEffect(() => {
+    const handleSearchShortcut = (event) => {
+      if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+      const tagName = event.target?.tagName;
+      if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') return;
+      event.preventDefault();
+      setShowSearch(true);
+    };
+
+    window.addEventListener('keydown', handleSearchShortcut);
+    return () => window.removeEventListener('keydown', handleSearchShortcut);
+  }, []);
 
   const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
@@ -155,6 +171,15 @@ function App() {
           >
             <span aria-hidden="true">✺</span>
             Oráculo
+          </button>
+          <button
+            type="button"
+            className="view-button"
+            aria-label="Abrir busca universal"
+            onClick={() => setShowSearch(true)}
+          >
+            <span aria-hidden="true">⌕</span>
+            Buscar
           </button>
           <button
             type="button"
@@ -250,6 +275,18 @@ function App() {
       {showHelp && (
         <Suspense fallback={null}>
           <HelpModal onClose={() => setShowHelp(false)} />
+        </Suspense>
+      )}
+
+      {showSearch && (
+        <Suspense fallback={null}>
+          <GlobalSearch
+            onClose={() => setShowSearch(false)}
+            onSelect={(id) => {
+              handleSegmentClick(id);
+              setShowSearch(false);
+            }}
+          />
         </Suspense>
       )}
     </div>
