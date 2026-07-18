@@ -362,6 +362,7 @@ function App() {
         onViewChange={handleViewChange}
         onSearch={() => setShowSearch(true)}
         onStudy={() => setShowStudy(true)}
+        onTutorial={() => setShowHelp(true)}
         onAngelFinder={() => setShowAngelFinder(true)}
         onSaved={() => setShowSavedItems(true)}
         canInstall={Boolean(installPrompt)}
