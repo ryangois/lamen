@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { contentData } from '../src/data/content.js';
+import {
+  HEBREW_LETTERS,
+  RESEARCH_SOURCES,
+  getLetterGate,
+} from '../src/data/researchData.js';
 import { ringStructure } from '../src/data/rings.js';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../src/data/treeOfLife.js';
 
@@ -108,4 +113,42 @@ test('editorial terminology distinguishes singular and plural Sephiroth forms', 
   assert.doesNotMatch(prose, /\b10 Sefirot\b/i);
   assert.match(contentData.arc_metatron.traditionNote, /“Sephirah”.+singular.+“Sephiroth”.+plural/i);
   assert.match(contentData.angel_1.traditionNote, /tríplice hebraico.+-el\/-iah/i);
+});
+
+test('the 22 Hebrew letters form exactly 231 distinct unordered gates', () => {
+  assert.equal(HEBREW_LETTERS.length, 22);
+  assert.equal(new Set(HEBREW_LETTERS.map((letter) => letter.hebrew)).size, 22);
+  const gates = HEBREW_LETTERS.flatMap((first, firstIndex) => (
+    HEBREW_LETTERS.slice(firstIndex + 1).map((second) => getLetterGate(first.hebrew, second.hebrew).pair)
+  ));
+  assert.equal(gates.length, 231);
+  assert.equal(new Set(gates).size, 231);
+});
+
+test('research layers are complete for Tree entries', () => {
+  treeSephiroth.forEach((sephirah) => {
+    const entry = contentData[sephirah.id];
+    assert.equal(entry.fourWorlds.length, 4, sephirah.id);
+    assert.equal(new Set(entry.fourWorlds.map((world) => world.id)).size, 4, sephirah.id);
+    assert.equal(entry.seferVersions.length, 4, sephirah.id);
+  });
+  treePaths.forEach((path) => {
+    const entry = contentData[path.id];
+    assert.equal(entry.seferVersions.length, 4, path.id);
+    assert.equal(entry.tarotComparison.length, 3, path.id);
+    assert.ok(entry.hebrewAnalysis, path.id);
+  });
+});
+
+test('provenance and equal-gematria links remain internally consistent', () => {
+  Object.entries(contentData).forEach(([id, entry]) => {
+    assert.ok(entry.provenance?.length, `${id} provenance`);
+    (entry.hebrewAnalysis?.equals || []).forEach((equal) => {
+      assert.equal(equal.value, entry.gematria.core.value, `${id} ↔ ${equal.id}`);
+      assert.ok(contentData[equal.id], equal.id);
+    });
+  });
+  Object.values(RESEARCH_SOURCES).forEach((url) => {
+    assert.doesNotThrow(() => new URL(url));
+  });
 });

@@ -1,0 +1,455 @@
+.research-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.research-panel > header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.research-panel > header > span,
+.textual-grid article > div span,
+.worlds-stack article > div > span,
+.tarot-comparison-table article > span {
+  color: var(--accent-gold);
+  font: 900 0.6rem 'Inter', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.research-panel > header h3 {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.research-panel > header p,
+.research-panel article p,
+.research-caution {
+  color: #aeb9c8;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.provenance-timeline {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.provenance-timeline article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 16px;
+}
+
+.provenance-timeline article > b {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #111318;
+  background: var(--accent-gold);
+  border-radius: 999px;
+  font-size: 0.65rem;
+}
+
+.provenance-timeline article > div {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.provenance-timeline span {
+  color: #8491a2;
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.provenance-timeline h4,
+.textual-grid h4,
+.worlds-stack h4,
+.tarot-comparison-table h4 {
+  color: var(--text-primary);
+  font-size: 0.88rem;
+}
+
+.provenance-timeline a,
+.tarot-comparison-table a,
+.textual-grid a {
+  width: fit-content;
+  color: var(--accent-gold);
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.research-caution {
+  padding: 0.8rem;
+  background: rgba(212, 175, 55, 0.075);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 14px;
+}
+
+.textual-grid,
+.tarot-comparison-table {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.textual-grid article,
+.tarot-comparison-table article {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  padding: 0.9rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(212, 175, 55, 0.11), transparent 34%),
+    rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 16px;
+}
+
+.textual-grid article > div {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.textual-grid article > div strong {
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.worlds-stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.worlds-stack article {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.85rem;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--world-color) 14%, transparent), rgba(255,255,255,.025));
+  border: 1px solid color-mix(in srgb, var(--world-color) 40%, transparent);
+  border-radius: 16px;
+}
+
+.worlds-stack article > b {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: #111318;
+  background: var(--world-color);
+  border-radius: 11px;
+}
+
+.worlds-stack article > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.worlds-stack h4 i {
+  margin-left: 0.35rem;
+  color: var(--world-color);
+  font-family: 'Times New Roman', serif;
+  font-style: normal;
+}
+
+.worlds-stack article strong {
+  color: #dbe3ee;
+  font-size: 0.72rem;
+}
+
+.tarot-comparison-table article > strong {
+  color: #f1d77a;
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+}
+
+.tarot-comparison-table article > small {
+  color: #c8d1de;
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.hebrew-word-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+}
+
+.hebrew-word-summary > strong {
+  color: var(--text-primary);
+  font: 700 clamp(2rem, 9vw, 3.2rem) 'Times New Roman', serif;
+}
+
+.hebrew-word-summary > div {
+  display: grid;
+  gap: 0.3rem;
+  text-align: right;
+}
+
+.hebrew-word-summary span {
+  color: #8f9cad;
+  font-size: 0.62rem;
+}
+
+.hebrew-word-summary b {
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+}
+
+.hebrew-letter-analysis {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.hebrew-root-card {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem 0.75rem;
+  padding: 0.8rem;
+  background: rgba(212, 175, 55, 0.075);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 15px;
+}
+
+.hebrew-root-card > span {
+  grid-column: 1 / -1;
+  color: var(--accent-gold);
+  font: 900 0.58rem 'Inter', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hebrew-root-card > strong {
+  color: var(--text-primary);
+  font: 700 1.35rem 'Times New Roman', serif;
+}
+
+.hebrew-root-card > b {
+  color: #dbe3ee;
+  font-size: 0.7rem;
+}
+
+.hebrew-root-card > p {
+  margin: 0;
+}
+
+.hebrew-letter-analysis article {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 13px;
+}
+
+.hebrew-letter-analysis article > strong {
+  color: var(--accent-gold);
+  font: 700 1.7rem 'Times New Roman', serif;
+  text-align: center;
+}
+
+.hebrew-letter-analysis article > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.hebrew-letter-analysis span {
+  color: #dce3ed;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.hebrew-letter-analysis p {
+  margin: 0;
+}
+
+.equal-gematria {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.equal-gematria h4 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.equal-gematria > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.equal-gematria button {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+  padding: 0.7rem;
+  color: inherit;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 13px;
+  cursor: pointer;
+}
+
+.equal-gematria button > span {
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+}
+
+.equal-gematria button strong,
+.equal-gematria button small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.equal-gematria button strong {
+  color: var(--text-primary);
+  font-size: 0.7rem;
+}
+
+.equal-gematria button small,
+.equal-gematria > p {
+  color: #8f9cad;
+  font-size: 0.62rem;
+}
+
+.relation-network {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  background:
+    radial-gradient(circle, rgba(212, 175, 55, 0.12), transparent 46%),
+    rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 20px;
+}
+
+.relation-network-canvas {
+  position: relative;
+  min-height: 340px;
+}
+
+.relation-network-canvas > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.relation-network-canvas > svg line {
+  stroke: rgba(212, 175, 55, 0.25);
+  stroke-width: 0.45;
+  stroke-dasharray: 2 2;
+}
+
+.relation-network-center,
+.relation-network-canvas > button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border-radius: 16px;
+  transform: translate(-50%, -50%);
+}
+
+.relation-network-center {
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 120px;
+  min-height: 78px;
+  padding: 0.65rem;
+  color: #111318;
+  background: linear-gradient(135deg, #f4d36f, #b98518);
+}
+
+.relation-network-center span,
+.relation-network-canvas > button span {
+  font-size: 0.52rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.relation-network-center strong {
+  font: 700 0.72rem 'Cinzel', serif;
+}
+
+.relation-network-canvas > button {
+  top: var(--node-y);
+  left: var(--node-x);
+  width: 90px;
+  min-height: 58px;
+  gap: 0.18rem;
+  padding: 0.45rem;
+  color: #c7d0dc;
+  background: #171b24;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  cursor: pointer;
+}
+
+.relation-network-canvas > button strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.63rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.relation-network > small {
+  color: #8793a4;
+  font-size: 0.58rem;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .textual-grid,
+  .tarot-comparison-table,
+  .equal-gematria > div {
+    grid-template-columns: 1fr;
+  }
+
+  .relation-network-canvas {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .relation-network-center,
+  .relation-network-canvas > button {
+    position: static;
+    width: auto;
+    min-height: 62px;
+    transform: none;
+  }
+
+  .relation-network-center {
+    grid-column: 1 / -1;
+  }
+
+  .relation-network-canvas > svg {
+    display: none;
+  }
+}

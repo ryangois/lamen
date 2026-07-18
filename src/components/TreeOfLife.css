@@ -44,6 +44,21 @@
   line-height: 1.7;
 }
 
+.tree-research-launch {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.9rem;
+  color: #111318;
+  background: linear-gradient(135deg, #f4d36f, #b98518);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 850 0.7rem 'Inter', sans-serif;
+}
+
 .tree-stage {
   min-height: 0;
   display: grid;
@@ -292,6 +307,12 @@
   .tree-intro p {
     font-size: 0.82rem;
     line-height: 1.42;
+  }
+
+  .tree-research-launch {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
   }
 
   .tree-intro,

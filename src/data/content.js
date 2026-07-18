@@ -6,6 +6,13 @@ import {
   transliterateHebrew,
 } from './scripture.js';
 import { treePathProfiles } from './treeOfLife.js';
+import {
+  HEBREW_LETTERS,
+  HEBREW_ROOTS_BY_ID,
+  SEFER_YETZIRAH_VERSIONS,
+  buildFourWorlds,
+  buildProvenance,
+} from './researchData.js';
 
 const content = {};
 
@@ -1646,6 +1653,62 @@ Object.entries(content).forEach(([id, item]) => {
     ...classifySource(source),
     ...source,
   }));
+  item.provenance = buildProvenance(category, item.sources);
+  if (['path', 'sephirah', 'daath'].includes(category)) {
+    item.seferVersions = SEFER_YETZIRAH_VERSIONS;
+  }
+  if (category === 'sephirah') {
+    item.fourWorlds = buildFourWorlds(item.associations);
+  }
+  if (item.gematria?.core?.text) {
+    const normalizedText = normalizeHebrewLetters(item.gematria.core.text);
+    item.hebrewAnalysis = {
+      text: normalizedText,
+      letterCount: [...normalizedText].length,
+      letters: [...normalizedText].map((letter) => {
+        const detail = HEBREW_LETTERS.find((entry) => entry.hebrew === letter);
+        return {
+          letter,
+          name: detail?.name || 'Forma final',
+          value: hebrewGematriaValues[letter],
+          image: detail?.image || 'forma final da letra',
+        };
+      }),
+      lexicalRoot: HEBREW_ROOTS_BY_ID[id] || (
+        category === 'angel'
+          ? { root: '—', transliteration: 'não se aplica', note: 'O tríplice combinatório não é apresentado como raiz lexical.' }
+          : category === 'path'
+            ? { root: normalizedText, transliteration: `${item.pronunciation?.transliteration || 'letra'} · letra isolada`, note: 'Uma letra isolada não constitui raiz trilítera.' }
+            : null
+      ),
+      morphologyNote: category === 'angel'
+        ? 'O tríplice é uma combinação de letras extraída de Êxodo 14:19–21; não deve ser tratado automaticamente como raiz lexical hebraica.'
+        : category === 'path'
+          ? 'Esta ficha trata uma letra isolada. Seu nome e sua imagem tradicional não constituem uma raiz lexical.'
+          : 'A tradução informa o sentido tradicional do termo; etimologia, uso bíblico e interpretação cabalística são camadas diferentes.',
+      equals: [],
+    };
+  }
+  if (item.tarotDecks?.length) {
+    item.tarotComparison = item.tarotDecks.map((card) => ({
+      deck: card.deck,
+      title: card.title,
+      period: card.deck.startsWith('Tarot de Marselha')
+        ? 'Jean Dodal, Lyon, 1701–1715'
+        : card.deck.startsWith('Rider-Waite')
+          ? 'Rider–Waite–Smith, 1909'
+          : 'Crowley–Harris, publicado em 1969',
+      visualLanguage: card.deck.startsWith('Tarot de Marselha')
+        ? 'Gravura histórica; composição emblemática e títulos franceses.'
+        : card.deck.startsWith('Rider-Waite')
+          ? 'Cena narrativa desenhada por Pamela Colman Smith, com simbolismo em figura e fundo.'
+          : 'Geometria, cor e símbolos thelêmicos de Frieda Harris; alguns títulos e atribuições foram revistos.',
+      difference: card.deck.startsWith('Thoth')
+        ? `Nesta carta: ${card.title}; confira número, nome e atribuição porque o Thoth altera pontos do esquema da Golden Dawn.`
+        : `Nesta carta: ${card.title}; compare postura, objetos, direção do olhar e organização da cena.`,
+      sourceUrl: card.sourceUrl,
+    }));
+  }
   if (item.sources.length > 0) {
     item.citations = {
       description: [0],
@@ -1655,6 +1718,22 @@ Object.entries(content).forEach(([id, item]) => {
       )),
     };
   }
+});
+
+const hebrewEntries = Object.entries(content)
+  .filter(([, item]) => item.hebrewAnalysis?.text && item.gematria?.core?.value)
+  .map(([id, item]) => ({
+    id,
+    title: item.title,
+    text: item.hebrewAnalysis.text,
+    value: item.gematria.core.value,
+    category: item.categoryLabel,
+  }));
+
+hebrewEntries.forEach((entry) => {
+  content[entry.id].hebrewAnalysis.equals = hebrewEntries
+    .filter((candidate) => candidate.id !== entry.id && candidate.value === entry.value)
+    .slice(0, 8);
 });
 
 export const contentData = content;

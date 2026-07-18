@@ -3,6 +3,14 @@ import { getContent } from '../data/content';
 import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
 import MiniContextMap from './MiniContextMap';
+import {
+    FourWorldsPanel,
+    HebrewAnalysisPanel,
+    ProvenancePanel,
+    RelationNetwork,
+    TarotComparisonPanel,
+    TextWitnessesPanel,
+} from './ResearchPanels';
 import ShareCard from './ShareCard';
 import { useDialogFocus } from '../hooks/useDialogFocus';
 import './InfoPanel.css';
@@ -25,10 +33,10 @@ const flatSegments = ringStructure.flatMap((ring) => (
 ));
 
 const TAB_GROUPS = [
-    { id: 'study', label: 'Estudo', tabs: ['summary', 'history', 'tradition'] },
-    { id: 'correspondences', label: 'Relações', tabs: ['associations', 'relations', 'gematria', 'variations'] },
+    { id: 'study', label: 'Estudo', tabs: ['summary', 'history', 'tradition', 'textual', 'worlds'] },
+    { id: 'correspondences', label: 'Relações', tabs: ['associations', 'relations', 'gematria', 'hebrew', 'tarot', 'variations'] },
     { id: 'practice', label: 'Prática', tabs: ['psalm', 'practice', 'notes'] },
-    { id: 'sources', label: 'Fontes', tabs: ['sources'] },
+    { id: 'sources', label: 'Fontes', tabs: ['provenance', 'sources'] },
 ];
 
 function getNeighborSegments(activeSegmentId) {
@@ -254,12 +262,17 @@ export default function InfoPanel({
         { id: 'summary', label: 'Resumo', available: true },
         { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
         { id: 'gematria', label: 'Gematria', available: Boolean(content?.gematria) },
+        { id: 'hebrew', label: 'Hebraico', available: Boolean(content?.hebrewAnalysis) },
         { id: 'associations', label: 'Correspondências', available: Boolean(content?.associations || content?.highlights?.length) },
         { id: 'relations', label: 'Relações', available: Boolean(content?.relations?.length) },
+        { id: 'tarot', label: 'Tarot comparado', available: Boolean(content?.tarotComparison?.length) },
         { id: 'practice', label: 'Prática', available: Boolean(content?.practice) },
         { id: 'history', label: 'História', available: Boolean(content?.history?.length) },
         { id: 'variations', label: 'Variações', available: Boolean(content?.variations?.length) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
+        { id: 'textual', label: 'Versões do texto', available: Boolean(content?.seferVersions?.length) },
+        { id: 'worlds', label: 'Quatro Mundos', available: Boolean(content?.fourWorlds?.length) },
+        { id: 'provenance', label: 'Proveniência', available: Boolean(content?.provenance?.length) },
         { id: 'notes', label: 'Notas', available: true },
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
@@ -794,6 +807,11 @@ export default function InfoPanel({
                                             Cada ligação abre a ficha correspondente sem sair do painel.
                                         </p>
                                     </header>
+                                    <RelationNetwork
+                                        title={content.title}
+                                        relations={content.relations}
+                                        onNavigate={onNavigateSegment}
+                                    />
                                     <div className="relations-grid">
                                         {content.relations.map((item) => (
                                             <button
@@ -809,6 +827,18 @@ export default function InfoPanel({
                                         ))}
                                     </div>
                                 </section>
+                            )}
+
+                            {activeTab === 'hebrew' && content.hebrewAnalysis && (
+                                <HebrewAnalysisPanel
+                                    analysis={content.hebrewAnalysis}
+                                    value={content.gematria?.core?.value}
+                                    onNavigate={onNavigateSegment}
+                                />
+                            )}
+
+                            {activeTab === 'tarot' && content.tarotComparison?.length > 0 && (
+                                <TarotComparisonPanel cards={content.tarotComparison} />
                             )}
 
                             {activeTab === 'practice' && content.practice && (
@@ -897,6 +927,18 @@ export default function InfoPanel({
                                         <p className="tradition-note">{content.traditionNote}</p>
                                     )}
                                 </section>
+                            )}
+
+                            {activeTab === 'textual' && content.seferVersions?.length > 0 && (
+                                <TextWitnessesPanel versions={content.seferVersions} />
+                            )}
+
+                            {activeTab === 'worlds' && content.fourWorlds?.length > 0 && (
+                                <FourWorldsPanel worlds={content.fourWorlds} title={content.title} />
+                            )}
+
+                            {activeTab === 'provenance' && content.provenance?.length > 0 && (
+                                <ProvenancePanel items={content.provenance} />
                             )}
 
                             {activeTab === 'notes' && (
