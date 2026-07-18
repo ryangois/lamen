@@ -20,6 +20,7 @@ export default function Oracle({ onSegmentClick }) {
   const [result, setResult] = useState(null);
   const [prompt, setPrompt] = useState(DEFAULT_PROMPTS[0]);
   const poolSize = useMemo(() => getOraclePool(type).length, [type]);
+  const activeType = oracleTypes.find((item) => item.id === type) || oracleTypes[0];
 
   const handleDraw = () => {
     const next = drawOracleItem(type, result?.id);
@@ -45,6 +46,14 @@ export default function Oracle({ onSegmentClick }) {
       </div>
 
       <div className="oracle-board">
+        <div className="oracle-controls-heading">
+          <div>
+            <span>Campo do sorteio</span>
+            <strong>{activeType.label}</strong>
+          </div>
+          <small>{poolSize} {poolSize === 1 ? 'chave' : 'chaves'}</small>
+        </div>
+
         <div className="oracle-controls" role="group" aria-label="Escolher tipo de sorteio">
           {oracleTypes.map((item) => (
             <button
@@ -54,12 +63,22 @@ export default function Oracle({ onSegmentClick }) {
               aria-pressed={type === item.id}
               key={item.id}
             >
+              <span aria-hidden="true">{type === item.id ? '✦' : '◇'}</span>
               {item.label}
             </button>
           ))}
         </div>
 
-        <article className={`oracle-card ${result ? 'revealed' : ''}`}>
+        <article
+          className={`oracle-card ${result ? 'revealed' : 'is-empty'}`}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <div className="oracle-card-topline">
+            <span>{result ? 'Chave sorteada' : 'Pronto para sortear'}</span>
+            <small>{activeType.label}</small>
+          </div>
+
           <div className="oracle-sigil" style={{ '--oracle-color': result?.color || '#d4af37' }}>
             <span>{result?.symbol || '✦'}</span>
           </div>
@@ -70,7 +89,7 @@ export default function Oracle({ onSegmentClick }) {
           </div>
 
           <div className="oracle-reading">
-            <small>Pergunta contemplativa</small>
+            <small><span aria-hidden="true">✦</span> Pergunta contemplativa</small>
             <p>{prompt}</p>
           </div>
 
@@ -83,18 +102,26 @@ export default function Oracle({ onSegmentClick }) {
           )}
         </article>
 
-        <div className="oracle-actions">
-          <button type="button" className="oracle-draw" onClick={handleDraw}>
-            {result ? 'Sortear outra chave' : 'Sortear chave'}
-          </button>
+        <div className={`oracle-actions ${result ? 'has-result' : ''}`}>
           <button
             type="button"
-            className="oracle-open"
-            onClick={() => result && onSegmentClick?.(result.id)}
-            disabled={!result}
+            className="oracle-draw"
+            onClick={handleDraw}
+            aria-label={`${result ? 'Sortear outra' : 'Sortear'} chave em ${activeType.label}`}
           >
-            Abrir ficha completa
+            <span aria-hidden="true">✦</span>
+            {result ? 'Sortear outra chave' : 'Sortear chave'}
           </button>
+          {result && (
+            <button
+              type="button"
+              className="oracle-open"
+              onClick={() => onSegmentClick?.(result.id)}
+            >
+              Abrir ficha completa
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
         </div>
       </div>
     </section>

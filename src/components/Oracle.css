@@ -49,14 +49,46 @@
 
 .oracle-board {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
   padding: clamp(0.85rem, 2vw, 1.2rem);
 }
 
-.oracle-controls {
+.oracle-controls-heading {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 0.25rem;
+}
+
+.oracle-controls-heading > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.oracle-controls-heading span,
+.oracle-card-topline span {
+  color: var(--accent-gold);
+  font: 900 0.65rem 'Inter', sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.oracle-controls-heading strong {
+  color: var(--text-primary);
+  font: 800 0.9rem 'Inter', sans-serif;
+}
+
+.oracle-controls-heading small,
+.oracle-card-topline small {
+  color: #98a5b7;
+  font: 800 0.68rem 'Inter', sans-serif;
+}
+
+.oracle-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
   padding: 0.35rem;
   background: rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -64,20 +96,48 @@
 }
 
 .oracle-controls button {
-  flex: 1 1 auto;
-  min-height: 36px;
-  padding: 0 0.75rem;
+  display: inline-flex;
+  min-width: 0;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.38rem;
+  padding: 0.35rem 0.55rem;
   color: #aeb9c8;
   background: transparent;
   border: 0;
-  border-radius: 999px;
+  border-radius: 13px;
   cursor: pointer;
   font: 800 0.76rem 'Inter', sans-serif;
+  line-height: 1.15;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.oracle-controls button > span {
+  flex: 0 0 auto;
+  color: #667286;
+  font-size: 0.72rem;
 }
 
 .oracle-controls button.active {
   color: #111318;
   background: var(--accent-gold);
+  box-shadow: 0 8px 18px rgba(212, 175, 55, 0.17);
+}
+
+.oracle-controls button.active > span {
+  color: #111318;
+}
+
+@media (hover: hover) {
+  .oracle-controls button:not(.active):hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.065);
+  }
+
+  .oracle-actions button:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .oracle-controls button:focus-visible,
@@ -89,8 +149,8 @@
 .oracle-card {
   position: relative;
   display: grid;
-  gap: 1rem;
-  min-height: 420px;
+  gap: 0.9rem;
+  min-height: 400px;
   padding: clamp(1rem, 3vw, 1.45rem);
   overflow: hidden;
   background:
@@ -98,6 +158,23 @@
     linear-gradient(155deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.022));
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 26px;
+}
+
+.oracle-card-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-width: 0;
+  padding: 0 0.15rem;
+}
+
+.oracle-card-topline small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .oracle-card::before {
@@ -110,6 +187,8 @@
 }
 
 .oracle-sigil {
+  position: relative;
+  z-index: 1;
   display: grid;
   width: 112px;
   height: 112px;
@@ -130,8 +209,14 @@
 
 .oracle-card-copy,
 .oracle-reading {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 0.55rem;
+}
+
+.oracle-card-copy {
+  padding: 0 0.35rem;
   text-align: center;
 }
 
@@ -156,13 +241,26 @@
 }
 
 .oracle-reading {
-  padding: 1rem;
+  padding: 0.95rem 1rem;
   background: rgba(0, 0, 0, 0.26);
   border: 1px solid rgba(255, 255, 255, 0.075);
   border-radius: 18px;
+  text-align: left;
+}
+
+.oracle-reading small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.oracle-reading p {
+  margin: 0;
 }
 
 .oracle-tags {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -180,16 +278,25 @@
 
 .oracle-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.65rem;
 }
 
+.oracle-actions.has-result {
+  grid-template-columns: 1fr 1fr;
+}
+
 .oracle-actions button {
+  display: inline-flex;
   min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
   padding: 0 1rem;
   border-radius: 999px;
   cursor: pointer;
   font: 900 0.88rem 'Inter', sans-serif;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
 .oracle-draw {
@@ -204,11 +311,6 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.oracle-open:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 @media (max-width: 900px) {
   .oracle-shell {
     height: auto;
@@ -217,6 +319,8 @@
     align-content: start;
     overflow-y: auto;
     overscroll-behavior: contain;
+    scroll-padding-bottom: 6rem;
+    scrollbar-gutter: stable;
   }
 
   .oracle-hero h1 {
@@ -226,7 +330,10 @@
 
 @media (max-width: 768px) {
   .oracle-shell {
-    padding: calc(7.1rem + env(safe-area-inset-top, 0px)) 0.55rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    padding:
+      calc(7.1rem + env(safe-area-inset-top, 0px))
+      0.55rem
+      calc(5.4rem + env(safe-area-inset-bottom, 0px));
     gap: 0.8rem;
   }
 
@@ -255,12 +362,25 @@
   }
 
   .oracle-controls {
-    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .oracle-controls button {
+    min-height: 42px;
   }
 
   .oracle-card {
     min-height: 0;
+    gap: 0.8rem;
+    padding: 0.9rem;
+  }
+
+  .oracle-card::before {
+    inset: 0.72rem;
+  }
+
+  .oracle-card-copy {
+    padding: 0 0.25rem;
   }
 
   .oracle-sigil {
@@ -274,5 +394,53 @@
 
   .oracle-actions {
     grid-template-columns: 1fr;
+  }
+
+  .oracle-actions.has-result {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .oracle-shell {
+    padding-inline: 0.4rem;
+  }
+
+  .oracle-hero,
+  .oracle-board {
+    border-radius: 19px;
+  }
+
+  .oracle-board {
+    padding: 0.72rem;
+  }
+
+  .oracle-controls-heading {
+    align-items: start;
+  }
+
+  .oracle-controls-heading strong {
+    font-size: 0.82rem;
+  }
+
+  .oracle-controls button {
+    padding-inline: 0.4rem;
+    font-size: 0.71rem;
+    touch-action: manipulation;
+  }
+
+  .oracle-card-topline {
+    align-items: start;
+  }
+
+  .oracle-card-topline span {
+    max-width: 65%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oracle-controls button,
+  .oracle-actions button {
+    transition: none;
   }
 }

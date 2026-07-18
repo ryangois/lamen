@@ -263,3 +263,19 @@
     height: 100vw;
   }
 }
+
+@media (max-width: 390px) {
+  .help-launch {
+    right: calc(0.55rem + env(safe-area-inset-right, 0px));
+    bottom: calc(0.55rem + env(safe-area-inset-bottom, 0px));
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 0 5px rgba(212, 175, 55, 0.1);
+  }
+
+  .help-launch span {
+    width: 30px;
+    height: 30px;
+  }
+}
