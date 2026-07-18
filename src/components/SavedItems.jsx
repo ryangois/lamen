@@ -3,11 +3,13 @@ import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import './SavedItems.css';
 
-function itemsFromIds(ids) {
-  return ids
-    .map((id) => {
+function itemsFromEntries(entries) {
+  return entries
+    .map((entry) => {
+      const id = typeof entry === 'string' ? entry : entry.id;
+      const viewedAt = typeof entry === 'string' ? null : entry.viewedAt;
       const catalogItem = flatItems.find((item) => item.id === id);
-      if (catalogItem) return catalogItem;
+      if (catalogItem) return { ...catalogItem, viewedAt };
 
       const sephirah = treeSephiroth.find((item) => item.id === id);
       const special = treeSpecialNodes.find((item) => item.id === id);
@@ -19,15 +21,32 @@ function itemsFromIds(ids) {
         color: sephirah ? '#d4af37' : '#9ca8b9',
         categoryName: sephirah ? 'Árvore · Sephirah' : special ? 'Árvore · Não-esfera' : 'Árvore · Caminho',
         content: getContent(id),
+        viewedAt,
       };
     })
     .filter(Boolean);
 }
 
-function SavedGroup({ title, emptyText, items, onSelect }) {
+function formatViewedAt(value) {
+  if (!value) return '';
+  const elapsedMinutes = Math.max(0, Math.floor((Date.now() - value) / 60000));
+  if (elapsedMinutes < 1) return 'agora';
+  if (elapsedMinutes < 60) return `há ${elapsedMinutes} min`;
+  const elapsedHours = Math.floor(elapsedMinutes / 60);
+  if (elapsedHours < 24) return `há ${elapsedHours} h`;
+  const elapsedDays = Math.floor(elapsedHours / 24);
+  return `há ${elapsedDays} ${elapsedDays === 1 ? 'dia' : 'dias'}`;
+}
+
+function SavedGroup({ title, emptyText, items, onSelect, onClear }) {
   return (
     <section className="saved-group">
-      <h3 className="brand-font">{title}</h3>
+      <div className="saved-group-heading">
+        <h3 className="brand-font">{title}</h3>
+        {items.length > 0 && onClear && (
+          <button type="button" onClick={onClear}>Limpar histórico</button>
+        )}
+      </div>
       {items.length > 0 ? (
         <div className="saved-list">
           {items.map((item) => (
@@ -39,7 +58,10 @@ function SavedGroup({ title, emptyText, items, onSelect }) {
             >
               <span style={{ '--saved-color': item.color || '#d4af37' }}></span>
               <strong>{item.content.title}</strong>
-              <small>{item.categoryName}</small>
+              <small>
+                {item.categoryName}
+                {item.viewedAt && <time dateTime={new Date(item.viewedAt).toISOString()}> · {formatViewedAt(item.viewedAt)}</time>}
+              </small>
             </button>
           ))}
         </div>
@@ -50,9 +72,9 @@ function SavedGroup({ title, emptyText, items, onSelect }) {
   );
 }
 
-export default function SavedItems({ favoriteIds, recentIds, onClose, onSelect }) {
-  const favorites = itemsFromIds(favoriteIds);
-  const recent = itemsFromIds(recentIds);
+export default function SavedItems({ favoriteIds, recentEntries, onClearHistory, onClose, onSelect }) {
+  const favorites = itemsFromEntries(favoriteIds);
+  const recent = itemsFromEntries(recentEntries);
 
   return (
     <div className="saved-backdrop" role="presentation">
@@ -75,6 +97,7 @@ export default function SavedItems({ favoriteIds, recentIds, onClose, onSelect }
           emptyText="Seu histórico aparece aqui conforme você explora o Lamen."
           items={recent}
           onSelect={onSelect}
+          onClear={onClearHistory}
         />
       </aside>
     </div>

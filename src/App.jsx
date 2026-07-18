@@ -47,6 +47,22 @@ function readStoredIds(key) {
   }
 }
 
+function readStoredRecent() {
+  try {
+    const value = JSON.parse(window.localStorage.getItem('lamen-recent') || '[]');
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((entry, index) => (
+        typeof entry === 'string'
+          ? { id: entry, viewedAt: Date.now() - index }
+          : entry
+      ))
+      .filter((entry) => entry?.id);
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
@@ -55,7 +71,7 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
-  const [recentIds, setRecentIds] = useState(() => readStoredIds('lamen-recent'));
+  const [recentEntries, setRecentEntries] = useState(readStoredRecent);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
@@ -70,8 +86,8 @@ function App() {
   }, [favoriteIds]);
 
   useEffect(() => {
-    window.localStorage.setItem('lamen-recent', JSON.stringify(recentIds));
-  }, [recentIds]);
+    window.localStorage.setItem('lamen-recent', JSON.stringify(recentEntries));
+  }, [recentEntries]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -112,7 +128,10 @@ function App() {
 
   const handleSegmentClick = useCallback((id) => {
     setActiveSegmentId(id);
-    setRecentIds((current) => [id, ...current.filter((item) => item !== id)].slice(0, 12));
+    setRecentEntries((current) => [
+      { id, viewedAt: Date.now() },
+      ...current.filter((entry) => entry.id !== id),
+    ].slice(0, 20));
   }, []);
 
   const handleClosePanel = useCallback(() => {
@@ -264,7 +283,8 @@ function App() {
         <Suspense fallback={null}>
           <SavedItems
             favoriteIds={favoriteIds}
-            recentIds={recentIds}
+            recentEntries={recentEntries}
+            onClearHistory={() => setRecentEntries([])}
             onClose={() => setShowSavedItems(false)}
             onSelect={(id) => {
               handleSegmentClick(id);
