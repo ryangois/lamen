@@ -128,7 +128,8 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-.favorite-orb {
+.favorite-orb,
+.compare-orb {
     display: grid;
     flex: 0 0 auto;
     --icon-size: 19px;
@@ -150,7 +151,9 @@
 }
 
 .favorite-orb:hover,
-.favorite-orb:focus-visible {
+.favorite-orb:focus-visible,
+.compare-orb:hover,
+.compare-orb:focus-visible {
     transform: translateY(-1px) scale(1.03);
     border-color: rgba(244, 211, 111, 0.72);
     outline: none;
@@ -166,6 +169,11 @@
 
 .favorite-orb .star-fill {
     fill: currentColor;
+}
+
+.compare-orb span {
+    font-size: 1rem;
+    font-weight: 900;
 }
 
 .subtitle {
@@ -1374,7 +1382,8 @@
         padding-right: calc(3.95rem + env(safe-area-inset-right, 0px));
     }
 
-    .favorite-orb {
+    .favorite-orb,
+    .compare-orb {
         --icon-size: 18px;
         width: 38px;
         height: 38px;

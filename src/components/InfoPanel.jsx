@@ -145,6 +145,7 @@ export default function InfoPanel({
     isFavorite = false,
     onToggleFavorite,
     onNavigateSegment,
+    onCompare,
 }) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
@@ -242,6 +243,14 @@ export default function InfoPanel({
                                 onClick={onToggleFavorite}
                             >
                                 <StarIcon filled={isFavorite} />
+                            </button>
+                            <button
+                                type="button"
+                                className="compare-orb"
+                                aria-label={`Comparar ${content.title} com outra ficha`}
+                                onClick={onCompare}
+                            >
+                                <span aria-hidden="true">⇄</span>
                             </button>
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}

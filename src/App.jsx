@@ -11,6 +11,7 @@ const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
 const GlobalSearch = lazy(() => import('./components/GlobalSearch'));
+const ComparePanel = lazy(() => import('./components/ComparePanel'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -70,6 +71,7 @@ function App() {
   const [showSavedItems, setShowSavedItems] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [comparisonId, setComparisonId] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
   const [recentEntries, setRecentEntries] = useState(readStoredRecent);
 
@@ -102,7 +104,8 @@ function App() {
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
 
-      if (showSearch) setShowSearch(false);
+      if (comparisonId) setComparisonId(null);
+      else if (showSearch) setShowSearch(false);
       else if (showHelp) setShowHelp(false);
       else if (showSavedItems) setShowSavedItems(false);
       else if (showAngelFinder) setShowAngelFinder(false);
@@ -111,7 +114,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, showAngelFinder, showHelp, showSavedItems, showSearch]);
+  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showSavedItems, showSearch]);
 
   useEffect(() => {
     const handleSearchShortcut = (event) => {
@@ -266,6 +269,7 @@ function App() {
             isFavorite={favoriteIds.includes(activeSegmentId)}
             onToggleFavorite={() => toggleFavorite(activeSegmentId)}
             onNavigateSegment={handleSegmentClick}
+            onCompare={() => setComparisonId(activeSegmentId)}
           />
         </Suspense>
       )}
@@ -307,6 +311,19 @@ function App() {
             onSelect={(id) => {
               handleSegmentClick(id);
               setShowSearch(false);
+            }}
+          />
+        </Suspense>
+      )}
+
+      {comparisonId && (
+        <Suspense fallback={null}>
+          <ComparePanel
+            initialId={comparisonId}
+            onClose={() => setComparisonId(null)}
+            onOpen={(id) => {
+              handleSegmentClick(id);
+              setComparisonId(null);
             }}
           />
         </Suspense>
