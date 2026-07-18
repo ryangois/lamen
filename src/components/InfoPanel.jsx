@@ -274,6 +274,20 @@ export default function InfoPanel({
                             </button>
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
+                        {content.evidence?.length > 0 && (
+                            <div className="evidence-strip" aria-label="Classificação das informações">
+                                {content.evidence.map((item) => (
+                                    <span
+                                        className={`evidence-badge ${item.level}`}
+                                        title={item.description}
+                                        key={`${item.level}-${item.label}`}
+                                    >
+                                        <i aria-hidden="true"></i>
+                                        {item.label}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
                                 <button

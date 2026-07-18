@@ -1532,6 +1532,49 @@ const editorialProfiles = {
   },
 };
 
+const evidenceByCategory = {
+  element: [
+    ['traditional', 'Tradição histórica', 'Qualidades elementares transmitidas por filosofia, medicina e alquimia.'],
+    ['hermetic', 'Correspondência hermética', 'Direções, armas, arcanjos e naipes variam entre escolas.'],
+  ],
+  planet: [
+    ['traditional', 'Astrologia tradicional', 'Dignidades e regências dos sete planetas visíveis.'],
+    ['scientific', 'Referência científica', 'Ciclos físicos são mantidos separados da interpretação astrológica.'],
+  ],
+  zodiac: [
+    ['traditional', 'Astrologia tradicional', 'Elementos, modalidades e regências possuem transmissão histórica.'],
+    ['hermetic', 'Correspondência hermética', 'Tarot e letras hebraicas são atribuições ocultistas modernas.'],
+  ],
+  decan: [
+    ['traditional', 'Tradição histórica', 'Divisão em faces de dez graus.'],
+    ['hermetic', 'Golden Dawn', 'Cartas numeradas e títulos esotéricos seguem síntese hermética.'],
+  ],
+  angel: [
+    ['primary', 'Base textual', 'O tríplice é relacionado a Êxodo 14:19–21.'],
+    ['hermetic', 'Tradição hermética', 'Graus, coros, Salmos e regentes pertencem a recepções posteriores.'],
+    ['contested', 'Associação específica', 'Contrapartes de Rudd não pertencem à formulação judaica original.'],
+  ],
+  sephirah: [
+    ['primary', 'Fonte cabalística', 'As dez sefirot são apresentadas no Sefer Yetzirah.'],
+    ['hermetic', 'Síntese hermética', 'Cores, planetas, Tarot, arcanjos e coros foram sistematizados posteriormente.'],
+  ],
+  daath: [
+    ['traditional', 'Conceito posterior', 'Daath é tratada como função ou limiar, não como esfera numerada.'],
+    ['contested', 'Variação entre escolas', 'Abismo e Choronzon pertencem a sistemas herméticos específicos.'],
+  ],
+  path: [
+    ['primary', 'Letra formativa', 'As 22 letras pertencem à estrutura do Sefer Yetzirah.'],
+    ['hermetic', 'Diagrama hermético', 'Posição na Árvore e ligação com o Tarot são desenvolvimentos posteriores.'],
+  ],
+  choir: [
+    ['primary', 'Fonte cristã histórica', 'A organização em três hierarquias segue Pseudo-Dionísio.'],
+    ['hermetic', 'Síntese cabalística', 'A relação fixa com Sephiroth e grupos do Shem é posterior.'],
+  ],
+  symbol: [
+    ['editorial', 'Síntese editorial', 'A ficha reúne sistemas distintos com indicação de suas fontes.'],
+  ],
+};
+
 function classifySource(source) {
   const text = `${source.label || ''} ${source.url || ''}`.toLowerCase();
   if (text.includes('sefaria')) {
@@ -1560,6 +1603,8 @@ Object.entries(content).forEach(([id, item]) => {
   const profile = editorialProfiles[category] || editorialProfiles.symbol;
   item.categoryLabel = profile.label;
   item.relations = buildRelations(id);
+  item.evidence = (evidenceByCategory[category] || evidenceByCategory.symbol)
+    .map(([level, label, description]) => ({ level, label, description }));
   item.practice = item.practice || {
     prompt: `Que aspecto de ${item.title} pede atenção, equilíbrio ou expressão consciente agora?`,
     meditation: `Leia as correspondências sem pressa, escolha uma imagem ou palavra-chave e observe o que ela mobiliza antes de formular uma conclusão.`,
