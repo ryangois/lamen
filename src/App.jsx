@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LamenMap from './components/LamenMap';
 import MobileNavigation from './components/MobileNavigation';
 import { findRouteItem, getRoutePath } from './data/routes';
@@ -39,7 +39,17 @@ function writeSegmentToUrl(segmentId, method = 'replaceState') {
   }
   url.searchParams.delete('acao');
 
-  window.history[method]({ lamenEntry: Boolean(item) }, '', url);
+  const currentDepth = Number(window.history.state?.lamenDepth) || 0;
+  const nextDepth = method === 'pushState'
+    ? currentDepth + 1
+    : item
+      ? currentDepth
+      : 0;
+
+  window.history[method]({
+    lamenEntry: Boolean(item),
+    lamenDepth: nextDepth,
+  }, '', url);
 }
 
 function readStoredIds(key) {
@@ -90,6 +100,7 @@ function readStoredCollections() {
 }
 
 function App() {
+  const closePanelOnPopRef = useRef(false);
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
   const [showAngelFinder, setShowAngelFinder] = useState(() => (
@@ -125,12 +136,38 @@ function App() {
   }, [recentEntries]);
 
   useEffect(() => {
+    const initialItem = getInitialSegmentId();
+    window.history.replaceState({
+      ...window.history.state,
+      lamenEntry: Boolean(initialItem),
+      lamenDepth: Number(window.history.state?.lamenDepth) || 0,
+    }, '', window.location.href);
+  }, []);
+
+  useEffect(() => {
     const handlePopState = () => {
+      if (closePanelOnPopRef.current) {
+        closePanelOnPopRef.current = false;
+        setActiveSegmentId(null);
+        writeSegmentToUrl(null);
+        return;
+      }
       setActiveSegmentId(getInitialSegmentId());
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleClosePanel = useCallback(() => {
+    const depth = Number(window.history.state?.lamenDepth) || 0;
+    if (depth > 0) {
+      closePanelOnPopRef.current = true;
+      window.history.go(-depth);
+      return;
+    }
+    setActiveSegmentId(null);
+    writeSegmentToUrl(null);
   }, []);
 
   useEffect(() => {
@@ -158,18 +195,12 @@ function App() {
       else if (showHelp) setShowHelp(false);
       else if (showSavedItems) setShowSavedItems(false);
       else if (showAngelFinder) setShowAngelFinder(false);
-      else if (activeSegmentId) {
-        if (window.history.state?.lamenEntry) window.history.back();
-        else {
-          setActiveSegmentId(null);
-          writeSegmentToUrl(null);
-        }
-      }
+      else if (activeSegmentId) handleClosePanel();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showMobileMenu, showSavedItems, showSearch, showStudy]);
+  }, [activeSegmentId, comparisonId, handleClosePanel, showAngelFinder, showHelp, showMobileMenu, showSavedItems, showSearch, showStudy]);
 
   useEffect(() => {
     const handleSearchShortcut = (event) => {
@@ -192,15 +223,6 @@ function App() {
       ...current.filter((entry) => entry.id !== id),
     ].slice(0, 20));
   }, [activeSegmentId]);
-
-  const handleClosePanel = useCallback(() => {
-    if (window.history.state?.lamenEntry) {
-      window.history.back();
-    } else {
-      setActiveSegmentId(null);
-      writeSegmentToUrl(null);
-    }
-  }, []);
 
   const handleViewChange = useCallback((nextView) => {
     setView(nextView);

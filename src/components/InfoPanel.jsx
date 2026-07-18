@@ -403,32 +403,34 @@ export default function InfoPanel({
                         </nav>
                         <div className="panel-title-row">
                             <h2 className="title brand-font" id="info-panel-title">{content.title}</h2>
-                            <button
-                                type="button"
-                                className={`favorite-orb ${isFavorite ? 'active' : ''}`}
-                                aria-label={isFavorite ? 'Gerenciar coleções' : 'Salvar em uma coleção'}
-                                aria-pressed={isFavorite}
-                                aria-expanded={showCollectionPicker}
-                                onClick={() => setShowCollectionPicker((current) => !current)}
-                            >
-                                <StarIcon filled={isFavorite} />
-                            </button>
-                            <button
-                                type="button"
-                                className="compare-orb"
-                                aria-label={`Comparar ${content.title} com outra ficha`}
-                                onClick={onCompare}
-                            >
-                                <span aria-hidden="true">⇄</span>
-                            </button>
-                            <button
-                                type="button"
-                                className="share-orb"
-                                aria-label={`Criar cartão visual de ${content.title}`}
-                                onClick={() => setShowShareCard(true)}
-                            >
-                                <ShareIcon />
-                            </button>
+                            <div className="panel-title-actions">
+                                <button
+                                    type="button"
+                                    className={`favorite-orb ${isFavorite ? 'active' : ''}`}
+                                    aria-label={isFavorite ? 'Gerenciar coleções' : 'Salvar em uma coleção'}
+                                    aria-pressed={isFavorite}
+                                    aria-expanded={showCollectionPicker}
+                                    onClick={() => setShowCollectionPicker((current) => !current)}
+                                >
+                                    <StarIcon filled={isFavorite} />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="compare-orb"
+                                    aria-label={`Comparar ${content.title} com outra ficha`}
+                                    onClick={onCompare}
+                                >
+                                    <span aria-hidden="true">⇄</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="share-orb"
+                                    aria-label={`Criar cartão visual de ${content.title}`}
+                                    onClick={() => setShowShareCard(true)}
+                                >
+                                    <ShareIcon />
+                                </button>
+                            </div>
                             {showCollectionPicker && (
                                 <div className="collection-picker">
                                     <strong>Salvar em</strong>
