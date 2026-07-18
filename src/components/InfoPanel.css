@@ -112,6 +112,12 @@
     gap: 1.2rem;
 }
 
+.share-orb .ui-icon circle {
+    fill: rgba(8, 10, 15, 0.95);
+    stroke: currentColor;
+    stroke-width: 1.8;
+}
+
 .panel-breadcrumbs {
     margin: -0.25rem 0 0.05rem;
 }
@@ -243,7 +249,8 @@
 }
 
 .favorite-orb,
-.compare-orb {
+.compare-orb,
+.share-orb {
     display: grid;
     flex: 0 0 auto;
     --icon-size: 19px;
@@ -267,7 +274,9 @@
 .favorite-orb:hover,
 .favorite-orb:focus-visible,
 .compare-orb:hover,
-.compare-orb:focus-visible {
+.compare-orb:focus-visible,
+.share-orb:hover,
+.share-orb:focus-visible {
     transform: translateY(-1px) scale(1.03);
     border-color: rgba(244, 211, 111, 0.72);
     outline: none;
@@ -1749,7 +1758,8 @@
     }
 
     .favorite-orb,
-    .compare-orb {
+    .compare-orb,
+    .share-orb {
         --icon-size: 18px;
         width: 38px;
         height: 38px;

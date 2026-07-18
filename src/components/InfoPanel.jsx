@@ -3,6 +3,7 @@ import { getContent } from '../data/content';
 import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
 import MiniContextMap from './MiniContextMap';
+import ShareCard from './ShareCard';
 import './InfoPanel.css';
 
 const ICONS = {
@@ -102,6 +103,17 @@ function ArrowIcon({ direction = 'right' }) {
             ) : (
                 <path d="M9.5 6.5L15 12l-5.5 5.5M4 12h10.25" />
             )}
+        </svg>
+    );
+}
+
+function ShareIcon() {
+    return (
+        <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="18" cy="5" r="2.25" />
+            <circle cx="6" cy="12" r="2.25" />
+            <circle cx="18" cy="19" r="2.25" />
+            <path d="M8.1 10.95l7.8-4.85M8.1 13.05l7.8 4.85" />
         </svg>
     );
 }
@@ -227,6 +239,7 @@ export default function InfoPanel({
     const [notesBySegment, setNotesBySegment] = useState({});
     const [glossaryEntry, setGlossaryEntry] = useState(null);
     const [showCollectionPicker, setShowCollectionPicker] = useState(false);
+    const [showShareCard, setShowShareCard] = useState(false);
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -353,6 +366,14 @@ export default function InfoPanel({
                                 onClick={onCompare}
                             >
                                 <span aria-hidden="true">⇄</span>
+                            </button>
+                            <button
+                                type="button"
+                                className="share-orb"
+                                aria-label={`Criar cartão visual de ${content.title}`}
+                                onClick={() => setShowShareCard(true)}
+                            >
+                                <ShareIcon />
                             </button>
                             {showCollectionPicker && (
                                 <div className="collection-picker">
@@ -900,6 +921,9 @@ export default function InfoPanel({
                     <h3 className="brand-font">{glossaryEntry.term}</h3>
                     <p>{glossaryEntry.definition}</p>
                 </aside>
+            )}
+            {showShareCard && content && (
+                <ShareCard content={content} onClose={() => setShowShareCard(false)} />
             )}
         </aside>
     );
