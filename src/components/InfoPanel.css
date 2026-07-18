@@ -773,11 +773,22 @@
 .tarot-placeholder {
     width: 100%;
     aspect-ratio: 2 / 3.25;
-    object-fit: cover;
+    object-fit: contain;
     background:
         linear-gradient(145deg, rgba(212, 175, 55, 0.18), rgba(255, 255, 255, 0.035));
     border: 1px solid rgba(212, 175, 55, 0.16);
     border-radius: 12px;
+}
+
+.tarot-image-link {
+    display: block;
+    border-radius: 12px;
+    outline: none;
+}
+
+.tarot-image-link:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 3px;
 }
 
 .tarot-placeholder {
@@ -803,11 +814,27 @@
     font-size: 0.82rem;
 }
 
+.tarot-card-title {
+    color: var(--accent-gold);
+    font-size: 0.76rem;
+    font-weight: 850;
+}
+
 .tarot-card small,
 .tarot-card p {
     color: #aeb9c8;
     font-size: 0.68rem;
     line-height: 1.35;
+}
+
+.tarot-card small a {
+    color: inherit;
+    text-decoration-color: rgba(212, 175, 55, 0.5);
+    text-underline-offset: 0.15em;
+}
+
+.tarot-card small a:hover {
+    color: var(--text-primary);
 }
 
 .practice-card {

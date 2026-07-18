@@ -34,6 +34,34 @@ const sources = {
     label: 'Agrippa — correspondências celestes e planetárias',
     url: 'https://www.esotericarchives.com/agrippa/agrippa2.htm',
   },
+  seferYetzirah: {
+    label: 'Sefer Yetzirah — texto hebraico, tradução e notas sobre as 10 Sefirot e 22 letras',
+    url: 'https://www.sefaria.org/Sefer_Yetzirah.1-6',
+  },
+  thirtyTwoPaths: {
+    label: 'W. W. Westcott — Sepher Yetzirah e o apêndice The Thirty-Two Paths of Wisdom (1893)',
+    url: 'https://en.wikisource.org/wiki/Sefer_Yetzirah',
+  },
+  liber777: {
+    label: 'Aleister Crowley — Liber 777 (1909), tabelas de correspondências herméticas',
+    url: 'https://keepsilence.org/the-equinox/777/table-of-correspondences_low.pdf',
+  },
+  kabbalahUnveiled: {
+    label: 'S. L. MacGregor Mathers — The Kabbalah Unveiled (1887)',
+    url: 'https://sacred-texts.com/jud/tku/index.htm',
+  },
+  marseilleDodal: {
+    label: 'Wikimedia Commons — Tarot de Marselha de Jean Dodal (Lyon, 1701–1715)',
+    url: 'https://commons.wikimedia.org/wiki/Category:Tarot_de_Marseille_-_Jean_Dodal',
+  },
+  thothMuseum: {
+    label: 'Wikimedia Commons — Thoth Tarot no Museum of Witchcraft and Magic (CC BY-SA 4.0)',
+    url: 'https://commons.wikimedia.org/wiki/File:Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
+  },
+  bookOfThoth: {
+    label: 'O.T.O. — The Book of Thoth, de Aleister Crowley (1944), registro bibliográfico',
+    url: 'https://lib.oto-usa.org/details.html?id=2065',
+  },
   nasa: {
     label: 'NASA Solar System Exploration — dados astronômicos',
     url: 'https://science.nasa.gov/solar-system/',
@@ -43,7 +71,7 @@ const sources = {
 const traditionNote = 'As correspondências abaixo pertencem a sistemas históricos de astrologia, Cabala hermética e magia cerimonial. Escolas diferentes podem usar grafias, regências e atribuições distintas.';
 
 const treeSephirahDetails = {
-  arc_metatron: ['Brilho branco; em escalas herméticas, branco puro e iridescência', 'Um antigo rei coroado visto de perfil', 'União com a fonte e percepção da unidade', 'Realização da Grande Obra', 'não se atribui vício direto; o risco simbólico é inflação espiritual', 'No Sepher Yetzirah, a primeira emanação é contemplada como sopro/espírito do Deus vivo, anterior à diferenciação plena.', 'כתר expressa coroa, culminação e princípio; sua soma é lida como síntese elevada no topo da Árvore.'],
+  arc_metatron: ['Brilho branco; em escalas herméticas, branco puro e iridescência', 'Um antigo rei coroado visto de perfil', 'União com a fonte e percepção da unidade', 'Realização da Grande Obra', 'não se atribui vício direto; o risco simbólico é inflação espiritual', 'No Sefer Yetzirah, a primeira emanação é contemplada como sopro/espírito do Deus vivo, anterior à diferenciação plena.', 'כתר expressa coroa, culminação e princípio; sua soma é lida como síntese elevada no topo da Árvore.'],
   arc_raziel: ['Cinza luminoso, branco-azulado e pérola', 'Figura masculina barbada', 'Visão de Deus face a face em chave contemplativa', 'Devoção e abertura à sabedoria', 'impulso sem forma e excesso de força não estruturada', 'Chokmah corresponde à sabedoria dinâmica, o jorro primordial que antecede a forma.', 'חכמה reúne vida, contenção e abertura; sua leitura favorece sabedoria como potência ativa.'],
   arc_tzaphkiel: ['Preto, índigo escuro e carmesim profundo', 'Mulher madura entronizada', 'Visão da tristeza e da estrutura do tempo', 'Silêncio, compreensão e disciplina', 'avareza, rigidez e esterilidade interior', 'Binah é entendimento: a matriz que limita, mede e torna inteligível a emanação.', 'בינה sugere construção do entendimento; a palavra combina casa, vida e abertura formativa.'],
   arc_tzadkiel: ['Azul profundo e majestoso', 'Rei poderoso coroado e entronizado', 'Visão do amor e da ordem benevolente', 'Obediência à medida justa, generosidade e magnanimidade', 'hipocrisia, tirania benevolente e excesso', 'Chesed organiza expansão, lei, misericórdia e estabilidade das forças superiores.', 'חסד é misericórdia e graça; a gematria enfatiza fluxo, sustentação e vínculo ético.'],
@@ -156,7 +184,7 @@ const pathWisdomTexts = {
 
 function tarotAssetKey(title) {
   const lookup = {
-    'O Louco': ['00_Fool', '00'],
+    'O Louco': ['00_Fool', 'Fool'],
     'O Mago': ['01_Magician', '01'],
     'A Sacerdotisa': ['02_High_Priestess', '02'],
     'A Imperatriz': ['03_Empress', '03'],
@@ -183,11 +211,62 @@ function tarotAssetKey(title) {
   return lookup[title] || null;
 }
 
+const thothTarotTitles = {
+  Aleph: 'O Louco',
+  Beth: 'O Magus',
+  Gimel: 'A Sacerdotisa',
+  Daleth: 'A Imperatriz',
+  Heh: 'A Estrela',
+  Vav: 'O Hierofante',
+  Zayin: 'Os Enamorados',
+  Cheth: 'O Carro',
+  Teth: 'A Luxúria',
+  Yod: 'O Eremita',
+  Kaph: 'A Fortuna',
+  Lamed: 'O Ajustamento',
+  Mem: 'O Enforcado',
+  Nun: 'A Morte',
+  Samekh: 'A Arte',
+  Ayin: 'O Diabo',
+  Peh: 'A Torre',
+  Tzaddi: 'O Imperador',
+  Qoph: 'A Lua',
+  Resh: 'O Sol',
+  Shin: 'O Aeon',
+  Tav: 'O Universo',
+};
+
+const marseilleDodalImages = {
+  Fool: '/tarot/marseille/fool.jpg',
+  '01': '/tarot/marseille/01.jpg',
+  '02': '/tarot/marseille/02.jpg',
+  '03': '/tarot/marseille/03.jpg',
+  '04': '/tarot/marseille/04.jpg',
+  '05': 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Jean_Dodal_Tarot_trump_05.jpg',
+  '06': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Jean_Dodal_Tarot_trump_06.jpg',
+  '07': 'https://upload.wikimedia.org/wikipedia/commons/b/be/Jean_Dodal_Tarot_trump_07.jpg',
+  '08': 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Jean_Dodal_Tarot_trump_08.jpg',
+  '09': 'https://upload.wikimedia.org/wikipedia/commons/6/69/Jean_Dodal_Tarot_trump_09.jpg',
+  '10': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Jean_Dodal_Tarot_trump_10.jpg',
+  '11': 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Jean_Dodal_Tarot_trump_11.jpg',
+  '12': '/tarot/marseille/12.jpg',
+  '13': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Jean_Dodal_Tarot_trump_13.jpg',
+  '14': 'https://upload.wikimedia.org/wikipedia/commons/2/27/Jean_Dodal_Tarot_trump_14.jpg',
+  '15': 'https://upload.wikimedia.org/wikipedia/commons/3/38/Jean_Dodal_Tarot_trump_15.jpg',
+  '16': '/tarot/marseille/16.jpg',
+  '17': 'https://upload.wikimedia.org/wikipedia/commons/3/30/Jean_Dodal_Tarot_trump_17.jpg',
+  '18': 'https://upload.wikimedia.org/wikipedia/commons/5/50/Jean_Dodal_Tarot_trump_18.jpg',
+  '19': 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Jean_Dodal_Tarot_trump_19.jpg',
+  '20': 'https://upload.wikimedia.org/wikipedia/commons/4/40/Jean_Dodal_Tarot_trump_20.jpg',
+  '21': 'https://upload.wikimedia.org/wikipedia/commons/1/1d/Jean_Dodal_Tarot_trump_21.jpg',
+};
+
 function buildTarotDecks(path) {
   const keys = tarotAssetKey(path.tarot);
   if (!keys) return [];
 
   const [rws, marseille] = keys;
+  const marseilleFilename = `Jean_Dodal_Tarot_trump_${marseille}.jpg`;
 
   return [
     {
@@ -195,22 +274,25 @@ function buildTarotDecks(path) {
       title: path.tarot,
       image: `https://commons.wikimedia.org/wiki/Special:FilePath/RWS_Tarot_${rws}.jpg`,
       source: 'Wikimedia Commons — Rider-Waite tarot deck',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck',
       note: 'Imagem histórica em domínio público segundo a ficha do Commons; algumas recolorizações modernas podem ter restrições.',
     },
     {
-      deck: 'Tarot de Marseille',
+      deck: 'Tarot de Marselha · Jean Dodal',
       title: path.tarot,
-      image: '',
+      image: marseilleDodalImages[marseille],
       variant: `Arcano ${marseille}`,
-      source: 'Wikimedia Commons — Tarot de Marseille',
-      note: 'Uso placeholder estilizado porque os nomes de arquivos públicos de Marselha variam por baralho e nem todos resolvem de forma confiável.',
+      source: 'Jean Dodal, Lyon, 1701–1715 · domínio público',
+      sourceUrl: `https://commons.wikimedia.org/wiki/File:${marseilleFilename}`,
+      note: 'Reprodução histórica do Tarot de Marselha preservada pelo Wikimedia Commons.',
     },
     {
-      deck: 'Thoth',
-      title: path.tarot,
-      image: '',
-      source: 'Imagem não incluída por cautela de copyright',
-      note: 'O deck Thoth de Crowley/Harris possui histórico de licenciamento moderno; mantive a associação sem incorporar imagem protegida.',
+      deck: 'Thoth · Crowley/Harris',
+      title: thothTarotTitles[path.letter] || path.tarot,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg/960px-Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
+      source: 'Foto do conjunto por Ethan Doyle White · CC BY-SA 4.0',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
+      note: 'A fotografia licenciada mostra o baralho no museu. O título acima segue a atribuição própria do Thoth; cartas individuais continuam protegidas.',
     },
   ];
 }
@@ -406,7 +488,7 @@ sphereProfiles.forEach((sphere, index) => {
       'Nome hebraico': sphere.hebrew,
       'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
       'Caminho de Sabedoria': pathWisdomTexts[sphere.number],
-      'Sepher Yetzirah': yetzirah || 'Associação contemplativa por esfera conforme leituras herméticas posteriores.',
+      'Sefer Yetzirah': yetzirah || 'Associação contemplativa por esfera conforme leituras herméticas posteriores.',
     },
     gematria: buildHebrewWordGematria(sphere.sephirah, sphere.hebrew, gematriaNote),
     practice: {
@@ -423,10 +505,11 @@ sphereProfiles.forEach((sphere, index) => {
         ],
       },
       {
-        title: 'Sepher Yetzirah',
+        title: 'Sefer Yetzirah e os Trinta e Dois Caminhos',
         paragraphs: [
           pathWisdomTexts[sphere.number],
-          yetzirah || 'O Sepher Yetzirah fala das emanações e letras como estruturas simbólicas da criação; a associação detalhada por esfera é desenvolvida em leituras herméticas posteriores.',
+          'A frase acima pertence ao apêndice The Thirty-Two Paths of Wisdom divulgado na edição de W. W. Westcott; não é uma passagem literal do corpo antigo do Sefer Yetzirah.',
+          yetzirah || 'O Sefer Yetzirah fala das dez Sefirot belimah e das 22 letras como estruturas da criação; as atribuições detalhadas da Árvore hermética são desenvolvimentos posteriores.',
         ],
       },
       {
@@ -436,7 +519,7 @@ sphereProfiles.forEach((sphere, index) => {
         ],
       },
     ],
-    sources: [sources.agrippa, sources.dionysius],
+    sources: [sources.seferYetzirah, sources.thirtyTwoPaths, sources.liber777, sources.dionysius],
   });
 });
 
@@ -464,7 +547,7 @@ add('arc_sandalphon', {
     'Nome hebraico': 'מלכות',
     'Anjos do Shem': 'síntese e aterramento das 72 forças',
     'Caminho de Sabedoria': pathWisdomTexts[10],
-    'Sepher Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
+    'Sefer Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
   },
   gematria: buildHebrewWordGematria('Malkuth', 'מלכות', 'מלכות soma a ideia de Reino: a força simbólica que recebe, sela e manifesta as demais emanações.'),
   practice: {
@@ -481,10 +564,11 @@ add('arc_sandalphon', {
       ],
     },
     {
-      title: 'Sepher Yetzirah',
+      title: 'Sefer Yetzirah e os Trinta e Dois Caminhos',
       paragraphs: [
         pathWisdomTexts[10],
-        'Embora a linguagem do Sepher Yetzirah seja concisa e não use sempre o vocabulário hermético posterior, Malkuth pode ser contemplada como o campo onde número, letra e mundo formado se tornam experiência.',
+        'A frase acima pertence ao apêndice The Thirty-Two Paths of Wisdom divulgado na edição de W. W. Westcott; não é uma passagem literal do corpo antigo do Sefer Yetzirah.',
+        'Embora a linguagem do Sefer Yetzirah seja concisa e não use sempre o vocabulário hermético posterior, Malkuth pode ser contemplada como o campo onde número, letra e mundo formado se tornam experiência.',
       ],
     },
     {
@@ -494,7 +578,7 @@ add('arc_sandalphon', {
       ],
     },
   ],
-  sources: [sources.agrippa, sources.dionysius],
+  sources: [sources.seferYetzirah, sources.thirtyTwoPaths, sources.liber777, sources.dionysius],
 });
 
 add('arc_daath', {
@@ -515,7 +599,7 @@ add('arc_daath', {
     Função: 'Limiar, abismo, síntese cognitiva e ponto oculto da Árvore',
     'Cor simbólica': 'Cinza-azulado, violeta escuro ou brilho velado',
     'Imagem mágica': 'Um portal velado ou cabeça sem corpo emergindo do abismo',
-    'Sepher Yetzirah': 'Daath não aparece como Sephirah numerada no esquema clássico; é uma leitura posterior usada para falar do conhecimento como passagem.',
+    'Sefer Yetzirah': 'Daath não aparece como Sephirah numerada no esquema clássico; é uma leitura posterior usada para falar do conhecimento como passagem.',
   },
   gematria: buildHebrewWordGematria('Daath', 'דעת', 'דעת significa conhecimento; sua gematria enfatiza porta, olho e selo como imagem de percepção atravessada pelo limite.'),
   practice: {
@@ -538,7 +622,7 @@ add('arc_daath', {
       ],
     },
   ],
-  sources: [sources.agrippa],
+  sources: [sources.kabbalahUnveiled, sources.liber777],
 });
 
 treePathProfiles.forEach((path) => add(path.id, {
@@ -558,7 +642,7 @@ treePathProfiles.forEach((path) => add(path.id, {
     Tarot: path.tarot,
     Função: path.meaning,
     'Nome hebraico': path.hebrew,
-    'Sepher Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
+    'Sefer Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
   },
   tarotDecks: buildTarotDecks(path),
   gematria: buildHebrewWordGematria(path.letter, path.hebrew, `A letra ${path.letter} reduz sua força ao valor ${getGematriaBreakdown(path.hebrew).value}, usado como chave contemplativa do caminho ${path.number}.`),
@@ -576,10 +660,11 @@ treePathProfiles.forEach((path) => add(path.id, {
       ],
     },
     {
-      title: 'Sepher Yetzirah',
+      title: 'Sefer Yetzirah e os Trinta e Dois Caminhos',
       paragraphs: [
         pathWisdomTexts[path.number],
-        `O Sepher Yetzirah apresenta as letras hebraicas como elementos formativos da criação. Aqui, ${path.letter} é lida como ponte entre ${path.fromName} e ${path.toName}.`,
+        'A frase acima pertence ao apêndice The Thirty-Two Paths of Wisdom divulgado na edição de W. W. Westcott; não é uma passagem literal do corpo antigo do Sefer Yetzirah.',
+        `O Sefer Yetzirah apresenta as letras hebraicas como elementos formativos da criação. Aqui, ${path.letter} é lida como ponte entre ${path.fromName} e ${path.toName}.`,
         `A atribuição a ${path.attribution} e ao arcano ${path.tarot} pertence à tradição hermética posterior, especialmente à leitura dos 22 caminhos da Árvore.`,
       ],
     },
@@ -590,7 +675,7 @@ treePathProfiles.forEach((path) => add(path.id, {
       ],
     },
   ],
-  sources: [sources.agrippa],
+  sources: [sources.seferYetzirah, sources.thirtyTwoPaths, sources.liber777, sources.bookOfThoth, sources.marseilleDodal, sources.thothMuseum],
 }));
 
 const planetProfiles = [

@@ -66,6 +66,44 @@ function ArrowIcon({ direction = 'right' }) {
     );
 }
 
+function TarotCardArtwork({ card }) {
+    const [failed, setFailed] = useState(false);
+
+    if (!card.image || failed) {
+        return (
+            <div className="tarot-placeholder" aria-label={`${card.deck}: ${card.title}`}>
+                {card.variant && <small>{card.variant}</small>}
+                <span>{card.title}</span>
+                {failed && <small>Imagem temporariamente indisponível</small>}
+            </div>
+        );
+    }
+
+    const image = (
+        <img
+            src={card.image}
+            alt={`${card.deck}: ${card.title}`}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setFailed(true)}
+        />
+    );
+
+    if (!card.sourceUrl) return image;
+
+    return (
+        <a
+            className="tarot-image-link"
+            href={card.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Abrir fonte da imagem de ${card.deck}`}
+        >
+            {image}
+        </a>
+    );
+}
+
 export default function InfoPanel({
     activeSegmentId,
     onClose,
@@ -350,16 +388,16 @@ export default function InfoPanel({
                                             <div className="tarot-grid">
                                                 {content.tarotDecks.map((card) => (
                                                     <article className="tarot-card" key={card.deck}>
-                                                        {card.image ? (
-                                                            <img src={card.image} alt={`${card.deck}: ${card.title}`} loading="lazy" />
-                                                        ) : (
-                                                            <div className="tarot-placeholder" aria-hidden="true">
-                                                                {card.variant && <small>{card.variant}</small>}
-                                                                <span>{card.title}</span>
-                                                            </div>
-                                                        )}
+                                                        <TarotCardArtwork key={card.image} card={card} />
                                                         <strong>{card.deck}</strong>
-                                                        <small>{card.source}</small>
+                                                        <span className="tarot-card-title">{card.title}</span>
+                                                        <small>
+                                                            {card.sourceUrl ? (
+                                                                <a href={card.sourceUrl} target="_blank" rel="noreferrer">
+                                                                    {card.source}
+                                                                </a>
+                                                            ) : card.source}
+                                                        </small>
                                                         <p>{card.note}</p>
                                                     </article>
                                                 ))}
