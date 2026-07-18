@@ -1,6 +1,6 @@
 import { flatItems } from '../data/catalog';
 import { getContent } from '../data/content';
-import { treePaths, treeSephiroth } from '../data/treeOfLife';
+import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import './SavedItems.css';
 
 function itemsFromIds(ids) {
@@ -10,13 +10,14 @@ function itemsFromIds(ids) {
       if (catalogItem) return catalogItem;
 
       const sephirah = treeSephiroth.find((item) => item.id === id);
+      const special = treeSpecialNodes.find((item) => item.id === id);
       const path = treePaths.find((item) => item.id === id);
-      if (!sephirah && !path) return null;
+      if (!sephirah && !special && !path) return null;
 
       return {
         id,
         color: sephirah ? '#d4af37' : '#9ca8b9',
-        categoryName: sephirah ? 'Árvore · Sephirah' : 'Árvore · Caminho',
+        categoryName: sephirah ? 'Árvore · Sephirah' : special ? 'Árvore · Não-esfera' : 'Árvore · Caminho',
         content: getContent(id),
       };
     })

@@ -107,8 +107,9 @@ function buildHebrewWordGematria(label, hebrew, note) {
   const core = getGematriaBreakdown(hebrew);
 
   return {
+    mode: 'single',
+    label,
     core,
-    full: core,
     method: 'Mispar Hechrechi aplicado ao nome hebraico da esfera ou caminho. Letras finais mantêm o valor comum.',
     interpretations: [
       `${label} (${core.text}) soma ${core.value}, reduzido a ${core.root}.`,
@@ -117,6 +118,31 @@ function buildHebrewWordGematria(label, hebrew, note) {
     ],
   };
 }
+
+const pathWisdomTexts = {
+  11: 'O décimo primeiro caminho é chamado Inteligência Cintilante, porque é a essência do véu colocado diante da ordem das causas.',
+  12: 'O décimo segundo caminho é chamado Inteligência de Transparência, porque é a imagem da magnificência e a visão dos mistérios.',
+  13: 'O décimo terceiro caminho é chamado Inteligência Unificadora, porque une a glória e torna conhecida a verdade de cada espírito.',
+  14: 'O décimo quarto caminho é chamado Inteligência Iluminadora, porque institui os arcanos e funda as ideias de santidade.',
+  15: 'O décimo quinto caminho é chamado Inteligência Constituinte, porque estabelece a criação na pureza de suas formas.',
+  16: 'O décimo sexto caminho é chamado Inteligência Triunfal ou Eterna, porque sustenta o prazer da glória além das mudanças.',
+  17: 'O décimo sétimo caminho é chamado Inteligência Disponente, porque ordena os fiéis e os prepara para receber a influência.',
+  18: 'O décimo oitavo caminho é chamado Inteligência da Casa da Influência, porque dela fluem os arcanos e sombras das coisas.',
+  19: 'O décimo nono caminho é chamado Inteligência do Segredo de todas as atividades espirituais, porque recebe a abundância superior.',
+  20: 'O vigésimo caminho é chamado Inteligência da Vontade, porque dispõe todos os seres criados em sua forma própria.',
+  21: 'O vigésimo primeiro caminho é chamado Inteligência Conciliadora ou Recompensadora, porque recebe a influência divina e a reparte.',
+  22: 'O vigésimo segundo caminho é chamado Inteligência Fiel, porque por ele aumentam as virtudes espirituais.',
+  23: 'O vigésimo terceiro caminho é chamado Inteligência Estável, porque dá permanência às emanações e sustenta sua força.',
+  24: 'O vigésimo quarto caminho é chamado Inteligência Imaginativa, porque dá semelhança a tudo que é criado segundo seus modelos.',
+  25: 'O vigésimo quinto caminho é chamado Inteligência da Provação ou Tentação, porque testa a firmeza do espírito.',
+  26: 'O vigésimo sexto caminho é chamado Inteligência Renovadora, porque renova todas as coisas que começam a mudar.',
+  27: 'O vigésimo sétimo caminho é chamado Inteligência Excitante ou Palpável, porque inflama e move as formas manifestas.',
+  28: 'O vigésimo oitavo caminho é chamado Inteligência Natural, porque aperfeiçoa a natureza de tudo que existe sob o Sol.',
+  29: 'O vigésimo nono caminho é chamado Inteligência Corpórea, porque forma os corpos em todos os mundos.',
+  30: 'O trigésimo caminho é chamado Inteligência Coletiva, porque reúne a ciência dos astros e das leis celestes.',
+  31: 'O trigésimo primeiro caminho é chamado Inteligência Perpétua, porque regula os movimentos do Sol e da Lua em sua ordem.',
+  32: 'O trigésimo segundo caminho é chamado Inteligência Administrativa, porque dirige as operações dos sete planetas.',
+};
 
 function tarotAssetKey(title) {
   const lookup = {
@@ -164,9 +190,10 @@ function buildTarotDecks(path) {
     {
       deck: 'Tarot de Marseille',
       title: path.tarot,
-      image: `https://commons.wikimedia.org/wiki/Special:FilePath/T${marseille}_Tarot.png`,
+      image: '',
+      variant: `Arcano ${marseille}`,
       source: 'Wikimedia Commons — Tarot de Marseille',
-      note: 'Imagem de baralhos antigos/derivados hospedados no Commons quando disponível.',
+      note: 'Uso placeholder estilizado porque os nomes de arquivos públicos de Marselha variam por baralho e nem todos resolvem de forma confiável.',
     },
     {
       deck: 'Thoth',
@@ -371,6 +398,11 @@ sphereProfiles.forEach((sphere, index) => {
       'Sepher Yetzirah': yetzirah || 'Associação contemplativa por esfera conforme leituras herméticas posteriores.',
     },
     gematria: buildHebrewWordGematria(sphere.sephirah, sphere.hebrew, gematriaNote),
+    practice: {
+      prompt: `Onde ${sphere.sephirah} aparece hoje como força psíquica, ética ou espiritual?`,
+      meditation: `Contemple a cor ${treeColor || sphere.color} e observe como ${(treeVirtue || sphere.virtue).toLowerCase()} pode se tornar gesto concreto.`,
+      integration: `Equilibre a virtude da esfera com seu risco: ${vice || sphere.imbalance}.`,
+    },
     sections: [
       {
         title: 'Função na Árvore da Vida',
@@ -422,6 +454,11 @@ add('arc_sandalphon', {
     'Sepher Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
   },
   gematria: buildHebrewWordGematria('Malkuth', 'מלכות', 'מלכות soma a ideia de Reino: a força simbólica que recebe, sela e manifesta as demais emanações.'),
+  practice: {
+    prompt: 'O que precisa deixar de ser ideia e virar corpo, agenda, gesto ou matéria?',
+    meditation: 'Sinta o peso do corpo e observe a respiração como a porta de Malkuth: presença antes de abstração.',
+    integration: 'Escolha uma ação simples para aterrar a contemplação no mundo real.',
+  },
   sections: [
     {
       title: 'Função na Árvore da Vida',
@@ -446,6 +483,50 @@ add('arc_sandalphon', {
   sources: [sources.agrippa, sources.dionysius],
 });
 
+add('arc_daath', {
+  title: 'Daath · Conhecimento oculto',
+  subtitle: 'Não-esfera — limiar entre a tríade superior e o coração da Árvore',
+  description: 'Daath não é contada entre as dez Sephiroth. É tratada como ponto de conhecimento, abismo, articulação invisível e passagem simbólica entre a tríade superna e as esferas manifestas.',
+  highlights: [
+    'Não é uma Sephirah numerada.',
+    'Funciona como limiar: conhecimento, abismo e integração entre sabedoria e entendimento.',
+    'No desenho, aparece como ponto velado entre Chokmah, Binah e Tiphareth.',
+  ],
+  associations: {
+    Tipo: 'Não-esfera',
+    Nome: 'Daath',
+    'Nome hebraico': 'דעת',
+    Significado: 'Conhecimento',
+    Localização: 'Entre Chokmah, Binah e Tiphareth',
+    Função: 'Limiar, abismo, síntese cognitiva e ponto oculto da Árvore',
+    'Cor simbólica': 'Cinza-azulado, violeta escuro ou brilho velado',
+    'Imagem mágica': 'Um portal velado ou cabeça sem corpo emergindo do abismo',
+    'Sepher Yetzirah': 'Daath não aparece como Sephirah numerada no esquema clássico; é uma leitura posterior usada para falar do conhecimento como passagem.',
+  },
+  gematria: buildHebrewWordGematria('Daath', 'דעת', 'דעת significa conhecimento; sua gematria enfatiza porta, olho e selo como imagem de percepção atravessada pelo limite.'),
+  practice: {
+    prompt: 'Que conhecimento você está tentando forçar antes de estar pronto para integrá-lo?',
+    meditation: 'Visualize Daath como um véu, não como uma posse: respire e permita que saber e silêncio coexistam.',
+    integration: 'Use Daath para discernir entre informação, experiência e sabedoria encarnada.',
+  },
+  sections: [
+    {
+      title: 'Daath como não-esfera',
+      paragraphs: [
+        'Daath é melhor entendida como função e limiar, não como décima primeira Sephirah. Em muitas leituras herméticas, ela marca o abismo entre a tríade superna e a personalidade integrada abaixo.',
+        'Por isso, no mapa ela aparece clicável, mas visualmente diferente: pontilhada, velada e sem número.',
+      ],
+    },
+    {
+      title: 'Uso contemplativo',
+      paragraphs: [
+        'Daath pergunta se o conhecimento foi integrado ou apenas acumulado. É a diferença entre saber sobre uma coisa e permitir que ela reorganize a consciência.',
+      ],
+    },
+  ],
+  sources: [sources.agrippa],
+});
+
 treePathProfiles.forEach((path) => add(path.id, {
   title: `${path.number}. ${path.letter} · ${path.fromName}–${path.toName}`,
   subtitle: `${path.hebrew} · ${path.attribution} · ${path.tarot}`,
@@ -467,6 +548,11 @@ treePathProfiles.forEach((path) => add(path.id, {
   },
   tarotDecks: buildTarotDecks(path),
   gematria: buildHebrewWordGematria(path.letter, path.hebrew, `A letra ${path.letter} reduz sua força ao valor ${getGematriaBreakdown(path.hebrew).value}, usado como chave contemplativa do caminho ${path.number}.`),
+  practice: {
+    prompt: `Como ${path.fromName} e ${path.toName} precisam conversar na sua vida agora?`,
+    meditation: `Contemple a letra ${path.hebrew} e o arcano ${path.tarot}; observe a passagem de ${path.meaning}.`,
+    integration: `Ação prática: traduza ${path.attribution.toLowerCase()} em uma escolha concreta de equilíbrio entre as duas esferas.`,
+  },
   sections: [
     {
       title: 'Leitura do caminho',
@@ -478,6 +564,7 @@ treePathProfiles.forEach((path) => add(path.id, {
     {
       title: 'Sepher Yetzirah',
       paragraphs: [
+        pathWisdomTexts[path.number],
         `O Sepher Yetzirah apresenta as letras hebraicas como elementos formativos da criação. Aqui, ${path.letter} é lida como ponte entre ${path.fromName} e ${path.toName}.`,
         `A atribuição a ${path.attribution} e ao arcano ${path.tarot} pertence à tradição hermética posterior, especialmente à leitura dos 22 caminhos da Árvore.`,
       ],

@@ -146,6 +146,21 @@
   transition: fill 160ms ease, stroke 160ms ease, filter 160ms ease;
 }
 
+.tree-node-special .tree-node-disc {
+  fill: rgba(13, 16, 24, 0.92);
+  stroke: rgba(174, 185, 200, 0.58);
+  stroke-dasharray: 4 4;
+}
+
+.tree-node-special .tree-node-aura {
+  fill: rgba(174, 185, 200, 0.12);
+}
+
+.tree-node-daath {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
+
 .tree-node-number,
 .tree-node-name {
   text-anchor: middle;
@@ -214,7 +229,7 @@
 }
 
 .legend-dot.mercy {
-  background: #35b779;
+  background: #2866d8;
 }
 
 .legend-dot.middle {
@@ -222,7 +237,7 @@
 }
 
 .legend-dot.severity {
-  background: #d75a5a;
+  background: #c93434;
 }
 
 @media (max-width: 900px) {
@@ -282,6 +297,7 @@
   }
 
   .tree-stage {
+    margin-top: 0.9rem;
     padding: 0.45rem;
   }
 

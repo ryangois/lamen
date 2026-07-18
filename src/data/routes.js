@@ -1,5 +1,5 @@
 import { ringStructure } from './rings';
-import { treePaths, treeSephiroth } from './treeOfLife';
+import { treePaths, treeSephiroth, treeSpecialNodes } from './treeOfLife';
 
 const ZODIAC_NAMES = {
   aries: 'Áries',
@@ -44,6 +44,10 @@ const ringRouteItems = ringStructure.flatMap((ring) => ring.segments.map((segmen
 
 const treeRouteItems = [
   ...treeSephiroth.map((item) => ({
+    id: item.id,
+    slug: slugify(item.name),
+  })),
+  ...treeSpecialNodes.map((item) => ({
     id: item.id,
     slug: slugify(item.name),
   })),

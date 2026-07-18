@@ -548,6 +548,12 @@
     gap: 0.75rem;
 }
 
+.gematria-grid.single .gematria-value {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(244, 211, 111, 0.22), transparent 34%),
+        linear-gradient(180deg, rgba(5, 7, 12, 0.78), rgba(0, 0, 0, 0.38));
+}
+
 .gematria-value {
     display: grid;
     gap: 0.65rem;
@@ -777,12 +783,19 @@
 .tarot-placeholder {
     display: grid;
     place-items: center;
+    align-content: center;
+    gap: 0.35rem;
     padding: 0.7rem;
     color: var(--accent-gold);
     text-align: center;
     font: 900 0.72rem 'Inter', sans-serif;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+}
+
+.tarot-placeholder small {
+    color: #cbd5e1;
+    font-size: 0.62rem;
 }
 
 .tarot-card strong {
@@ -795,6 +808,46 @@
     color: #aeb9c8;
     font-size: 0.68rem;
     line-height: 1.35;
+}
+
+.practice-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.1rem;
+    background:
+        radial-gradient(circle at 12% 0%, rgba(212, 175, 55, 0.16), transparent 36%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.practice-card > span,
+.practice-card small {
+    color: var(--accent-gold);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.practice-card h3 {
+    color: var(--text-primary);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.practice-card div {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.practice-card p {
+    color: #cbd5e1;
+    line-height: 1.65;
 }
 
 /* ─── Mobile: Full Screen Panel ─── */

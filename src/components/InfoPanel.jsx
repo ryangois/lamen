@@ -82,6 +82,7 @@ export default function InfoPanel({
         { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
         { id: 'gematria', label: 'Gematria', available: Boolean(content?.gematria) },
         { id: 'associations', label: 'Correspondências', available: Boolean(content?.associations || content?.highlights?.length) },
+        { id: 'practice', label: 'Prática', available: Boolean(content?.practice) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
@@ -289,29 +290,31 @@ export default function InfoPanel({
                                             <p>{content.gematria.method}</p>
                                         </header>
 
-                                        <div className="gematria-grid">
-                                            {[
-                                                ['Tríplice', content.gematria.core],
-                                                ['Nome completo', content.gematria.full],
-                                            ].map(([label, item]) => (
-                                                <section className="gematria-value" key={label}>
-                                                    <div>
-                                                        <span>{label}</span>
-                                                        <strong dir="rtl">{item.text}</strong>
-                                                    </div>
-                                                    <b>{item.value}</b>
-                                                    <small>Redução: {item.root}</small>
-                                                    <p>{item.formula}</p>
-                                                    <div className="gematria-letters" dir="rtl" aria-label={`${label}: letras e valores`}>
-                                                        {item.letters.map((letter, index) => (
-                                                            <span key={`${label}-${letter.letter}-${index}`}>
-                                                                <b>{letter.letter}</b>
-                                                                <small>{letter.value}</small>
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </section>
-                                            ))}
+                                        <div className={`gematria-grid ${content.gematria.mode === 'single' ? 'single' : ''}`}>
+                                            {(content.gematria.mode === 'single'
+                                                ? [[content.gematria.label || 'Nome hebraico', content.gematria.core]]
+                                                : [
+                                                    ['Tríplice', content.gematria.core],
+                                                    ['Nome completo', content.gematria.full],
+                                                ]).map(([label, item]) => (
+                                                    <section className="gematria-value" key={label}>
+                                                        <div>
+                                                            <span>{label}</span>
+                                                            <strong dir="rtl">{item.text}</strong>
+                                                        </div>
+                                                        <b>{item.value}</b>
+                                                        <small>Redução: {item.root}</small>
+                                                        <p>{item.formula}</p>
+                                                        <div className="gematria-letters" dir="rtl" aria-label={`${label}: letras e valores`}>
+                                                            {item.letters.map((letter, index) => (
+                                                                <span key={`${label}-${letter.letter}-${index}`}>
+                                                                    <b>{letter.letter}</b>
+                                                                    <small>{letter.value}</small>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </section>
+                                                ))}
                                         </div>
 
                                         <section className="gematria-interpretation">
@@ -351,6 +354,7 @@ export default function InfoPanel({
                                                             <img src={card.image} alt={`${card.deck}: ${card.title}`} loading="lazy" />
                                                         ) : (
                                                             <div className="tarot-placeholder" aria-hidden="true">
+                                                                {card.variant && <small>{card.variant}</small>}
                                                                 <span>{card.title}</span>
                                                             </div>
                                                         )}
@@ -362,6 +366,27 @@ export default function InfoPanel({
                                             </div>
                                         </section>
                                     )}
+                                </section>
+                            )}
+
+                            {activeTab === 'practice' && content.practice && (
+                                <section className="tab-section">
+                                    <article className="practice-card">
+                                        <span>Integração</span>
+                                        <h3 className="brand-font">Prática contemplativa</h3>
+                                        <div>
+                                            <small>Pergunta</small>
+                                            <p>{content.practice.prompt}</p>
+                                        </div>
+                                        <div>
+                                            <small>Meditação</small>
+                                            <p>{content.practice.meditation}</p>
+                                        </div>
+                                        <div>
+                                            <small>Integração</small>
+                                            <p>{content.practice.integration}</p>
+                                        </div>
+                                    </article>
                                 </section>
                             )}
 

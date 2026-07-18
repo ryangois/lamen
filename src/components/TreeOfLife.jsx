@@ -1,5 +1,5 @@
 import { getContent } from '../data/content';
-import { treePaths, treeSephiroth } from '../data/treeOfLife';
+import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import './TreeOfLife.css';
 
 function activateByKeyboard(event, callback) {
@@ -32,6 +32,32 @@ export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
             <line x1="112" y1="118" x2="112" y2="470" />
             <line x1="210" y1="52" x2="210" y2="606" />
             <line x1="308" y1="118" x2="308" y2="470" />
+          </g>
+
+          <g className="tree-special-nodes">
+            {treeSpecialNodes.map((node) => {
+              const content = getContent(node.id);
+              const isActive = activeSegmentId === node.id;
+
+              return (
+                <g
+                  key={node.id}
+                  className={`tree-node tree-node-special ${isActive ? 'active' : ''}`}
+                  style={{ '--tree-node-color': node.color }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Abrir ${content.title}`}
+                  onClick={() => handleSelect(node.id)}
+                  onKeyDown={(event) => activateByKeyboard(event, () => handleSelect(node.id))}
+                >
+                  <circle className="tree-node-aura" cx={node.x} cy={node.y} r="30" />
+                  <circle className="tree-node-disc" cx={node.x} cy={node.y} r="22" />
+                  <text className="tree-node-name tree-node-daath" x={node.x} y={node.y + 4}>
+                    {node.name}
+                  </text>
+                </g>
+              );
+            })}
           </g>
 
           <g className="tree-paths">
@@ -91,9 +117,9 @@ export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
         </svg>
 
         <div className="tree-legend" aria-label="Legenda da Árvore">
-          <span><i className="legend-dot mercy"></i>Pilar da Misericórdia</span>
-          <span><i className="legend-dot middle"></i>Pilar do Meio</span>
           <span><i className="legend-dot severity"></i>Pilar da Severidade</span>
+          <span><i className="legend-dot middle"></i>Pilar do Meio</span>
+          <span><i className="legend-dot mercy"></i>Pilar da Misericórdia</span>
         </div>
       </div>
     </section>

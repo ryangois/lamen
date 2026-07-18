@@ -19,7 +19,7 @@ export const treeSephiroth = [
     hebrew: 'חכמה',
     title: 'Sabedoria',
     color: '#b8bcc6',
-    x: 112,
+    x: 308,
     y: 142,
     pillar: 'mercy',
   },
@@ -31,7 +31,7 @@ export const treeSephiroth = [
     hebrew: 'בינה',
     title: 'Entendimento',
     color: '#111318',
-    x: 308,
+    x: 112,
     y: 142,
     pillar: 'severity',
   },
@@ -43,7 +43,7 @@ export const treeSephiroth = [
     hebrew: 'חסד',
     title: 'Misericórdia',
     color: '#2866d8',
-    x: 112,
+    x: 308,
     y: 280,
     pillar: 'mercy',
   },
@@ -55,7 +55,7 @@ export const treeSephiroth = [
     hebrew: 'גבורה',
     title: 'Severidade',
     color: '#c93434',
-    x: 308,
+    x: 112,
     y: 280,
     pillar: 'severity',
   },
@@ -79,7 +79,7 @@ export const treeSephiroth = [
     hebrew: 'נצח',
     title: 'Vitória',
     color: '#2faa58',
-    x: 112,
+    x: 308,
     y: 452,
     pillar: 'mercy',
   },
@@ -91,7 +91,7 @@ export const treeSephiroth = [
     hebrew: 'הוד',
     title: 'Esplendor',
     color: '#f08522',
-    x: 308,
+    x: 112,
     y: 452,
     pillar: 'severity',
   },
@@ -121,7 +121,26 @@ export const treeSephiroth = [
   },
 ];
 
-const byKey = Object.fromEntries(treeSephiroth.map((sephirah) => [sephirah.key, sephirah]));
+export const treeSpecialNodes = [
+  {
+    id: 'arc_daath',
+    key: 'daath',
+    number: 'Daath',
+    name: 'Daath',
+    hebrew: 'דעת',
+    title: 'Conhecimento',
+    color: '#5e6a7e',
+    x: 210,
+    y: 205,
+    pillar: 'hidden',
+    nonSphere: true,
+  },
+];
+
+const byKey = Object.fromEntries([
+  ...treeSephiroth,
+  ...treeSpecialNodes,
+].map((sephirah) => [sephirah.key, sephirah]));
 
 export const treePaths = [
   ['path_aleph', 11, 'Aleph', 'א', 'Kether', 'Chokmah', 'Ar', 'O Louco', 'respiração, início e passagem entre o ilimitado e a sabedoria'],
