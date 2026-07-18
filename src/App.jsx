@@ -6,13 +6,14 @@ import './App.css';
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
 const LamenList = lazy(() => import('./components/LamenList'));
 const TreeOfLife = lazy(() => import('./components/TreeOfLife'));
+const Oracle = lazy(() => import('./components/Oracle'));
 const AngelFinder = lazy(() => import('./components/AngelFinder'));
 const SavedItems = lazy(() => import('./components/SavedItems'));
 const HelpModal = lazy(() => import('./components/HelpModal'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
-  return ['wheel', 'list', 'tree'].includes(savedView) ? savedView : 'wheel';
+  return ['wheel', 'list', 'tree', 'oracle'].includes(savedView) ? savedView : 'wheel';
 }
 
 function getInitialSegmentId() {
@@ -148,6 +149,15 @@ function App() {
           </button>
           <button
             type="button"
+            className={`view-button ${view === 'oracle' ? 'active' : ''}`}
+            aria-pressed={view === 'oracle'}
+            onClick={() => handleViewChange('oracle')}
+          >
+            <span aria-hidden="true">✺</span>
+            Oráculo
+          </button>
+          <button
+            type="button"
             className="view-button"
             aria-label="Abrir calculadora Meu Anjo"
             onClick={() => setShowAngelFinder(true)}
@@ -176,7 +186,7 @@ function App() {
         <span aria-hidden="true">?</span>
       </button>
 
-      <main className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''}`}>
+      <main className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''} ${view === 'oracle' ? 'oracle-mode' : ''}`}>
         {view === 'wheel' ? (
           <div className="map-container">
             <LamenMap onSegmentClick={handleSegmentClick} activeSegmentId={activeSegmentId} />
@@ -188,12 +198,16 @@ function App() {
               activeSegmentId={activeSegmentId}
             />
           </Suspense>
-        ) : (
+        ) : view === 'tree' ? (
           <Suspense fallback={<div className="view-loading">Carregando Árvore…</div>}>
             <TreeOfLife
               onSegmentClick={handleSegmentClick}
               activeSegmentId={activeSegmentId}
             />
+          </Suspense>
+        ) : (
+          <Suspense fallback={<div className="view-loading">Carregando Oráculo…</div>}>
+            <Oracle onSegmentClick={handleSegmentClick} />
           </Suspense>
         )}
       </main>

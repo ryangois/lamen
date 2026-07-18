@@ -144,6 +144,11 @@
   overflow: hidden;
 }
 
+.main-content.oracle-mode {
+  padding: 0;
+  overflow: hidden;
+}
+
 .view-loading {
   display: grid;
   height: 100%;
@@ -200,6 +205,9 @@
   .main-content.tree-mode {
     padding: 0;
   }
+  .main-content.oracle-mode {
+    padding: 0;
+  }
   .view-toolbar {
     top: calc(0.65rem + env(safe-area-inset-top, 0px));
     left: 0;
@@ -225,7 +233,7 @@
     min-height: 36px;
     padding: 0 0.45rem;
     gap: 0.3rem;
-    font-size: 0.76rem;
+    font-size: 0.72rem;
   }
   .help-launch {
     min-height: 38px;

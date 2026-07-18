@@ -274,6 +274,8 @@
   }
 
   .tree-intro {
+    position: relative;
+    z-index: 2;
     gap: 0.52rem;
     padding: 0.85rem 0.95rem;
   }
@@ -298,11 +300,14 @@
   }
 
   .tree-stage {
+    position: relative;
+    z-index: 1;
     margin-top: 0.25rem;
-    padding: 0.45rem;
+    padding: 2.25rem 0.45rem 0.45rem;
   }
 
   .tree-svg {
+    display: block;
     width: min(100%, 460px);
     max-height: none;
   }
