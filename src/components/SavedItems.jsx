@@ -39,6 +39,29 @@ function formatViewedAt(value) {
   return `há ${elapsedDays} ${elapsedDays === 1 ? 'dia' : 'dias'}`;
 }
 
+function normalizeSearch(value) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function filterAndSortItems(items, query, category, order) {
+  const normalizedQuery = normalizeSearch(query.trim());
+  return items
+    .filter((item) => (
+      (!normalizedQuery
+        || normalizeSearch(`${item.content.title} ${item.content.subtitle || ''} ${item.categoryName}`)
+          .includes(normalizedQuery))
+      && (category === 'all' || item.categoryName === category)
+    ))
+    .sort((first, second) => (
+      order === 'recent'
+        ? (second.viewedAt || 0) - (first.viewedAt || 0)
+        : first.content.title.localeCompare(second.content.title, 'pt-BR', { numeric: true })
+    ));
+}
+
 function SavedGroup({ title, emptyText, items, onSelect, onClear }) {
   return (
     <section className="saved-group">
@@ -84,10 +107,17 @@ export default function SavedItems({
 }) {
   const [activeCollectionId, setActiveCollectionId] = useState(collections[0]?.id || 'favorites');
   const [newCollectionName, setNewCollectionName] = useState('');
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('all');
+  const [order, setOrder] = useState('name');
   const activeCollection = collections.find((collection) => collection.id === activeCollectionId)
     || collections[0];
-  const favorites = itemsFromEntries(activeCollection?.itemIds || []);
-  const recent = itemsFromEntries(recentEntries);
+  const allFavorites = itemsFromEntries(activeCollection?.itemIds || []);
+  const allRecent = itemsFromEntries(recentEntries);
+  const categories = [...new Set([...allFavorites, ...allRecent].map((item) => item.categoryName))]
+    .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+  const favorites = filterAndSortItems(allFavorites, query, category, order);
+  const recent = filterAndSortItems(allRecent, query, category, order);
   const handleCreateCollection = (event) => {
     event.preventDefault();
     const id = onCreateCollection?.(newCollectionName);
@@ -111,6 +141,43 @@ export default function SavedItems({
         <p className="saved-intro">
           Guarde símbolos para estudar depois e retorne aos últimos pontos abertos na roda.
         </p>
+
+        <div className="saved-filters" aria-label="Filtrar itens salvos">
+          <label className="saved-search">
+            <span>Buscar</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Nome, tema ou categoria"
+            />
+          </label>
+          <label>
+            <span>Categoria</span>
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              <option value="all">Todas</option>
+              {categories.map((item) => <option value={item} key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Ordem</span>
+            <select value={order} onChange={(event) => setOrder(event.target.value)}>
+              <option value="name">Nome</option>
+              <option value="recent">Mais recentes</option>
+            </select>
+          </label>
+          {(query || category !== 'all') && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setCategory('all');
+              }}
+            >
+              Limpar filtros
+            </button>
+          )}
+        </div>
 
         <section className="saved-group collection-manager">
           <div className="saved-group-heading">
@@ -146,14 +213,18 @@ export default function SavedItems({
           </form>
           <SavedGroup
             title={activeCollection?.name || 'Favoritos'}
-            emptyText="Esta coleção está vazia. Abra uma ficha, toque na estrela e escolha onde salvar."
+            emptyText={allFavorites.length > 0
+              ? 'Nenhum item desta coleção corresponde aos filtros.'
+              : 'Esta coleção está vazia. Abra uma ficha, toque na estrela e escolha onde salvar.'}
             items={favorites}
             onSelect={onSelect}
           />
         </section>
         <SavedGroup
           title="Últimos abertos"
-          emptyText="Seu histórico aparece aqui conforme você explora o Lamen."
+          emptyText={allRecent.length > 0
+            ? 'Nenhum item do histórico corresponde aos filtros.'
+            : 'Seu histórico aparece aqui conforme você explora o Lâmen.'}
           items={recent}
           onSelect={onSelect}
           onClear={onClearHistory}
