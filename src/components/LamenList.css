@@ -202,6 +202,8 @@
 }
 
 .catalog-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 120px;
   position: relative;
   display: grid;
   grid-template-columns: 5px minmax(0, 1fr) auto;

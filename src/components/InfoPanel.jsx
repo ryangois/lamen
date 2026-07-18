@@ -164,7 +164,10 @@ function TarotCardArtwork({ card }) {
         <img
             src={card.image}
             alt={`${card.deck}: ${card.title}`}
+            width="400"
+            height="650"
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setFailed(true)}
         />
@@ -342,7 +345,16 @@ export default function InfoPanel({
                 <div className="content-container animate-fade-in">
                     {content.image ? (
                         <div className="image-wrapper">
-                            <img src={content.image} alt={content.title} className="panel-image" loading="lazy" />
+                            <img
+                                src={content.image}
+                                alt={content.title}
+                                className="panel-image"
+                                width="900"
+                                height="500"
+                                loading="eager"
+                                decoding="async"
+                                fetchPriority="high"
+                            />
                             <div className="image-overlay"></div>
                         </div>
                     ) : (
