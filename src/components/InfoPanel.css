@@ -690,11 +690,59 @@
 .sources-list {
     display: grid;
     gap: 0.75rem;
-    padding-left: 1.2rem;
+    padding: 0;
+}
+
+.sources-intro {
+    color: #aeb9c8;
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
+
+.sources-list article {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0.95rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 16px;
+}
+
+.sources-list article > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.sources-list article > div span,
+.sources-list article > div small {
+    padding: 0.26rem 0.48rem;
+    border-radius: 999px;
+    font: 850 0.6rem 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.sources-list article > div span {
+    color: #111318;
+    background: var(--accent-gold);
+}
+
+.sources-list article > div small {
+    color: #b9c3d2;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.sources-list article p {
+    color: #98a5b7;
+    font-size: 0.78rem;
+    line-height: 1.45;
 }
 
 .sources-list a {
     color: var(--text-primary);
+    font-weight: 800;
     line-height: 1.45;
     text-decoration-color: rgba(212, 175, 55, 0.6);
     text-underline-offset: 3px;
@@ -949,6 +997,287 @@
     line-height: 1.65;
 }
 
+.gematria-methods,
+.relations-header,
+.variations-header {
+    display: grid;
+    gap: 0.55rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.gematria-methods > div:first-child > span,
+.relations-header > span,
+.variations-header > span,
+.notes-card > span {
+    color: var(--accent-gold);
+    font: 900 0.65rem 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.gematria-methods h4,
+.relations-header h3,
+.variations-header h3,
+.notes-card h3 {
+    color: var(--text-primary);
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+}
+
+.gematria-method-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.gematria-method-grid article {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.85rem;
+    background: rgba(0, 0, 0, 0.26);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 15px;
+}
+
+.gematria-method-grid article > span {
+    color: var(--accent-gold);
+    font: 850 0.66rem 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.gematria-method-grid article > div {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.gematria-method-grid strong {
+    color: var(--text-primary);
+    font: 800 1.3rem 'Cinzel', serif;
+}
+
+.gematria-method-grid p,
+.gematria-method-grid small,
+.gematria-caution,
+.relations-header p,
+.variations-header p,
+.notes-card > p {
+    color: #aeb9c8;
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.gematria-caution {
+    padding: 0.75rem;
+    background: rgba(212, 175, 55, 0.08);
+    border-left: 2px solid var(--accent-gold);
+    border-radius: 0 12px 12px 0;
+}
+
+.relations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.relations-grid button {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 118px;
+    align-content: start;
+    gap: 0.38rem;
+    padding: 0.9rem 2.2rem 0.9rem 0.9rem;
+    color: inherit;
+    text-align: left;
+    background:
+        radial-gradient(circle at 0 0, rgba(212, 175, 55, 0.12), transparent 45%),
+        rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.relations-grid button > span {
+    color: var(--accent-gold);
+    font: 900 0.6rem 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.relations-grid button strong {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 0.84rem;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+}
+
+.relations-grid button small {
+    color: #98a5b7;
+    font-size: 0.68rem;
+    line-height: 1.4;
+}
+
+.relations-grid button b {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.75rem;
+    color: var(--accent-gold);
+    font-size: 1rem;
+}
+
+.relations-grid button:hover,
+.relations-grid button:focus-visible {
+    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(212, 175, 55, 0.32);
+    outline: none;
+}
+
+.history-timeline {
+    position: relative;
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    top: 1.2rem;
+    bottom: 1.2rem;
+    left: 1.15rem;
+    width: 1px;
+    background: linear-gradient(var(--accent-gold), rgba(212, 175, 55, 0.08));
+}
+
+.history-timeline article {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.35rem 1fr;
+    gap: 0.8rem;
+}
+
+.history-timeline article > span {
+    z-index: 1;
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    place-items: center;
+    color: #111318;
+    background: var(--accent-gold);
+    border-radius: 999px;
+    font: 900 0.68rem 'Inter', sans-serif;
+    box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.09);
+}
+
+.history-timeline article > div {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.2rem 0 1.1rem;
+}
+
+.history-timeline h3 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+}
+
+.history-timeline p,
+.variations-grid p {
+    color: #c3ccda;
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.variations-grid {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.variations-grid article {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 0.7rem;
+    padding: 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 16px;
+}
+
+.variations-grid article > span {
+    grid-row: 1 / 3;
+    color: var(--accent-gold);
+    font: 900 0.68rem 'Inter', sans-serif;
+}
+
+.variations-grid h4 {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.notes-card {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1.05rem;
+    background:
+        radial-gradient(circle at 10% 0, rgba(212, 175, 55, 0.13), transparent 38%),
+        rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    border-radius: 20px;
+}
+
+.notes-card label {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.notes-card label > span {
+    color: #cbd5e1;
+    font: 800 0.7rem 'Inter', sans-serif;
+}
+
+.notes-card textarea {
+    width: 100%;
+    min-height: 190px;
+    resize: vertical;
+    padding: 0.9rem;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.34);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 15px;
+    font: 400 0.9rem/1.6 'Inter', sans-serif;
+}
+
+.notes-card textarea:focus {
+    border-color: var(--accent-gold);
+    outline: 2px solid rgba(212, 175, 55, 0.18);
+    outline-offset: 2px;
+}
+
+.notes-card > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.notes-card > div small {
+    color: #98a5b7;
+    font-size: 0.68rem;
+}
+
+.notes-card > div button {
+    min-height: 36px;
+    padding: 0 0.8rem;
+    color: #d8e0eb;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    cursor: pointer;
+    font: 800 0.68rem 'Inter', sans-serif;
+}
+
 /* ─── Mobile: Full Screen Panel ─── */
 @media (max-width: 768px) {
     .info-panel {
@@ -1013,6 +1342,24 @@
         min-height: 38px;
         padding: 0 0.55rem;
         font-size: 0.68rem;
+    }
+
+    .gematria-method-grid,
+    .relations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .relations-grid button {
+        min-height: 104px;
+    }
+
+    .notes-card > div {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .notes-card > div button {
+        align-self: start;
     }
 
     .panel-navigation {

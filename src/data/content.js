@@ -93,6 +93,18 @@ const hebrewGematriaValues = {
   ש: 300, ת: 400,
 };
 
+const hebrewOrdinalValues = Object.fromEntries(
+  [...'אבגדהוזחטיכלמנסעפצקרשת'].map((letter, index) => [letter, index + 1]),
+);
+
+const hebrewFinalOrdinals = {
+  ך: 11, ם: 13, ן: 14, ף: 17, ץ: 18,
+};
+
+const hebrewGadolFinalValues = {
+  ך: 500, ם: 600, ן: 700, ף: 800, ץ: 900,
+};
+
 const gematriaRoots = {
   1: 'unidade, impulso inicial e direção da vontade',
   2: 'polaridade, vínculo e cooperação entre forças',
@@ -135,6 +147,50 @@ function getGematriaBreakdown(value) {
   };
 }
 
+function getGematriaSystems(value) {
+  const letters = [...normalizeHebrewLetters(value)];
+  const standard = letters.reduce((sum, letter) => sum + hebrewGematriaValues[letter], 0);
+  const ordinal = letters.reduce(
+    (sum, letter) => sum + (hebrewFinalOrdinals[letter] || hebrewOrdinalValues[letter] || 0),
+    0,
+  );
+  const small = letters.reduce(
+    (sum, letter) => sum + reduceGematria(hebrewGematriaValues[letter]),
+    0,
+  );
+  const gadol = letters.reduce(
+    (sum, letter) => sum + (hebrewGadolFinalValues[letter] || hebrewGematriaValues[letter]),
+    0,
+  );
+
+  return [
+    {
+      id: 'hechrechi',
+      label: 'Mispar Hechrechi',
+      value: standard,
+      note: 'Valor padrão: unidades, dezenas e centenas.',
+    },
+    {
+      id: 'siduri',
+      label: 'Mispar Siduri',
+      value: ordinal,
+      note: 'Posição ordinal de cada letra no alfabeto.',
+    },
+    {
+      id: 'katan',
+      label: 'Mispar Katan',
+      value: small,
+      note: 'Redução decimal aplicada ao valor de cada letra.',
+    },
+    {
+      id: 'gadol',
+      label: 'Mispar Gadol',
+      value: gadol,
+      note: 'Formas finais recebem 500–900 quando aparecem.',
+    },
+  ];
+}
+
 function buildHebrewWordGematria(label, hebrew, note) {
   const core = getGematriaBreakdown(hebrew);
 
@@ -142,6 +198,10 @@ function buildHebrewWordGematria(label, hebrew, note) {
     mode: 'single',
     label,
     core,
+    calculations: getGematriaSystems(hebrew).map((system) => ({
+      ...system,
+      coreValue: system.value,
+    })),
     method: 'Mispar Hechrechi aplicado ao nome hebraico da esfera ou caminho. Letras finais mantêm o valor comum.',
     interpretations: [
       `${label} (${core.text}) soma ${core.value}, reduzido a ${core.root}.`,
@@ -351,6 +411,11 @@ function buildAngelGematria(segment, name) {
     core,
     full,
     suffix,
+    calculations: getGematriaSystems(segment.hebrew).map((system, index) => ({
+      ...system,
+      coreValue: system.value,
+      fullValue: getGematriaSystems(`${segment.hebrew}${suffix}`)[index].value,
+    })),
     method: 'Mispar Hechrechi: א=1, ב=2 … י=10 … ק=100, ר=200, ש=300, ת=400; letras finais mantêm o mesmo valor das formas comuns.',
     interpretations: [
       `Tríplice ${core.text}: ${core.value}, reduzido a ${core.root}. Esta raiz sugere ${gematriaRoots[core.root]}.`,
@@ -1163,6 +1228,355 @@ choirDescriptions.forEach(([id, name, functionText, triad], index) => {
     ],
     sources: [sources.dionysius, sources.agrippa, sources.shemTable],
   });
+});
+
+const sphereIds = [
+  ...sphereProfiles.map((sphere) => sphere.id),
+  'arc_sandalphon',
+];
+const choirIds = choirDescriptions.map(([id]) => id);
+const zodiacIds = zodiacProfiles.map(([id]) => id);
+const planetIds = planetProfiles.map((planet) => planet.id);
+const elementIds = elementProfiles.map((element) => element.id);
+const pathIds = treePathProfiles.map((path) => path.id);
+const decanIds = decanCards.flatMap((cards, signIndex) => (
+  cards.map((_, decanIndex) => `dec_${signIndex}_${decanIndex}`)
+));
+const angelIds = angelSegments.map((segment) => segment.id);
+
+const sphereIdByName = Object.fromEntries([
+  ...sphereProfiles.map((sphere) => [sphere.sephirah, sphere.id]),
+  ['Malkuth', 'arc_sandalphon'],
+]);
+const planetIdByName = Object.fromEntries(planetProfiles.map((planet) => [planet.name, planet.id]));
+const zodiacIdByName = Object.fromEntries(zodiacProfiles.map(([id, , name]) => [name, id]));
+const elementIdByName = Object.fromEntries(elementProfiles.map((element) => [element.name, element.id]));
+const pathIdByLetter = Object.fromEntries(treePathProfiles.map((path) => [path.letter, path.id]));
+
+function relation(id, category, detail) {
+  if (!id || !content[id]) return null;
+  return {
+    id,
+    category,
+    label: content[id].title,
+    detail,
+  };
+}
+
+function uniqueRelations(items) {
+  return items
+    .filter(Boolean)
+    .filter((item, index, list) => list.findIndex((candidate) => candidate.id === item.id) === index);
+}
+
+function getContentCategory(id) {
+  if (elementIds.includes(id)) return 'element';
+  if (planetIds.includes(id)) return 'planet';
+  if (zodiacIds.includes(id)) return 'zodiac';
+  if (decanIds.includes(id)) return 'decan';
+  if (angelIds.includes(id)) return 'angel';
+  if (pathIds.includes(id)) return 'path';
+  if (choirIds.includes(id)) return 'choir';
+  if (sphereIds.includes(id)) return 'sephirah';
+  if (id === 'arc_daath') return 'daath';
+  return 'symbol';
+}
+
+function buildRelations(id) {
+  const category = getContentCategory(id);
+
+  if (category === 'element') {
+    const element = elementProfiles.find((item) => item.id === id);
+    const signs = zodiacProfiles
+      .filter((profile) => profile[3] === element.name)
+      .map(([signId]) => relation(signId, 'Signo', `Signo de ${element.name}`));
+    const paths = treePathProfiles
+      .filter((path) => path.attribution === element.name)
+      .map((path) => relation(path.id, 'Caminho', `Letra atribuída ao elemento ${element.name}`));
+    return uniqueRelations([...signs, ...paths]);
+  }
+
+  if (category === 'planet') {
+    const planet = planetProfiles.find((item) => item.id === id);
+    const sphere = relation(sphereIdByName[planet.sephirah], 'Sephirah', `Esfera cabalística de ${planet.name}`);
+    const signs = zodiacProfiles
+      .filter((profile) => profile[6] === planet.name || profile[7] === planet.name)
+      .map(([signId]) => relation(signId, 'Signo', `Regência de ${planet.name}`));
+    const paths = treePathProfiles
+      .filter((path) => path.attribution === planet.name)
+      .map((path) => relation(path.id, 'Caminho', `Atribuição planetária de ${planet.name}`));
+    return uniqueRelations([sphere, ...signs, ...paths]);
+  }
+
+  if (category === 'zodiac') {
+    const signIndex = zodiacProfiles.findIndex(([signId]) => signId === id);
+    const profile = zodiacProfiles[signIndex];
+    const [, , name, element, , , ruler, modernRuler, , , letter] = profile;
+    const start = signIndex * 6;
+    return uniqueRelations([
+      relation(elementIdByName[element], 'Elemento', `Elemento de ${name}`),
+      relation(planetIdByName[ruler], 'Planeta', `Regente tradicional de ${name}`),
+      relation(planetIdByName[modernRuler], 'Planeta', `Regente moderno de ${name}`),
+      relation(pathIdByLetter[letter], 'Caminho', `Letra e arcano atribuídos a ${name}`),
+      ...[0, 1, 2].map((decanIndex) => (
+        relation(`dec_${signIndex}_${decanIndex}`, 'Decanato', `${decanIndex * 10}°–${(decanIndex + 1) * 10}°`)
+      )),
+      ...angelIds.slice(start, start + 6).map((angelId, index) => (
+        relation(angelId, 'Anjo', `${index * 5}°–${(index + 1) * 5}° de ${name}`)
+      )),
+    ]);
+  }
+
+  if (category === 'decan') {
+    const [, signIndexText, decanIndexText] = id.split('_');
+    const signIndex = Number(signIndexText);
+    const decanIndex = Number(decanIndexText);
+    const sign = zodiacProfiles[signIndex];
+    const planet = decanPlanets[signIndex][decanIndex];
+    const number = Number(decanCards[signIndex][decanIndex].match(/\d+/)?.[0]);
+    const firstAngel = signIndex * 6 + decanIndex * 2;
+    return uniqueRelations([
+      relation(sign[0], 'Signo', `Decanato de ${sign[2]}`),
+      relation(planetIdByName[planet], 'Planeta', 'Regente caldeu do decanato'),
+      relation(sphereIdByName[numberSephiroth[number]], 'Sephirah', `Número ${number} no Tarot menor`),
+      relation(angelIds[firstAngel], 'Anjo', 'Primeiro quinário do decanato'),
+      relation(angelIds[firstAngel + 1], 'Anjo', 'Segundo quinário do decanato'),
+    ]);
+  }
+
+  if (category === 'angel') {
+    const index = angelIds.indexOf(id);
+    const signIndex = Math.floor(index / 6);
+    const decanIndex = Math.floor((index % 6) / 2);
+    const sphereIndex = Math.floor(index / 8);
+    const pairIndex = index % 2 === 0 ? index + 1 : index - 1;
+    return uniqueRelations([
+      relation(zodiacIds[signIndex], 'Signo', 'Faixa zodiacal de 5°'),
+      relation(`dec_${signIndex}_${decanIndex}`, 'Decanato', 'Carta e regente do decanato'),
+      relation(sphereIds[sphereIndex], 'Sephirah', 'Esfera e arcanjo regentes'),
+      relation(choirIds[sphereIndex], 'Coro', 'Ordem angélica correspondente'),
+      relation(angelIds[pairIndex], 'Anjo', 'Par que completa o decanato'),
+    ]);
+  }
+
+  if (category === 'sephirah') {
+    const sphereIndex = sphereIds.indexOf(id);
+    const sphereName = sphereIndex < sphereProfiles.length
+      ? sphereProfiles[sphereIndex].sephirah
+      : 'Malkuth';
+    const sphere = sphereProfiles[sphereIndex];
+    const planet = sphere && planetProfiles.find((item) => item.sephirah === sphere.sephirah);
+    return uniqueRelations([
+      relation(planet?.id, 'Planeta', `Esfera planetária de ${sphereName}`),
+      relation(choirIds[sphereIndex], 'Coro', `Ordem angélica de ${sphereName}`),
+      ...treePathProfiles
+        .filter((path) => path.fromName === sphereName || path.toName === sphereName)
+        .map((path) => relation(path.id, 'Caminho', `${path.fromName} ↔ ${path.toName}`)),
+      ...angelIds.slice(sphereIndex * 8, sphereIndex * 8 + 8)
+        .map((angelId) => relation(angelId, 'Anjo', `Força do coro de ${sphereName}`)),
+    ]);
+  }
+
+  if (category === 'daath') {
+    return uniqueRelations([
+      relation('arc_metatron', 'Sephirah', 'Coroa acima do limiar'),
+      relation('arc_raziel', 'Sephirah', 'Sabedoria'),
+      relation('arc_tzaphkiel', 'Sephirah', 'Entendimento'),
+      relation('arc_raphael', 'Sephirah', 'Centro abaixo do Abismo'),
+      relation('path_gimel', 'Caminho', 'Eixo central que atravessa a região de Daath'),
+    ]);
+  }
+
+  if (category === 'path') {
+    const path = treePathProfiles.find((item) => item.id === id);
+    const attributedId = planetIdByName[path.attribution]
+      || zodiacIdByName[path.attribution]
+      || elementIdByName[path.attribution];
+    const attributedCategory = planetIdByName[path.attribution]
+      ? 'Planeta'
+      : zodiacIdByName[path.attribution]
+        ? 'Signo'
+        : 'Elemento';
+    return uniqueRelations([
+      relation(path.fromId, 'Sephirah', 'Origem do caminho'),
+      relation(path.toId, 'Sephirah', 'Destino do caminho'),
+      relation(attributedId, attributedCategory, `Atribuição de ${path.letter}`),
+    ]);
+  }
+
+  if (category === 'choir') {
+    const index = choirIds.indexOf(id);
+    return uniqueRelations([
+      relation(sphereIds[index], 'Sephirah', 'Esfera e arcanjo regentes'),
+      ...angelIds.slice(index * 8, index * 8 + 8)
+        .map((angelId) => relation(angelId, 'Anjo', `Integrante do coro ${content[id].title.split(' · ')[0]}`)),
+    ]);
+  }
+
+  return [];
+}
+
+const editorialProfiles = {
+  element: {
+    label: 'Elemento',
+    history: [
+      'A linguagem dos quatro elementos foi sistematizada na filosofia antiga e atravessou medicina, alquimia e cosmologia europeias.',
+      'A magia cerimonial moderna reuniu direções, cores, armas e nomes angélicos em tabelas operativas; essas camadas não pertencem todas ao mesmo período histórico.',
+    ],
+    variations: [
+      ['Filosofia clássica', 'Qualidades quente, fria, seca e úmida descrevem processos da natureza.'],
+      ['Magia cerimonial', 'Elementos recebem direções, cores, instrumentos, arcanjos e naipes do Tarot.'],
+      ['Leitura psicológica', 'São usados como metáforas de ação, emoção, pensamento e materialização.'],
+    ],
+  },
+  planet: {
+    label: 'Planeta',
+    history: [
+      'Os sete astros visíveis organizaram calendários, dias da semana, metais e dignidades na astrologia antiga e medieval.',
+      'A Cabala hermética relacionou cada planeta a uma Sephirah, nomes divinos, arcanjos e inteligências; a astronomia moderna descreve esses corpos por outro método e finalidade.',
+    ],
+    variations: [
+      ['Astrologia tradicional', 'Prioriza os sete planetas visíveis, dignidades, seitas, casas e condições celestes.'],
+      ['Cabala hermética', 'Integra planeta, Sephirah, arcanjo, cor, metal e Tarot em uma cadeia simbólica.'],
+      ['Astronomia', 'Trata órbitas e propriedades físicas sem atribuir significado divinatório.'],
+    ],
+  },
+  zodiac: {
+    label: 'Signo',
+    history: [
+      'O zodíaco de doze signos consolidou-se na astronomia e astrologia babilônica e helenística, recebendo novas camadas na tradição medieval.',
+      'As relações com letras hebraicas e Arcanos Maiores pertencem à Cabala hermética moderna, não à origem antiga dos signos.',
+    ],
+    variations: [
+      ['Zodíaco tropical', 'Mede os signos a partir dos equinócios e solstícios; é o padrão usado nesta roda.'],
+      ['Zodíaco sideral', 'Usa referências estelares e diferentes ayanamshas, deslocando as posições zodiacais.'],
+      ['Regências modernas', 'Urano, Netuno e Plutão complementam ou substituem regentes tradicionais em algumas escolas.'],
+    ],
+  },
+  decan: {
+    label: 'Decanato',
+    history: [
+      'Os decanatos dividem cada signo em três faces de dez graus e possuem raízes egípcias, helenísticas e medievais.',
+      'A Golden Dawn associou os 36 decanatos às cartas numeradas do Tarot e à ordem caldeia dos planetas.',
+    ],
+    variations: [
+      ['Faces tradicionais', 'Textos antigos e medievais descrevem imagens e regentes que variam entre autores.'],
+      ['Golden Dawn', 'Relaciona cada decanato a uma carta numerada, título esotérico e planeta.'],
+      ['Tarot contemporâneo', 'Frequentemente privilegia a imagem da carta e omite a estrutura astrológica completa.'],
+    ],
+  },
+  angel: {
+    label: 'Anjo',
+    history: [
+      'O núcleo de três letras deriva de uma leitura combinatória de Êxodo 14:19–21. A vocalização como nomes angélicos e muitas atribuições surgem em recepções cabalísticas posteriores.',
+      'Versos dos Salmos, coros, graus zodiacais e contraparte de Rudd pertencem a camadas históricas distintas e devem ser lidos com suas fontes.',
+    ],
+    variations: [
+      ['Tríplice hebraico', 'Preserva as três letras sem pressupor uma única vocalização ou personalidade angélica.'],
+      ['Cabala cristã e hermética', 'Acrescenta terminações, coros, regentes, graus e usos contemplativos.'],
+      ['Sistema de Thomas Rudd', 'Relaciona os 72 nomes a contrapartes goéticas; é uma camada moderna específica.'],
+    ],
+  },
+  sephirah: {
+    label: 'Sephirah',
+    history: [
+      'O Sefer Yetzirah apresenta dez sefirot belimah ao lado das 22 letras. A Árvore com posições, caminhos, cores e regências foi elaborada em estágios posteriores.',
+      'As correspondências planetárias, angélicas e tarológicas desta ficha seguem principalmente sínteses herméticas modernas.',
+    ],
+    variations: [
+      ['Cabala judaica', 'Desenvolve as Sephiroth em contextos teológicos e exegéticos próprios, sem depender do Tarot.'],
+      ['Cabala hermética', 'Organiza cores, planetas, arcanjos, coros e caminhos em um mapa operativo.'],
+      ['Leitura contemplativa', 'Usa virtude e desequilíbrio como linguagem simbólica, não como diagnóstico clínico.'],
+    ],
+  },
+  daath: {
+    label: 'Não-esfera',
+    history: [
+      'Daath significa conhecimento e aparece em sistemas posteriores como articulação invisível entre Chokmah e Binah.',
+      'Na Árvore hermética, tornou-se imagem do Abismo e do limiar da tríade superna, mas não é contada como uma décima primeira Sephirah.',
+    ],
+    variations: [
+      ['Cabala judaica', 'Conhecimento pode ser entendido como função de integração, sem uma esfera numerada independente.'],
+      ['Cabala hermética', 'Daath marca o Abismo e uma passagem iniciática entre níveis da Árvore.'],
+      ['Thelema', 'Alguns textos associam o Abismo a Choronzon; essa leitura não deve ser generalizada para toda a Cabala.'],
+    ],
+  },
+  path: {
+    label: 'Caminho',
+    history: [
+      'O Sefer Yetzirah fala de 22 letras fundamentais, mas não apresenta o mesmo diagrama de caminhos usado pela Cabala hermética moderna.',
+      'As ligações entre letras, Tarot e posições da Árvore foram sistematizadas por escolas ocultistas; diferentes diagramas produzem atribuições diferentes.',
+    ],
+    variations: [
+      ['Sefer Yetzirah', 'Classifica letras como mães, duplas e simples e lhes atribui funções formativas.'],
+      ['Golden Dawn e RWS', 'Consolida a sequência de letras e Arcanos usada como base desta Árvore.'],
+      ['Thoth', 'Crowley troca as atribuições de Heh e Tzaddi e renomeia alguns Arcanos.'],
+    ],
+  },
+  choir: {
+    label: 'Coro',
+    history: [
+      'A hierarquia de nove ordens foi articulada no cristianismo tardo-antigo por Pseudo-Dionísio e reelaborada por teólogos medievais.',
+      'A ligação fixa entre cada coro, uma Sephirah e oito nomes do Shem é uma síntese cabalística e hermética posterior.',
+    ],
+    variations: [
+      ['Pseudo-Dionísio', 'Organiza três hierarquias com três ordens cada, segundo proximidade e função espiritual.'],
+      ['Teologia medieval', 'Comenta nomes, funções e ordem dos coros com pequenas diferenças de apresentação.'],
+      ['Cabala hermética', 'Relaciona os nove coros às Sephiroth, arcanjos e grupos de oito anjos.'],
+    ],
+  },
+  symbol: {
+    label: 'Símbolo',
+    history: ['Esta ficha reúne camadas históricas diferentes em uma leitura comparativa.'],
+    variations: [['Leitura editorial', 'As relações são apresentadas como correspondências simbólicas, não como causalidade científica.']],
+  },
+};
+
+function classifySource(source) {
+  const text = `${source.label || ''} ${source.url || ''}`.toLowerCase();
+  if (text.includes('sefaria')) {
+    return { kind: 'Fonte primária', tradition: 'Judaica', note: 'Texto histórico em edição digital bilíngue.' };
+  }
+  if (text.includes('dionísio') || text.includes('/dio/')) {
+    return { kind: 'Fonte primária', tradition: 'Cristã', note: 'Tradução histórica da hierarquia celeste.' };
+  }
+  if (text.includes('agrippa') || text.includes('liber 777') || text.includes('kabbalah unveiled')) {
+    return { kind: 'Fonte histórica', tradition: 'Hermética', note: 'Base para correspondências e variações entre escolas.' };
+  }
+  if (text.includes('nasa')) {
+    return { kind: 'Referência científica', tradition: 'Astronomia', note: 'Dados físicos e orbitais, separados da leitura astrológica.' };
+  }
+  if (text.includes('wikimedia') || text.includes('commons')) {
+    return { kind: 'Acervo visual', tradition: 'História do Tarot', note: 'Imagem e registro de proveniência da obra.' };
+  }
+  if (text.includes('u.s. games') || text.includes('thoth')) {
+    return { kind: 'Edição oficial', tradition: 'Thoth', note: 'Referência editorial e informação sobre direitos de reprodução.' };
+  }
+  return { kind: 'Fonte secundária', tradition: 'Estudo comparado', note: 'Tabela ou comentário usado com indicação de tradição.' };
+}
+
+Object.entries(content).forEach(([id, item]) => {
+  const category = getContentCategory(id);
+  const profile = editorialProfiles[category] || editorialProfiles.symbol;
+  item.categoryLabel = profile.label;
+  item.relations = buildRelations(id);
+  item.practice = item.practice || {
+    prompt: `Que aspecto de ${item.title} pede atenção, equilíbrio ou expressão consciente agora?`,
+    meditation: `Leia as correspondências sem pressa, escolha uma imagem ou palavra-chave e observe o que ela mobiliza antes de formular uma conclusão.`,
+    integration: `Registre uma ação pequena e verificável que traduza a contemplação de ${item.title} para a vida cotidiana.`,
+  };
+  item.history = profile.history.map((paragraph, index) => ({
+    title: index === 0 ? 'Origem e formação' : 'Desenvolvimento das correspondências',
+    paragraphs: [paragraph],
+  }));
+  item.variations = profile.variations.map(([name, description]) => ({
+    name,
+    description,
+  }));
+  item.sources = (item.sources || []).map((source) => ({
+    ...classifySource(source),
+    ...source,
+  }));
 });
 
 export const contentData = content;

@@ -141,6 +141,7 @@ export default function InfoPanel({
 }) {
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
+    const [notesBySegment, setNotesBySegment] = useState({});
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -148,8 +149,12 @@ export default function InfoPanel({
         { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
         { id: 'gematria', label: 'Gematria', available: Boolean(content?.gematria) },
         { id: 'associations', label: 'Correspondências', available: Boolean(content?.associations || content?.highlights?.length) },
+        { id: 'relations', label: 'Relações', available: Boolean(content?.relations?.length) },
         { id: 'practice', label: 'Prática', available: Boolean(content?.practice) },
+        { id: 'history', label: 'História', available: Boolean(content?.history?.length) },
+        { id: 'variations', label: 'Variações', available: Boolean(content?.variations?.length) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
+        { id: 'notes', label: 'Notas', available: true },
         { id: 'sources', label: 'Fontes', available: Boolean(content?.sources?.length) },
     ].filter((tab) => tab.available), [content]);
     const neighbors = useMemo(() => getNeighborSegments(activeSegmentId), [activeSegmentId]);
@@ -170,6 +175,21 @@ export default function InfoPanel({
     const psalmReference = psalmView === 'hebrew'
         ? content?.psalm?.hebrewReference || content?.psalm?.reference
         : content?.psalm?.reference;
+    const noteValue = activeSegmentId
+        ? notesBySegment[activeSegmentId]
+            ?? window.localStorage.getItem(`lamen-note:${activeSegmentId}`)
+            ?? ''
+        : '';
+
+    const handleNoteChange = (event) => {
+        const value = event.target.value;
+        setNotesBySegment((current) => ({ ...current, [activeSegmentId]: value }));
+        if (value.trim()) {
+            window.localStorage.setItem(`lamen-note:${activeSegmentId}`, value);
+        } else {
+            window.localStorage.removeItem(`lamen-note:${activeSegmentId}`);
+        }
+    };
 
     if (!activeSegmentId) return null;
 
@@ -391,6 +411,39 @@ export default function InfoPanel({
                                                 ))}
                                             </ul>
                                         </section>
+
+                                        {content.gematria.calculations?.length > 0 && (
+                                            <section className="gematria-methods">
+                                                <div>
+                                                    <span>Métodos comparados</span>
+                                                    <h4 className="brand-font">Quatro formas de calcular</h4>
+                                                </div>
+                                                <div className="gematria-method-grid">
+                                                    {content.gematria.calculations.map((calculation) => (
+                                                        <article key={calculation.id}>
+                                                            <span>{calculation.label}</span>
+                                                            <div>
+                                                                <strong>{calculation.coreValue}</strong>
+                                                                {calculation.fullValue !== undefined && (
+                                                                    <>
+                                                                        <small>→</small>
+                                                                        <strong>{calculation.fullValue}</strong>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                            <p>{calculation.note}</p>
+                                                            {calculation.fullValue !== undefined && (
+                                                                <small>Tríplice → nome completo</small>
+                                                            )}
+                                                        </article>
+                                                    ))}
+                                                </div>
+                                                <p className="gematria-caution">
+                                                    Valores iguais sugerem uma relação para estudo comparativo; não provam
+                                                    equivalência histórica, teológica ou causal.
+                                                </p>
+                                            </section>
+                                        )}
                                     </article>
                                 </section>
                             )}
@@ -435,6 +488,32 @@ export default function InfoPanel({
                                 </section>
                             )}
 
+                            {activeTab === 'relations' && content.relations?.length > 0 && (
+                                <section className="tab-section">
+                                    <header className="relations-header">
+                                        <span>Mapa de conexões</span>
+                                        <h3 className="brand-font">Explore as relações desta ficha</h3>
+                                        <p>
+                                            Cada ligação abre a ficha correspondente sem sair do painel.
+                                        </p>
+                                    </header>
+                                    <div className="relations-grid">
+                                        {content.relations.map((item) => (
+                                            <button
+                                                type="button"
+                                                onClick={() => onNavigateSegment?.(item.id)}
+                                                key={item.id}
+                                            >
+                                                <span>{item.category}</span>
+                                                <strong>{item.label}</strong>
+                                                <small>{item.detail}</small>
+                                                <b aria-hidden="true">→</b>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
                             {activeTab === 'practice' && content.practice && (
                                 <section className="tab-section">
                                     <article className="practice-card">
@@ -453,6 +532,43 @@ export default function InfoPanel({
                                             <p>{content.practice.integration}</p>
                                         </div>
                                     </article>
+                                </section>
+                            )}
+
+                            {activeTab === 'history' && content.history?.length > 0 && (
+                                <section className="tab-section history-timeline">
+                                    {content.history.map((section, index) => (
+                                        <article key={`${section.title}-${index}`}>
+                                            <span>{String(index + 1).padStart(2, '0')}</span>
+                                            <div>
+                                                <h3 className="brand-font">{section.title}</h3>
+                                                {section.paragraphs.map((paragraph) => (
+                                                    <p key={paragraph}>{paragraph}</p>
+                                                ))}
+                                            </div>
+                                        </article>
+                                    ))}
+                                </section>
+                            )}
+
+                            {activeTab === 'variations' && content.variations?.length > 0 && (
+                                <section className="tab-section">
+                                    <header className="variations-header">
+                                        <span>Escolas e sistemas</span>
+                                        <h3 className="brand-font">Variações de leitura</h3>
+                                        <p>
+                                            As diferenças abaixo ajudam a não misturar tradições como se fossem uma única fonte.
+                                        </p>
+                                    </header>
+                                    <div className="variations-grid">
+                                        {content.variations.map((variation, index) => (
+                                            <article key={variation.name}>
+                                                <span>{String(index + 1).padStart(2, '0')}</span>
+                                                <h4>{variation.name}</h4>
+                                                <p>{variation.description}</p>
+                                            </article>
+                                        ))}
+                                    </div>
                                 </section>
                             )}
 
@@ -478,18 +594,67 @@ export default function InfoPanel({
                                 </section>
                             )}
 
+                            {activeTab === 'notes' && (
+                                <section className="tab-section">
+                                    <article className="notes-card">
+                                        <span>Caderno privado</span>
+                                        <h3 className="brand-font">Suas notas sobre {content.title}</h3>
+                                        <p>
+                                            O texto fica salvo somente neste navegador e não é enviado nem compartilhado.
+                                        </p>
+                                        <label>
+                                            <span>Observações, relações e perguntas</span>
+                                            <textarea
+                                                value={noteValue}
+                                                onChange={handleNoteChange}
+                                                placeholder="Escreva aqui sua leitura pessoal…"
+                                                rows="8"
+                                            />
+                                        </label>
+                                        <div>
+                                            <small aria-live="polite">
+                                                {noteValue ? 'Salvo automaticamente neste dispositivo' : 'Nenhuma nota salva'}
+                                            </small>
+                                            {noteValue && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        window.localStorage.removeItem(`lamen-note:${activeSegmentId}`);
+                                                        setNotesBySegment((current) => ({
+                                                            ...current,
+                                                            [activeSegmentId]: '',
+                                                        }));
+                                                    }}
+                                                >
+                                                    Limpar nota
+                                                </button>
+                                            )}
+                                        </div>
+                                    </article>
+                                </section>
+                            )}
+
                             {activeTab === 'sources' && content.sources?.length > 0 && (
                                 <section className="sources-section">
                                     <h3 className="section-title brand-font">Fontes e referências</h3>
-                                    <ul className="sources-list">
+                                    <p className="sources-intro">
+                                        As etiquetas distinguem texto primário, edição histórica, acervo visual,
+                                        referência científica e estudo secundário.
+                                    </p>
+                                    <div className="sources-list">
                                         {content.sources.map((source) => (
-                                            <li key={source.url}>
+                                            <article key={source.url}>
+                                                <div>
+                                                    <span>{source.kind}</span>
+                                                    <small>{source.tradition}</small>
+                                                </div>
                                                 <a href={source.url} target="_blank" rel="noreferrer">
                                                     {source.label}
                                                 </a>
-                                            </li>
+                                                <p>{source.note}</p>
+                                            </article>
                                         ))}
-                                    </ul>
+                                    </div>
                                 </section>
                             )}
                         </div>
