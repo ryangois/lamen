@@ -9,6 +9,8 @@ const DEFAULT_PROMPTS = [
   'Qual chave abre uma leitura mais honesta do momento?',
 ];
 
+const SPREAD_POSITIONS = ['Situação', 'Desafio', 'Conselho'];
+
 function getPrompt(item) {
   return item?.content?.practice?.prompt
     || item?.content?.psalm?.meditation
@@ -17,21 +19,35 @@ function getPrompt(item) {
 
 export default function Oracle({ onSegmentClick }) {
   const [type, setType] = useState('all');
-  const [result, setResult] = useState(null);
-  const [prompt, setPrompt] = useState(DEFAULT_PROMPTS[0]);
+  const [mode, setMode] = useState('single');
+  const [results, setResults] = useState([]);
   const poolSize = useMemo(() => getOraclePool(type).length, [type]);
   const activeType = oracleTypes.find((item) => item.id === type) || oracleTypes[0];
+  const result = results[0]?.item || null;
+  const prompt = results[0]?.prompt || DEFAULT_PROMPTS[0];
 
   const handleDraw = () => {
-    const next = drawOracleItem(type, result?.id);
-    setResult(next);
-    setPrompt(getPrompt(next));
+    if (mode === 'single') {
+      const next = drawOracleItem(type, result?.id);
+      setResults(next ? [{ item: next, prompt: getPrompt(next) }] : []);
+      return;
+    }
+
+    const previousIds = new Set(results.map((entry) => entry.item.id));
+    const available = getOraclePool(type).filter((item) => !previousIds.has(item.id));
+    const pool = available.length >= 3 ? available : getOraclePool(type);
+    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+    setResults(shuffled.map((item) => ({ item, prompt: getPrompt(item) })));
   };
 
   const handleTypeChange = (nextType) => {
     setType(nextType);
-    setResult(null);
-    setPrompt(DEFAULT_PROMPTS[0]);
+    setResults([]);
+  };
+
+  const handleModeChange = (nextMode) => {
+    setMode(nextMode);
+    setResults([]);
   };
 
   return (
@@ -46,6 +62,27 @@ export default function Oracle({ onSegmentClick }) {
       </div>
 
       <div className="oracle-board">
+        <div className="oracle-mode-switch" role="group" aria-label="Escolher formato do oráculo">
+          <button
+            type="button"
+            className={mode === 'single' ? 'active' : ''}
+            aria-pressed={mode === 'single'}
+            onClick={() => handleModeChange('single')}
+          >
+            <span aria-hidden="true">✦</span>
+            Uma chave
+          </button>
+          <button
+            type="button"
+            className={mode === 'triad' ? 'active' : ''}
+            aria-pressed={mode === 'triad'}
+            onClick={() => handleModeChange('triad')}
+          >
+            <span aria-hidden="true">✦ ✦ ✦</span>
+            Três chaves
+          </button>
+        </div>
+
         <div className="oracle-controls-heading">
           <div>
             <span>Campo do sorteio</span>
@@ -69,11 +106,12 @@ export default function Oracle({ onSegmentClick }) {
           ))}
         </div>
 
-        <article
-          className={`oracle-card ${result ? 'revealed' : 'is-empty'}`}
-          aria-live="polite"
-          aria-atomic="true"
-        >
+        {mode === 'single' ? (
+          <article
+            className={`oracle-card ${result ? 'revealed' : 'is-empty'}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
           <div className="oracle-card-topline">
             <span>{result ? 'Chave sorteada' : 'Pronto para sortear'}</span>
             <small>{activeType.label}</small>
@@ -100,19 +138,53 @@ export default function Oracle({ onSegmentClick }) {
               ))}
             </div>
           )}
-        </article>
+          </article>
+        ) : (
+          <section className={`oracle-spread ${results.length ? 'revealed' : 'is-empty'}`} aria-live="polite">
+            {results.length ? results.map(({ item, prompt: itemPrompt }, index) => (
+              <article className="oracle-spread-card" key={item.id}>
+                <div className="oracle-spread-position">
+                  <span>{index + 1}</span>
+                  <strong>{SPREAD_POSITIONS[index]}</strong>
+                </div>
+                <div className="oracle-spread-sigil" style={{ '--oracle-color': item.color || '#d4af37' }}>
+                  {item.symbol || '✦'}
+                </div>
+                <small>{item.typeLabel}</small>
+                <h2 className="brand-font">{item.title}</h2>
+                <p>{item.subtitle}</p>
+                <blockquote>{itemPrompt}</blockquote>
+                <button type="button" onClick={() => onSegmentClick?.(item.id)}>
+                  Abrir ficha <span aria-hidden="true">→</span>
+                </button>
+              </article>
+            )) : SPREAD_POSITIONS.map((position, index) => (
+              <article className="oracle-spread-card placeholder" key={position}>
+                <div className="oracle-spread-position">
+                  <span>{index + 1}</span>
+                  <strong>{position}</strong>
+                </div>
+                <div className="oracle-spread-sigil">✦</div>
+                <h2 className="brand-font">Aguardando</h2>
+                <p>Esta posição será revelada junto das outras duas.</p>
+              </article>
+            ))}
+          </section>
+        )}
 
-        <div className={`oracle-actions ${result ? 'has-result' : ''}`}>
+        <div className={`oracle-actions ${mode === 'single' && result ? 'has-result' : ''}`}>
           <button
             type="button"
             className="oracle-draw"
             onClick={handleDraw}
-            aria-label={`${result ? 'Sortear outra' : 'Sortear'} chave em ${activeType.label}`}
+            aria-label={`${results.length ? 'Sortear novamente' : 'Sortear'} ${mode === 'triad' ? 'três chaves' : 'uma chave'} em ${activeType.label}`}
           >
             <span aria-hidden="true">✦</span>
-            {result ? 'Sortear outra chave' : 'Sortear chave'}
+            {results.length
+              ? `Sortear ${mode === 'triad' ? 'outras três chaves' : 'outra chave'}`
+              : `Sortear ${mode === 'triad' ? 'três chaves' : 'chave'}`}
           </button>
-          {result && (
+          {mode === 'single' && result && (
             <button
               type="button"
               className="oracle-open"
