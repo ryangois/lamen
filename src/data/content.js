@@ -1622,6 +1622,15 @@ Object.entries(content).forEach(([id, item]) => {
     ...classifySource(source),
     ...source,
   }));
+  if (item.sources.length > 0) {
+    item.citations = {
+      description: [0],
+      highlights: (item.highlights || []).map((_, index) => [index % item.sources.length]),
+      sections: (item.sections || []).map((section, sectionIndex) => (
+        (section.paragraphs || []).map(() => [sectionIndex % item.sources.length])
+      )),
+    };
+  }
 });
 
 export const contentData = content;

@@ -158,6 +158,29 @@ function GlossaryText({ children, onTerm }) {
     });
 }
 
+function InlineCitations({ sources, indexes }) {
+    if (!indexes?.length || !sources?.length) return null;
+    return (
+        <sup className="inline-citations" aria-label="Fontes desta afirmação">
+            {[...new Set(indexes)].map((sourceIndex) => {
+                const source = sources[sourceIndex];
+                return source ? (
+                    <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        title={source.label}
+                        aria-label={`Fonte ${sourceIndex + 1}: ${source.label}`}
+                        key={`${source.url}-${sourceIndex}`}
+                    >
+                        {sourceIndex + 1}
+                    </a>
+                ) : null;
+            })}
+        </sup>
+    );
+}
+
 export default function InfoPanel({
     activeSegmentId,
     onClose,
@@ -369,12 +392,22 @@ export default function InfoPanel({
                                 <section className="tab-section">
                                     <p className="description">
                                         <GlossaryText onTerm={setGlossaryEntry}>{content.description}</GlossaryText>
+                                        <InlineCitations
+                                            sources={content.sources}
+                                            indexes={content.citations?.description}
+                                        />
                                     </p>
 
                                     {content.highlights?.length > 0 && (
                                         <ul className="highlights-list">
-                                            {content.highlights.map((highlight) => (
-                                                <li key={highlight}>{highlight}</li>
+                                            {content.highlights.map((highlight, index) => (
+                                                <li key={highlight}>
+                                                    {highlight}
+                                                    <InlineCitations
+                                                        sources={content.sources}
+                                                        indexes={content.citations?.highlights?.[index]}
+                                                    />
+                                                </li>
                                             ))}
                                         </ul>
                                     )}
@@ -659,9 +692,15 @@ export default function InfoPanel({
                                     {content.sections?.map((section) => (
                                         <section className="info-section" key={section.title}>
                                             <h3 className="section-title brand-font">{section.title}</h3>
-                                            {section.paragraphs?.map((paragraph) => (
+                                            {section.paragraphs?.map((paragraph, paragraphIndex) => (
                                                 <p className="section-text" key={paragraph}>
                                                     <GlossaryText onTerm={setGlossaryEntry}>{paragraph}</GlossaryText>
+                                                    <InlineCitations
+                                                        sources={content.sources}
+                                                        indexes={content.citations?.sections?.[
+                                                            content.sections.indexOf(section)
+                                                        ]?.[paragraphIndex]}
+                                                    />
                                                 </p>
                                             ))}
                                             {section.items?.length > 0 && (

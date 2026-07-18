@@ -457,6 +457,34 @@
     outline: none;
 }
 
+.inline-citations {
+    display: inline-flex;
+    gap: 0.18rem;
+    margin-left: 0.28rem;
+    vertical-align: super;
+}
+
+.inline-citations a {
+    display: inline-grid;
+    min-width: 17px;
+    height: 17px;
+    place-items: center;
+    color: #111318;
+    background: var(--accent-gold);
+    border-radius: 999px;
+    font: 900 0.52rem 'Inter', sans-serif;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.inline-citations a:hover,
+.inline-citations a:focus-visible {
+    color: #111318;
+    filter: brightness(1.12);
+    outline: 2px solid #fff;
+    outline-offset: 1px;
+}
+
 .glossary-popover {
     position: fixed;
     right: calc(1rem + env(safe-area-inset-right, 0px));
