@@ -311,6 +311,21 @@ export default function InfoPanel({
                                 ))}
                             </div>
                         )}
+                        {content.pronunciation && (
+                            <article className="pronunciation-card">
+                                <span>Guia de leitura</span>
+                                <strong lang="he" dir="rtl">{content.pronunciation.hebrew}</strong>
+                                <div>
+                                    <small>Transliteração</small>
+                                    <b>{content.pronunciation.transliteration}</b>
+                                </div>
+                                <div>
+                                    <small>Aproximação em português</small>
+                                    <b>{content.pronunciation.guide}</b>
+                                </div>
+                                <p>{content.pronunciation.note}</p>
+                            </article>
+                        )}
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
                                 <button

@@ -234,6 +234,56 @@
     background: #df835f;
 }
 
+.pronunciation-card {
+    display: grid;
+    grid-template-columns: auto repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 0.8rem;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 15px;
+}
+
+.pronunciation-card > span {
+    grid-column: 1 / -1;
+    color: var(--accent-gold);
+    font: 900 0.6rem 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pronunciation-card > strong {
+    grid-row: 2 / 4;
+    min-width: 62px;
+    color: var(--text-primary);
+    font-size: 1.45rem;
+    text-align: center;
+}
+
+.pronunciation-card > div {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.pronunciation-card small {
+    color: #8793a4;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+}
+
+.pronunciation-card b {
+    color: #d8e0eb;
+    font-size: 0.76rem;
+}
+
+.pronunciation-card p {
+    grid-column: 1 / -1;
+    color: #8f9cad;
+    font-size: 0.66rem;
+    line-height: 1.45;
+}
+
 .nav-card {
     position: relative;
     display: flex;

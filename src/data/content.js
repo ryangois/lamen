@@ -1575,6 +1575,64 @@ const evidenceByCategory = {
   ],
 };
 
+const pathPronunciations = {
+  Aleph: 'Álef', Beth: 'Bêt', Gimel: 'Guímel', Daleth: 'Dálet', Heh: 'Hê',
+  Vav: 'Vav', Zayin: 'Záin', Cheth: 'Rrêt', Teth: 'Têt', Yod: 'Iôd',
+  Kaph: 'Kaf', Lamed: 'Lámed', Mem: 'Mêm', Nun: 'Nun', Samekh: 'Sámekh',
+  Ayin: 'Áin', Peh: 'Pê', Tzaddi: 'Tsádi', Qoph: 'Kôf', Resh: 'Rêsh',
+  Shin: 'Shin', Tav: 'Tav',
+};
+
+const sephirahPronunciations = {
+  arc_metatron: ['Ké-ter', 'Kether'],
+  arc_raziel: ['Rrôkh-ma', 'Chokmah'],
+  arc_tzaphkiel: ['Bi-ná', 'Binah'],
+  arc_tzadkiel: ['Rré-sed', 'Chesed'],
+  arc_kamael: ['Gue-vu-rá', 'Geburah'],
+  arc_raphael: ['Ti-fé-ret', 'Tiphareth'],
+  arc_haniel: ['Nê-tsarr', 'Netzach'],
+  arc_michael: ['Hôd', 'Hod'],
+  arc_gabriel: ['Ie-sôd', 'Yesod'],
+  arc_sandalphon: ['Mal-khút', 'Malkuth'],
+  arc_daath: ['Dá-at', 'Daath'],
+};
+
+function buildPronunciation(id, category, item) {
+  if (category === 'path') {
+    const path = treePathProfiles.find((profile) => profile.id === id);
+    return {
+      hebrew: path.hebrew,
+      transliteration: path.letter,
+      guide: pathPronunciations[path.letter],
+      note: 'A consoante e a vocalização podem variar entre hebraico moderno, tradições litúrgicas e escolas ocultistas.',
+    };
+  }
+
+  if (category === 'sephirah' || category === 'daath') {
+    const [guide, transliteration] = sephirahPronunciations[id] || [];
+    return {
+      hebrew: item.gematria?.core?.text,
+      transliteration,
+      guide,
+      note: 'Guia aproximado para falantes de português; não substitui estudo de hebraico ou tradição litúrgica.',
+    };
+  }
+
+  if (category === 'angel') {
+    const index = angelIds.indexOf(id);
+    const segment = angelSegments[index];
+    const conventionalName = item.title.replace(/^\d+\.\s*/, '');
+    return {
+      hebrew: segment.hebrew,
+      transliteration: segment.letters,
+      guide: conventionalName,
+      note: 'O tríplice não possui uma única vocalização original. O nome exibido segue uma forma convencional da Cabala cristã e hermética.',
+    };
+  }
+
+  return null;
+}
+
 function classifySource(source) {
   const text = `${source.label || ''} ${source.url || ''}`.toLowerCase();
   if (text.includes('sefaria')) {
@@ -1605,6 +1663,7 @@ Object.entries(content).forEach(([id, item]) => {
   item.relations = buildRelations(id);
   item.evidence = (evidenceByCategory[category] || evidenceByCategory.symbol)
     .map(([level, label, description]) => ({ level, label, description }));
+  item.pronunciation = buildPronunciation(id, category, item);
   item.practice = item.practice || {
     prompt: `Que aspecto de ${item.title} pede atenção, equilíbrio ou expressão consciente agora?`,
     meditation: `Leia as correspondências sem pressa, escolha uma imagem ou palavra-chave e observe o que ela mobiliza antes de formular uma conclusão.`,
