@@ -187,8 +187,8 @@ export const treePaths = [
     y1: from.y,
     x2: to.x,
     y2: to.y,
-    labelX: (from.x + to.x) / 2,
-    labelY: (from.y + to.y) / 2,
+    labelX: id === 'path_gimel' ? 210 : (from.x + to.x) / 2,
+    labelY: id === 'path_gimel' ? 278 : (from.y + to.y) / 2,
   };
 });
 

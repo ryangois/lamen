@@ -120,6 +120,16 @@ function buildHebrewWordGematria(label, hebrew, note) {
 }
 
 const pathWisdomTexts = {
+  1: 'O primeiro caminho é chamado Inteligência Admirável ou Oculta, porque é a luz que dá poder de compreender o princípio sem começo.',
+  2: 'O segundo caminho é chamado Inteligência Iluminadora, porque é a coroa da criação e o esplendor da unidade que se desdobra.',
+  3: 'O terceiro caminho é chamado Inteligência Santificadora, fundamento da sabedoria primordial e raiz da fé.',
+  4: 'O quarto caminho é chamado Inteligência Receptiva ou Medidora, porque recebe as emanações superiores e contém todas as virtudes espirituais.',
+  5: 'O quinto caminho é chamado Inteligência Radical, porque se aproxima da unidade e emana da profundidade da compreensão.',
+  6: 'O sexto caminho é chamado Inteligência Mediadora, porque multiplica a influência das emanações e a transmite aos canais de bênção.',
+  7: 'O sétimo caminho é chamado Inteligência Oculta, porque derrama o esplendor intelectual que é percebido pelos olhos da contemplação.',
+  8: 'O oitavo caminho é chamado Inteligência Absoluta ou Perfeita, porque é o instrumento da ordem primordial e da preparação das causas.',
+  9: 'O nono caminho é chamado Inteligência Pura, porque purifica as numerações e prova a imagem de suas representações.',
+  10: 'O décimo caminho é chamado Inteligência Resplandecente, porque é exaltado acima de toda cabeça e se assenta no trono de Binah em sua operação manifestadora.',
   11: 'O décimo primeiro caminho é chamado Inteligência Cintilante, porque é a essência do véu colocado diante da ordem das causas.',
   12: 'O décimo segundo caminho é chamado Inteligência de Transparência, porque é a imagem da magnificência e a visão dos mistérios.',
   13: 'O décimo terceiro caminho é chamado Inteligência Unificadora, porque une a glória e torna conhecida a verdade de cada espírito.',
@@ -395,6 +405,7 @@ sphereProfiles.forEach((sphere, index) => {
       'Nome divino': sphere.divineName,
       'Nome hebraico': sphere.hebrew,
       'Anjos do Shem': `${index * 8 + 1}–${index * 8 + 8}`,
+      'Caminho de Sabedoria': pathWisdomTexts[sphere.number],
       'Sepher Yetzirah': yetzirah || 'Associação contemplativa por esfera conforme leituras herméticas posteriores.',
     },
     gematria: buildHebrewWordGematria(sphere.sephirah, sphere.hebrew, gematriaNote),
@@ -414,6 +425,7 @@ sphereProfiles.forEach((sphere, index) => {
       {
         title: 'Sepher Yetzirah',
         paragraphs: [
+          pathWisdomTexts[sphere.number],
           yetzirah || 'O Sepher Yetzirah fala das emanações e letras como estruturas simbólicas da criação; a associação detalhada por esfera é desenvolvida em leituras herméticas posteriores.',
         ],
       },
@@ -451,6 +463,7 @@ add('arc_sandalphon', {
     'Nome divino': 'Adonai ha-Aretz',
     'Nome hebraico': 'מלכות',
     'Anjos do Shem': 'síntese e aterramento das 72 forças',
+    'Caminho de Sabedoria': pathWisdomTexts[10],
     'Sepher Yetzirah': 'Malkuth recebe a operação das letras e sefirot como mundo formado, corpo, circunstância e presença.',
   },
   gematria: buildHebrewWordGematria('Malkuth', 'מלכות', 'מלכות soma a ideia de Reino: a força simbólica que recebe, sela e manifesta as demais emanações.'),
@@ -470,6 +483,7 @@ add('arc_sandalphon', {
     {
       title: 'Sepher Yetzirah',
       paragraphs: [
+        pathWisdomTexts[10],
         'Embora a linguagem do Sepher Yetzirah seja concisa e não use sempre o vocabulário hermético posterior, Malkuth pode ser contemplada como o campo onde número, letra e mundo formado se tornam experiência.',
       ],
     },
