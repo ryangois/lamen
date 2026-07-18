@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { flatItems } from '../data/catalog';
 import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import './SavedItems.css';
 
 function itemsFromEntries(entries) {
@@ -105,6 +106,8 @@ export default function SavedItems({
   onClose,
   onSelect,
 }) {
+  const panelRef = useRef(null);
+  useDialogFocus(panelRef);
   const [activeCollectionId, setActiveCollectionId] = useState(collections[0]?.id || 'favorites');
   const [newCollectionName, setNewCollectionName] = useState('');
   const [query, setQuery] = useState('');
@@ -134,7 +137,7 @@ export default function SavedItems({
 
   return (
     <div className="saved-backdrop" role="presentation">
-      <aside className="saved-panel" role="dialog" aria-modal="true" aria-labelledby="saved-title">
+      <aside ref={panelRef} className="saved-panel" role="dialog" aria-modal="true" aria-labelledby="saved-title" tabIndex="-1">
         <button type="button" className="saved-close" onClick={onClose} aria-label="Fechar salvos">&times;</button>
         <p className="saved-eyebrow">Minha seleção</p>
         <h2 className="brand-font" id="saved-title">Favoritos e histórico</h2>

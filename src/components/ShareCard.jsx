@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import './ShareCard.css';
 
 function wrapText(context, text, maxWidth) {
@@ -104,8 +105,10 @@ function canvasBlob(canvas) {
 
 export default function ShareCard({ content, onClose }) {
   const canvasRef = useRef(null);
+  const dialogRef = useRef(null);
   const [status, setStatus] = useState('');
   const url = window.location.href;
+  useDialogFocus(dialogRef);
 
   useEffect(() => {
     drawCard(canvasRef.current, content, url);
@@ -150,7 +153,7 @@ export default function ShareCard({ content, onClose }) {
 
   return (
     <div className="share-card-backdrop" role="presentation">
-      <section className="share-card-dialog" role="dialog" aria-modal="true" aria-labelledby="share-card-title">
+      <section ref={dialogRef} className="share-card-dialog" role="dialog" aria-modal="true" aria-labelledby="share-card-title" tabIndex="-1">
         <button type="button" className="share-card-close" onClick={onClose} aria-label="Fechar cartão">×</button>
         <p>Cartão da ficha</p>
         <h2 className="brand-font" id="share-card-title">Compartilhar visualmente</h2>

@@ -211,6 +211,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <a className="skip-link" href="#main-content">Pular para o conteúdo</a>
       <div className="ambient-glow"></div>
 
       <header className="view-toolbar" aria-label="Navegação principal">
@@ -299,7 +300,11 @@ function App() {
         <span aria-hidden="true">?</span>
       </button>
 
-      <main className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''} ${view === 'oracle' ? 'oracle-mode' : ''}`}>
+      <main
+        id="main-content"
+        tabIndex="-1"
+        className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''} ${view === 'oracle' ? 'oracle-mode' : ''}`}
+      >
         {view === 'wheel' ? (
           <div className="map-container">
             <LamenMap onSegmentClick={handleSegmentClick} activeSegmentId={activeSegmentId} />

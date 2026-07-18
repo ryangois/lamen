@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { getContent } from '../data/content';
 import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
 import MiniContextMap from './MiniContextMap';
 import ShareCard from './ShareCard';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import './InfoPanel.css';
 
 const ICONS = {
@@ -234,6 +235,7 @@ export default function InfoPanel({
     onNavigateSegment,
     onCompare,
 }) {
+    const panelRef = useRef(null);
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
     const [notesBySegment, setNotesBySegment] = useState({});
@@ -241,6 +243,7 @@ export default function InfoPanel({
     const [showCollectionPicker, setShowCollectionPicker] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
+    useDialogFocus(panelRef, Boolean(activeSegmentId));
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
         { id: 'summary', label: 'Resumo', available: true },
@@ -304,13 +307,33 @@ export default function InfoPanel({
         }
     };
 
+    const handleTabKeyDown = (event) => {
+        const availableTabs = activeTabGroup?.availableTabs || [];
+        const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
+        let nextIndex = currentIndex;
+        if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % availableTabs.length;
+        else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + availableTabs.length) % availableTabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = availableTabs.length - 1;
+        else return;
+        event.preventDefault();
+        const nextTab = availableTabs[nextIndex];
+        setTabState({ segmentId: activeSegmentId, tab: nextTab.id });
+        window.requestAnimationFrame(() => document.getElementById(`tab-${nextTab.id}`)?.focus());
+    };
+
     if (!activeSegmentId) return null;
 
     return (
         <aside
+            ref={panelRef}
             className={`info-panel glass-panel ${activeSegmentId ? 'open' : ''}`}
+            role="dialog"
+            aria-modal="true"
             aria-labelledby="info-panel-title"
+            tabIndex="-1"
         >
+            <p className="sr-only" aria-live="polite">{content?.title} aberto.</p>
             <button className="close-btn" onClick={onClose} aria-label="Fechar painel">
                 <CloseIcon />
             </button>
@@ -501,8 +524,10 @@ export default function InfoPanel({
                                     id={`tab-${tab.id}`}
                                     aria-controls={`panel-${tab.id}`}
                                     aria-selected={activeTab === tab.id}
+                                    tabIndex={activeTab === tab.id ? 0 : -1}
                                     className={activeTab === tab.id ? 'active' : ''}
                                     onClick={() => setTabState({ segmentId: activeSegmentId, tab: tab.id })}
+                                    onKeyDown={handleTabKeyDown}
                                     key={tab.id}
                                 >
                                     {tab.label}
