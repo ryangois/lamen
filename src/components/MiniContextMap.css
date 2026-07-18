@@ -1,0 +1,116 @@
+.mini-context-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 108px;
+    min-height: 118px;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.85rem 1rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 88% 50%, rgba(212, 175, 55, 0.11), transparent 38%),
+        rgba(5, 7, 12, 0.58);
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    border-radius: 20px;
+}
+
+.mini-context-map figcaption {
+    display: grid;
+    min-width: 0;
+    gap: 0.28rem;
+}
+
+.mini-context-map figcaption span {
+    color: var(--accent-gold);
+    font: 850 0.62rem/1.3 'Inter', sans-serif;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.mini-context-map figcaption strong {
+    overflow: hidden;
+    color: #dce2ec;
+    font: 700 0.92rem/1.35 'Inter', sans-serif;
+    text-overflow: ellipsis;
+}
+
+.mini-context-map svg {
+    display: block;
+    width: 100%;
+    height: 100px;
+    overflow: visible;
+}
+
+.tree-mini-map line {
+    stroke: rgba(212, 175, 55, 0.28);
+    stroke-width: 5;
+}
+
+.tree-mini-map line.active {
+    stroke: #f4d36f;
+    stroke-width: 11;
+    filter: drop-shadow(0 0 8px rgba(244, 211, 111, 0.65));
+}
+
+.tree-mini-map circle {
+    fill: var(--node-color);
+    stroke: rgba(244, 211, 111, 0.68);
+    stroke-width: 3;
+}
+
+.tree-mini-map circle.active {
+    stroke: #fff1a9;
+    stroke-width: 7;
+    filter: drop-shadow(0 0 9px rgba(244, 211, 111, 0.75));
+}
+
+.tree-mini-map circle.hidden-node {
+    fill: #171b25;
+    stroke-dasharray: 4 3;
+}
+
+.tree-mini-map circle.path-marker {
+    fill: #0c0e15;
+    stroke: #fff1a9;
+    stroke-width: 5;
+}
+
+.ring-mini-map svg > circle:not(.ring-marker, .ring-center) {
+    fill: none;
+    stroke: rgba(166, 176, 192, 0.2);
+    stroke-width: 2;
+}
+
+.ring-mini-map svg > circle.active-ring {
+    stroke: #d4af37;
+    stroke-width: 5;
+    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+.ring-mini-map line {
+    stroke: rgba(244, 211, 111, 0.68);
+    stroke-width: 2;
+}
+
+.ring-mini-map .ring-marker {
+    fill: var(--marker-color);
+    stroke: #fff1a9;
+    stroke-width: 2.5;
+}
+
+.ring-mini-map .ring-center {
+    fill: #f4d36f;
+}
+
+@media (max-width: 520px) {
+    .mini-context-map {
+        grid-template-columns: minmax(0, 1fr) 88px;
+        min-height: 102px;
+        padding: 0.72rem 0.8rem;
+        border-radius: 17px;
+    }
+
+    .mini-context-map svg {
+        height: 82px;
+    }
+}

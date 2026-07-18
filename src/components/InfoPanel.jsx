@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { getContent } from '../data/content';
 import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
+import MiniContextMap from './MiniContextMap';
 import './InfoPanel.css';
 
 const ICONS = {
@@ -352,6 +353,7 @@ export default function InfoPanel({
                             </button>
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
+                        <MiniContextMap activeId={activeSegmentId} title={content.title} />
                         {content.evidence?.length > 0 && (
                             <div className="evidence-strip" aria-label="Classificação das informações">
                                 {content.evidence.map((item) => (
