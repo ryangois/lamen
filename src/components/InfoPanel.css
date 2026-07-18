@@ -770,7 +770,8 @@
 }
 
 .tarot-card img,
-.tarot-placeholder {
+.tarot-placeholder,
+.thoth-reference-card {
     width: 100%;
     aspect-ratio: 2 / 3.25;
     object-fit: contain;
@@ -778,6 +779,77 @@
         linear-gradient(145deg, rgba(212, 175, 55, 0.18), rgba(255, 255, 255, 0.035));
     border: 1px solid rgba(212, 175, 55, 0.16);
     border-radius: 12px;
+}
+
+.thoth-reference-card {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.5rem;
+    overflow: hidden;
+    padding: 1rem 0.6rem;
+    color: #f7f3e8;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--thoth-accent) 32%, transparent), transparent 30%),
+        linear-gradient(155deg, #171724 0%, #090a10 58%, color-mix(in srgb, var(--thoth-accent) 18%, #090a10) 100%);
+    border-color: color-mix(in srgb, var(--thoth-accent) 62%, rgba(255, 255, 255, 0.2));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.thoth-reference-card::before {
+    position: absolute;
+    z-index: -1;
+    width: 72%;
+    aspect-ratio: 1;
+    content: '';
+    border: 1px solid color-mix(in srgb, var(--thoth-accent) 55%, transparent);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 12px color-mix(in srgb, var(--thoth-accent) 6%, transparent),
+        0 0 38px color-mix(in srgb, var(--thoth-accent) 18%, transparent);
+}
+
+.thoth-card-number {
+    position: absolute;
+    top: 0.65rem;
+    left: 0.72rem;
+    color: var(--thoth-accent);
+    font: 850 0.72rem 'Inter', sans-serif;
+    letter-spacing: 0.08em;
+}
+
+.thoth-card-letter {
+    color: var(--thoth-accent);
+    font: 700 clamp(2.6rem, 6vw, 4rem) 'Times New Roman', serif;
+    line-height: 1;
+    text-shadow: 0 0 22px color-mix(in srgb, var(--thoth-accent) 50%, transparent);
+}
+
+.thoth-card-attribution {
+    padding: 0.25rem 0.5rem;
+    color: #d9dfeb;
+    background: rgba(0, 0, 0, 0.34);
+    border: 1px solid color-mix(in srgb, var(--thoth-accent) 35%, rgba(255, 255, 255, 0.1));
+    border-radius: 999px;
+    font: 750 0.58rem 'Inter', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.thoth-reference-card strong {
+    max-width: 9rem;
+    color: #fffaf0;
+    font: 700 0.86rem 'Cinzel', serif;
+    line-height: 1.15;
+}
+
+.thoth-reference-card small {
+    color: var(--thoth-accent);
+    font: 850 0.48rem 'Inter', sans-serif;
+    letter-spacing: 0.12em;
 }
 
 .tarot-image-link {
@@ -1072,8 +1144,44 @@
     }
 
     .tarot-card img,
-    .tarot-placeholder {
+    .tarot-placeholder,
+    .thoth-reference-card {
         grid-row: span 4;
+    }
+
+    .thoth-reference-card {
+        gap: 0.24rem;
+        padding: 0.55rem 0.28rem;
+        direction: ltr;
+    }
+
+    .thoth-card-number {
+        top: 0.38rem;
+        left: 0.42rem;
+        font-size: 0.58rem;
+    }
+
+    .thoth-card-letter {
+        font-size: 2.15rem;
+        unicode-bidi: isolate;
+    }
+
+    .thoth-card-attribution {
+        max-width: 76px;
+        padding: 0.18rem 0.32rem;
+        overflow: hidden;
+        font-size: 0.44rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .thoth-reference-card strong {
+        max-width: 74px;
+        font-size: 0.58rem;
+    }
+
+    .thoth-reference-card small {
+        display: none;
     }
 
     .title {

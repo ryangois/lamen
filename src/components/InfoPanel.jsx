@@ -69,6 +69,34 @@ function ArrowIcon({ direction = 'right' }) {
 function TarotCardArtwork({ card }) {
     const [failed, setFailed] = useState(false);
 
+    if (card.visual) {
+        const visual = (
+            <div
+                className="thoth-reference-card"
+                style={{ '--thoth-accent': card.visual.accent }}
+                aria-label={`${card.deck}: ${card.title}, ${card.visual.attribution}`}
+            >
+                <span className="thoth-card-number">{card.visual.number}</span>
+                <span className="thoth-card-letter" lang="he" dir="rtl">{card.visual.letter}</span>
+                <span className="thoth-card-attribution">{card.visual.attribution}</span>
+                <strong>{card.title}</strong>
+                <small>THOTH · CORRESPONDÊNCIA</small>
+            </div>
+        );
+
+        return card.sourceUrl ? (
+            <a
+                className="tarot-image-link"
+                href={card.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Abrir edição oficial de ${card.deck}`}
+            >
+                {visual}
+            </a>
+        ) : visual;
+    }
+
     if (!card.image || failed) {
         return (
             <div className="tarot-placeholder" aria-label={`${card.deck}: ${card.title}`}>

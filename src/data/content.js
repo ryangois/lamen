@@ -54,9 +54,13 @@ const sources = {
     label: 'Wikimedia Commons — Tarot de Marselha de Jean Dodal (Lyon, 1701–1715)',
     url: 'https://commons.wikimedia.org/wiki/Category:Tarot_de_Marseille_-_Jean_Dodal',
   },
-  thothMuseum: {
-    label: 'Wikimedia Commons — Thoth Tarot no Museum of Witchcraft and Magic (CC BY-SA 4.0)',
-    url: 'https://commons.wikimedia.org/wiki/File:Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
+  thothOfficial: {
+    label: 'U.S. Games Systems — edição oficial do Crowley Thoth Tarot',
+    url: 'https://www.usgamesinc.com/tarot-and-inspiration/crowley-thoth-tarot-deck-premier-edition.html',
+  },
+  thothReproduction: {
+    label: 'U.S. Games Systems — autorização exigida para reproduzir imagens das cartas',
+    url: 'https://www.usgamesinc.com/info/TarotReproductionAuthForm.pdf',
   },
   bookOfThoth: {
     label: 'O.T.O. — The Book of Thoth, de Aleister Crowley (1944), registro bibliográfico',
@@ -236,6 +240,30 @@ const thothTarotTitles = {
   Tav: 'O Universo',
 };
 
+const thothTarotNumbers = {
+  Aleph: '0', Beth: 'I', Gimel: 'II', Daleth: 'III', Heh: 'XVII', Vav: 'V',
+  Zayin: 'VI', Cheth: 'VII', Teth: 'XI', Yod: 'IX', Kaph: 'X', Lamed: 'VIII',
+  Mem: 'XII', Nun: 'XIII', Samekh: 'XIV', Ayin: 'XV', Peh: 'XVI',
+  Tzaddi: 'IV', Qoph: 'XVIII', Resh: 'XIX', Shin: 'XX', Tav: 'XXI',
+};
+
+const thothTarotAttributions = {
+  Aleph: 'Ar', Beth: 'Mercúrio', Gimel: 'Lua', Daleth: 'Vênus', Heh: 'Aquário',
+  Vav: 'Touro', Zayin: 'Gêmeos', Cheth: 'Câncer', Teth: 'Leão', Yod: 'Virgem',
+  Kaph: 'Júpiter', Lamed: 'Libra', Mem: 'Água', Nun: 'Escorpião',
+  Samekh: 'Sagitário', Ayin: 'Capricórnio', Peh: 'Marte', Tzaddi: 'Áries',
+  Qoph: 'Peixes', Resh: 'Sol', Shin: 'Fogo e Espírito', Tav: 'Saturno e Terra',
+};
+
+const thothTarotAccents = {
+  Aleph: '#f2df8b', Beth: '#f3a83b', Gimel: '#d8deea', Daleth: '#4fc27a',
+  Heh: '#8f7bea', Vav: '#69a85a', Zayin: '#f2d35c', Cheth: '#77b8d9',
+  Teth: '#e98d34', Yod: '#b7be72', Kaph: '#6a8dde', Lamed: '#74c4a8',
+  Mem: '#4da7d8', Nun: '#b44949', Samekh: '#7565bc', Ayin: '#8e7358',
+  Peh: '#dc5547', Tzaddi: '#e97039', Qoph: '#718bd1', Resh: '#f3c94d',
+  Shin: '#dd4f3c', Tav: '#776b9c',
+};
+
 const marseilleDodalImages = {
   Fool: '/tarot/marseille/fool.jpg',
   '01': '/tarot/marseille/01.jpg',
@@ -289,10 +317,16 @@ function buildTarotDecks(path) {
     {
       deck: 'Thoth · Crowley/Harris',
       title: thothTarotTitles[path.letter] || path.tarot,
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg/960px-Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
-      source: 'Foto do conjunto por Ethan Doyle White · CC BY-SA 4.0',
-      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Thoth_Tarot_Cards_in_the_Museum_of_Witchcraft_and_Magic.jpg',
-      note: 'A fotografia licenciada mostra o baralho no museu. O título acima segue a atribuição própria do Thoth; cartas individuais continuam protegidas.',
+      image: '',
+      visual: {
+        number: thothTarotNumbers[path.letter],
+        letter: path.hebrew,
+        attribution: thothTarotAttributions[path.letter],
+        accent: thothTarotAccents[path.letter],
+      },
+      source: 'Correspondência do Thoth · consulte a edição oficial',
+      sourceUrl: 'https://www.usgamesinc.com/tarot-and-inspiration/crowley-thoth-tarot-deck-premier-edition.html',
+      note: 'Cartão de referência original do Lamen. A arte de Frieda Harris não é reproduzida porque a editora exige autorização específica.',
     },
   ];
 }
@@ -675,7 +709,7 @@ treePathProfiles.forEach((path) => add(path.id, {
       ],
     },
   ],
-  sources: [sources.seferYetzirah, sources.thirtyTwoPaths, sources.liber777, sources.bookOfThoth, sources.marseilleDodal, sources.thothMuseum],
+  sources: [sources.seferYetzirah, sources.thirtyTwoPaths, sources.liber777, sources.bookOfThoth, sources.marseilleDodal, sources.thothOfficial, sources.thothReproduction],
 }));
 
 const planetProfiles = [
