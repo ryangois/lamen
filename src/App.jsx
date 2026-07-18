@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import LamenMap from './components/LamenMap';
 import MobileNavigation from './components/MobileNavigation';
 import { findRouteItem, getRoutePath } from './data/routes';
+import { treeSephiroth } from './data/treeOfLife';
 import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
@@ -119,6 +120,11 @@ function App() {
   const favoriteIds = useMemo(() => (
     [...new Set(favoriteCollections.flatMap((collection) => collection.itemIds))]
   ), [favoriteCollections]);
+  const activeTreeSphereName = useMemo(() => (
+    view === 'tree'
+      ? treeSephiroth.find((sephirah) => sephirah.id === activeSegmentId)?.name || null
+      : null
+  ), [activeSegmentId, view]);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
@@ -426,6 +432,7 @@ function App() {
         <Suspense fallback={null}>
           <InfoPanel
             activeSegmentId={activeSegmentId}
+            treeSphereName={activeTreeSphereName}
             onClose={handleClosePanel}
             isFavorite={favoriteIds.includes(activeSegmentId)}
             favoriteCollections={favoriteCollections}

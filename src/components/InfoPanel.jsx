@@ -237,8 +237,53 @@ function InlineCitations({ sources, indexes }) {
     );
 }
 
+function stripNamedSentences(text, name) {
+    if (typeof text !== 'string' || !name) return text;
+    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+    const filtered = sentences
+        .filter((sentence) => !sentence.toLocaleLowerCase('pt-BR').includes(name.toLocaleLowerCase('pt-BR')))
+        .join(' ')
+        .trim();
+    return filtered || text;
+}
+
+function buildTreeSphereContent(content, sphereName) {
+    if (!content || !sphereName) return content;
+    const archangel = content.associations?.Arcanjo;
+    if (!archangel) return { ...content, title: sphereName };
+
+    const cleanSections = (sections = []) => sections
+        .filter((section) => !/arcanjo/i.test(section.title))
+        .map((section) => ({
+            ...section,
+            paragraphs: (section.paragraphs || [])
+                .map((paragraph) => stripNamedSentences(paragraph, archangel))
+                .filter(Boolean),
+        }));
+
+    return {
+        ...content,
+        title: sphereName,
+        description: stripNamedSentences(content.description, archangel),
+        highlights: (content.highlights || []).filter((highlight) => (
+            !highlight.toLocaleLowerCase('pt-BR').includes(archangel.toLocaleLowerCase('pt-BR'))
+        )),
+        sections: cleanSections(content.sections),
+        history: cleanSections(content.history),
+        variations: (content.variations || []).map((variation) => ({
+            ...variation,
+            description: stripNamedSentences(variation.description, archangel),
+        })),
+        fourWorlds: (content.fourWorlds || []).map((world) => ({
+            ...world,
+            expression: world.expression === archangel ? `Potência criativa de ${sphereName}` : world.expression,
+        })),
+    };
+}
+
 export default function InfoPanel({
     activeSegmentId,
+    treeSphereName,
     onClose,
     isFavorite = false,
     favoriteCollections = [],
@@ -255,7 +300,11 @@ export default function InfoPanel({
     const [showShareCard, setShowShareCard] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
     const [saveFeedback, setSaveFeedback] = useState('');
-    const content = activeSegmentId ? getContent(activeSegmentId) : null;
+    const baseContent = activeSegmentId ? getContent(activeSegmentId) : null;
+    const content = useMemo(
+        () => buildTreeSphereContent(baseContent, treeSphereName),
+        [baseContent, treeSphereName],
+    );
     useDialogFocus(panelRef, Boolean(activeSegmentId));
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
