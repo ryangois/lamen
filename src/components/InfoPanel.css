@@ -279,6 +279,12 @@
     margin: 0.5rem 0;
 }
 
+.panel-tab-navigation {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.panel-tab-groups,
 .panel-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -288,6 +294,50 @@
     background: rgba(0, 0, 0, 0.38);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 22px;
+}
+
+.panel-tab-groups {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.panel-tab-groups button {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0 0.55rem;
+    color: #9da9b9;
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font: 800 0.68rem 'Inter', sans-serif;
+}
+
+.panel-tab-groups button small {
+    display: grid;
+    min-width: 18px;
+    height: 18px;
+    place-items: center;
+    color: #818da0;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 999px;
+    font-size: 0.56rem;
+}
+
+.panel-tab-groups button.active {
+    color: var(--text-primary);
+    background: rgba(212, 175, 55, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+.panel-tab-groups button.active small {
+    color: #111318;
+    background: var(--accent-gold);
 }
 
 .panel-tabs button {
@@ -1335,6 +1385,26 @@
         margin-inline: -0.2rem;
         padding: 0.3rem;
         border-radius: 18px;
+    }
+
+    .panel-tab-groups {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-inline: -0.2rem;
+        padding: 0.3rem;
+        border-radius: 18px;
+    }
+
+    .panel-tab-groups button {
+        min-height: 38px;
+        gap: 0.2rem;
+        padding-inline: 0.2rem;
+        font-size: 0.62rem;
+    }
+
+    .panel-tab-groups button small {
+        min-width: 16px;
+        height: 16px;
+        font-size: 0.52rem;
     }
 
     .panel-tabs button {

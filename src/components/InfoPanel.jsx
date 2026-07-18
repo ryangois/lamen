@@ -20,6 +20,13 @@ const flatSegments = ringStructure.flatMap((ring) => (
     }))
 ));
 
+const TAB_GROUPS = [
+    { id: 'study', label: 'Estudo', tabs: ['summary', 'history', 'tradition'] },
+    { id: 'correspondences', label: 'Relações', tabs: ['associations', 'relations', 'gematria', 'variations'] },
+    { id: 'practice', label: 'Prática', tabs: ['psalm', 'practice', 'notes'] },
+    { id: 'sources', label: 'Fontes', tabs: ['sources'] },
+];
+
 function getNeighborSegments(activeSegmentId) {
     const current = flatSegments.find((segment) => segment.id === activeSegmentId);
     if (!current) return { previous: null, next: null, position: null };
@@ -166,6 +173,17 @@ export default function InfoPanel({
         && tabs.some((tab) => tab.id === tabState.tab)
         ? tabState.tab
         : 'summary';
+    const tabGroups = TAB_GROUPS
+        .map((group) => ({
+            ...group,
+            availableTabs: group.tabs
+                .map((tabId) => tabs.find((tab) => tab.id === tabId))
+                .filter(Boolean),
+        }))
+        .filter((group) => group.availableTabs.length > 0);
+    const activeTabGroup = tabGroups.find((group) => (
+        group.availableTabs.some((tab) => tab.id === activeTab)
+    )) || tabGroups[0];
     const psalmView = psalmViewState.segmentId === activeSegmentId ? psalmViewState.view : 'portuguese';
     const psalmText = {
         hebrew: content?.psalm?.hebrew,
@@ -262,8 +280,26 @@ export default function InfoPanel({
                         )}
                         <div className="divider"></div>
 
-                        <div className="panel-tabs" role="tablist" aria-label="Seções da ficha">
-                            {tabs.map((tab) => (
+                        <div className="panel-tab-navigation">
+                            <div className="panel-tab-groups" aria-label="Grupos da ficha">
+                                {tabGroups.map((group) => (
+                                    <button
+                                        type="button"
+                                        className={activeTabGroup?.id === group.id ? 'active' : ''}
+                                        aria-pressed={activeTabGroup?.id === group.id}
+                                        onClick={() => setTabState({
+                                            segmentId: activeSegmentId,
+                                            tab: group.availableTabs[0].id,
+                                        })}
+                                        key={group.id}
+                                    >
+                                        {group.label}
+                                        <small>{group.availableTabs.length}</small>
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="panel-tabs" role="tablist" aria-label={`Seções de ${activeTabGroup?.label}`}>
+                                {activeTabGroup?.availableTabs.map((tab) => (
                                 <button
                                     type="button"
                                     role="tab"
@@ -276,7 +312,8 @@ export default function InfoPanel({
                                 >
                                     {tab.label}
                                 </button>
-                            ))}
+                                ))}
+                            </div>
                         </div>
 
                         <div
