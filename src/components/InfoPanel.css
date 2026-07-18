@@ -387,6 +387,73 @@
     font-weight: 400;
 }
 
+.glossary-term {
+    display: inline;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px dotted rgba(212, 175, 55, 0.72);
+    cursor: help;
+    font: inherit;
+    line-height: inherit;
+}
+
+.glossary-term:hover,
+.glossary-term:focus-visible {
+    color: var(--accent-gold);
+    outline: none;
+}
+
+.glossary-popover {
+    position: fixed;
+    right: calc(1rem + env(safe-area-inset-right, 0px));
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 8;
+    display: grid;
+    width: min(370px, calc(100vw - 2rem));
+    gap: 0.45rem;
+    padding: 1rem 3rem 1rem 1rem;
+    color: var(--text-primary);
+    background:
+        radial-gradient(circle at 10% 0, rgba(212, 175, 55, 0.18), transparent 38%),
+        #171b25;
+    border: 1px solid rgba(212, 175, 55, 0.32);
+    border-radius: 18px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.52);
+}
+
+.glossary-popover > button {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    width: 30px;
+    height: 30px;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.glossary-popover > span {
+    color: var(--accent-gold);
+    font: 900 0.62rem 'Inter', sans-serif;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.glossary-popover h3 {
+    font-size: 1.35rem;
+}
+
+.glossary-popover p {
+    color: #c3ccda;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+
 .highlights-list,
 .section-list {
     display: grid;
@@ -1360,6 +1427,13 @@
         --icon-size: 21px;
         width: 46px;
         height: 46px;
+    }
+
+    .glossary-popover {
+        right: max(0.65rem, env(safe-area-inset-right, 0px));
+        bottom: max(0.65rem, env(safe-area-inset-bottom, 0px));
+        left: max(0.65rem, env(safe-area-inset-left, 0px));
+        width: auto;
     }
 
     .content-container {

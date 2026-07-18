@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { getContent } from '../data/content';
+import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
 import './InfoPanel.css';
 
@@ -139,6 +140,24 @@ function TarotCardArtwork({ card }) {
     );
 }
 
+function GlossaryText({ children, onTerm }) {
+    if (typeof children !== 'string') return children;
+    return children.split(glossaryPattern).map((part, index) => {
+        const entry = findGlossaryEntry(part);
+        return entry ? (
+            <button
+                type="button"
+                className="glossary-term"
+                onClick={() => onTerm(entry)}
+                aria-label={`Abrir definição de ${entry.term}`}
+                key={`${part}-${index}`}
+            >
+                {part}
+            </button>
+        ) : part;
+    });
+}
+
 export default function InfoPanel({
     activeSegmentId,
     onClose,
@@ -150,6 +169,7 @@ export default function InfoPanel({
     const [tabState, setTabState] = useState({ segmentId: null, tab: 'summary' });
     const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
     const [notesBySegment, setNotesBySegment] = useState({});
+    const [glossaryEntry, setGlossaryEntry] = useState(null);
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -333,7 +353,9 @@ export default function InfoPanel({
                         >
                             {activeTab === 'summary' && (
                                 <section className="tab-section">
-                                    <p className="description">{content.description}</p>
+                                    <p className="description">
+                                        <GlossaryText onTerm={setGlossaryEntry}>{content.description}</GlossaryText>
+                                    </p>
 
                                     {content.highlights?.length > 0 && (
                                         <ul className="highlights-list">
@@ -624,7 +646,9 @@ export default function InfoPanel({
                                         <section className="info-section" key={section.title}>
                                             <h3 className="section-title brand-font">{section.title}</h3>
                                             {section.paragraphs?.map((paragraph) => (
-                                                <p className="section-text" key={paragraph}>{paragraph}</p>
+                                                <p className="section-text" key={paragraph}>
+                                                    <GlossaryText onTerm={setGlossaryEntry}>{paragraph}</GlossaryText>
+                                                </p>
                                             ))}
                                             {section.items?.length > 0 && (
                                                 <ul className="section-list">
@@ -706,6 +730,15 @@ export default function InfoPanel({
                         </div>
                     </div>
                 </div>
+            )}
+
+            {glossaryEntry && (
+                <aside className="glossary-popover" aria-live="polite" aria-label={`Definição: ${glossaryEntry.term}`}>
+                    <button type="button" onClick={() => setGlossaryEntry(null)} aria-label="Fechar definição">×</button>
+                    <span>{glossaryEntry.category}</span>
+                    <h3 className="brand-font">{glossaryEntry.term}</h3>
+                    <p>{glossaryEntry.definition}</p>
+                </aside>
             )}
         </aside>
     );
