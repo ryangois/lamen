@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import LamenMap from './components/LamenMap';
+import MobileNavigation from './components/MobileNavigation';
 import { findRouteItem, getRoutePath } from './data/routes';
 import './App.css';
 
@@ -98,6 +99,7 @@ function App() {
   const [showSearch, setShowSearch] = useState(false);
   const [comparisonId, setComparisonId] = useState(null);
   const [showStudy, setShowStudy] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [favoriteCollections, setFavoriteCollections] = useState(readStoredCollections);
   const [recentEntries, setRecentEntries] = useState(readStoredRecent);
   const favoriteIds = useMemo(() => (
@@ -137,7 +139,8 @@ function App() {
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
 
-      if (comparisonId) setComparisonId(null);
+      if (showMobileMenu) setShowMobileMenu(false);
+      else if (comparisonId) setComparisonId(null);
       else if (showStudy) setShowStudy(false);
       else if (showSearch) setShowSearch(false);
       else if (showHelp) setShowHelp(false);
@@ -148,7 +151,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showSavedItems, showSearch, showStudy]);
+  }, [activeSegmentId, comparisonId, showAngelFinder, showHelp, showMobileMenu, showSavedItems, showSearch, showStudy]);
 
   useEffect(() => {
     const handleSearchShortcut = (event) => {
@@ -290,6 +293,18 @@ function App() {
           </button>
         </div>
       </header>
+
+      <MobileNavigation
+        open={showMobileMenu}
+        view={view}
+        savedCount={favoriteIds.length}
+        onOpen={() => setShowMobileMenu(true)}
+        onClose={() => setShowMobileMenu(false)}
+        onViewChange={handleViewChange}
+        onSearch={() => setShowSearch(true)}
+        onAngelFinder={() => setShowAngelFinder(true)}
+        onSaved={() => setShowSavedItems(true)}
+      />
 
       <button
         type="button"
