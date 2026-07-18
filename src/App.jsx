@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import LamenMap from './components/LamenMap';
-import { findRouteItem } from './data/routes';
+import { findRouteItem, getRoutePath } from './data/routes';
 import './App.css';
 
 const InfoPanel = lazy(() => import('./components/InfoPanel'));
@@ -19,7 +19,7 @@ function getInitialView() {
 
 function getInitialSegmentId() {
   const params = new URLSearchParams(window.location.search);
-  const item = findRouteItem(params.get('item'));
+  const item = findRouteItem(params.get('item')) || findRouteItem(window.location.pathname);
   return item?.id || null;
 }
 
@@ -28,9 +28,11 @@ function writeSegmentToUrl(segmentId) {
   const item = findRouteItem(segmentId);
 
   if (item) {
-    url.searchParams.set('item', item.slug || item.id);
+    url.pathname = getRoutePath(item.id);
+    url.searchParams.delete('item');
   } else {
     url.searchParams.delete('item');
+    url.pathname = '/';
   }
 
   window.history.replaceState({}, '', url);
