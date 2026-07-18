@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { flatItems } from '../data/catalog';
 import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
@@ -72,9 +73,34 @@ function SavedGroup({ title, emptyText, items, onSelect, onClear }) {
   );
 }
 
-export default function SavedItems({ favoriteIds, recentEntries, onClearHistory, onClose, onSelect }) {
-  const favorites = itemsFromEntries(favoriteIds);
+export default function SavedItems({
+  collections,
+  recentEntries,
+  onCreateCollection,
+  onDeleteCollection,
+  onClearHistory,
+  onClose,
+  onSelect,
+}) {
+  const [activeCollectionId, setActiveCollectionId] = useState(collections[0]?.id || 'favorites');
+  const [newCollectionName, setNewCollectionName] = useState('');
+  const activeCollection = collections.find((collection) => collection.id === activeCollectionId)
+    || collections[0];
+  const favorites = itemsFromEntries(activeCollection?.itemIds || []);
   const recent = itemsFromEntries(recentEntries);
+  const handleCreateCollection = (event) => {
+    event.preventDefault();
+    const id = onCreateCollection?.(newCollectionName);
+    if (id) {
+      setActiveCollectionId(id);
+      setNewCollectionName('');
+    }
+  };
+
+  const handleDeleteCollection = () => {
+    onDeleteCollection?.(activeCollection.id);
+    setActiveCollectionId('favorites');
+  };
 
   return (
     <div className="saved-backdrop" role="presentation">
@@ -86,12 +112,45 @@ export default function SavedItems({ favoriteIds, recentEntries, onClearHistory,
           Guarde símbolos para estudar depois e retorne aos últimos pontos abertos na roda.
         </p>
 
-        <SavedGroup
-          title="Favoritos"
-          emptyText="Nenhum favorito ainda. Abra uma ficha e toque na estrela."
-          items={favorites}
-          onSelect={onSelect}
-        />
+        <section className="saved-group collection-manager">
+          <div className="saved-group-heading">
+            <h3 className="brand-font">Coleções</h3>
+            {activeCollection?.id !== 'favorites' && (
+              <button type="button" onClick={handleDeleteCollection}>Excluir coleção</button>
+            )}
+          </div>
+          <div className="collection-tabs" role="tablist" aria-label="Coleções de favoritos">
+            {collections.map((collection) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={collection.id === activeCollection?.id}
+                className={collection.id === activeCollection?.id ? 'active' : ''}
+                onClick={() => setActiveCollectionId(collection.id)}
+                key={collection.id}
+              >
+                {collection.name}
+                <span>{collection.itemIds.length}</span>
+              </button>
+            ))}
+          </div>
+          <form className="collection-create" onSubmit={handleCreateCollection}>
+            <input
+              value={newCollectionName}
+              onChange={(event) => setNewCollectionName(event.target.value)}
+              maxLength="36"
+              placeholder="Nova coleção"
+              aria-label="Nome da nova coleção"
+            />
+            <button type="submit" disabled={!newCollectionName.trim()}>Criar</button>
+          </form>
+          <SavedGroup
+            title={activeCollection?.name || 'Favoritos'}
+            emptyText="Esta coleção está vazia. Abra uma ficha, toque na estrela e escolha onde salvar."
+            items={favorites}
+            onSelect={onSelect}
+          />
+        </section>
         <SavedGroup
           title="Últimos abertos"
           emptyText="Seu histórico aparece aqui conforme você explora o Lamen."

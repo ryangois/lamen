@@ -217,7 +217,8 @@ export default function InfoPanel({
     activeSegmentId,
     onClose,
     isFavorite = false,
-    onToggleFavorite,
+    favoriteCollections = [],
+    onToggleCollection,
     onNavigateSegment,
     onCompare,
 }) {
@@ -225,6 +226,7 @@ export default function InfoPanel({
     const [psalmViewState, setPsalmViewState] = useState({ segmentId: null, view: 'portuguese' });
     const [notesBySegment, setNotesBySegment] = useState({});
     const [glossaryEntry, setGlossaryEntry] = useState(null);
+    const [showCollectionPicker, setShowCollectionPicker] = useState(false);
     const content = activeSegmentId ? getContent(activeSegmentId) : null;
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
@@ -337,9 +339,10 @@ export default function InfoPanel({
                             <button
                                 type="button"
                                 className={`favorite-orb ${isFavorite ? 'active' : ''}`}
-                                aria-label={isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+                                aria-label={isFavorite ? 'Gerenciar coleções' : 'Salvar em uma coleção'}
                                 aria-pressed={isFavorite}
-                                onClick={onToggleFavorite}
+                                aria-expanded={showCollectionPicker}
+                                onClick={() => setShowCollectionPicker((current) => !current)}
                             >
                                 <StarIcon filled={isFavorite} />
                             </button>
@@ -351,6 +354,25 @@ export default function InfoPanel({
                             >
                                 <span aria-hidden="true">⇄</span>
                             </button>
+                            {showCollectionPicker && (
+                                <div className="collection-picker">
+                                    <strong>Salvar em</strong>
+                                    {favoriteCollections.map((collection) => {
+                                        const checked = collection.itemIds.includes(activeSegmentId);
+                                        return (
+                                            <label key={collection.id}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={() => onToggleCollection?.(collection.id)}
+                                                />
+                                                <span>{collection.name}</span>
+                                                <small>{checked ? 'Salvo' : 'Adicionar'}</small>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                         {content.subtitle && <h4 className="subtitle brand-font">{content.subtitle}</h4>}
                         <MiniContextMap activeId={activeSegmentId} title={content.title} />

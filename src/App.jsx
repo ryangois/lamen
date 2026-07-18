@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import LamenMap from './components/LamenMap';
 import { findRouteItem, getRoutePath } from './data/routes';
 import './App.css';
@@ -65,6 +65,28 @@ function readStoredRecent() {
   }
 }
 
+function readStoredCollections() {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem('lamen-favorite-collections') || '[]');
+    if (Array.isArray(stored) && stored.length > 0) {
+      return stored
+        .filter((collection) => collection?.id && collection?.name)
+        .map((collection) => ({
+          ...collection,
+          itemIds: Array.isArray(collection.itemIds) ? collection.itemIds.filter(Boolean) : [],
+        }));
+    }
+  } catch {
+    // The legacy favorites migration below remains available.
+  }
+
+  return [{
+    id: 'favorites',
+    name: 'Favoritos',
+    itemIds: readStoredIds('lamen-favorites'),
+  }];
+}
+
 function App() {
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
@@ -74,8 +96,11 @@ function App() {
   const [showSearch, setShowSearch] = useState(false);
   const [comparisonId, setComparisonId] = useState(null);
   const [showStudy, setShowStudy] = useState(false);
-  const [favoriteIds, setFavoriteIds] = useState(() => readStoredIds('lamen-favorites'));
+  const [favoriteCollections, setFavoriteCollections] = useState(readStoredCollections);
   const [recentEntries, setRecentEntries] = useState(readStoredRecent);
+  const favoriteIds = useMemo(() => (
+    [...new Set(favoriteCollections.flatMap((collection) => collection.itemIds))]
+  ), [favoriteCollections]);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-view', view);
@@ -88,6 +113,10 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem('lamen-favorites', JSON.stringify(favoriteIds));
   }, [favoriteIds]);
+
+  useEffect(() => {
+    window.localStorage.setItem('lamen-favorite-collections', JSON.stringify(favoriteCollections));
+  }, [favoriteCollections]);
 
   useEffect(() => {
     window.localStorage.setItem('lamen-recent', JSON.stringify(recentEntries));
@@ -149,12 +178,33 @@ function App() {
     setActiveSegmentId(null);
   }, []);
 
-  const toggleFavorite = useCallback((id) => {
-    setFavoriteIds((current) => (
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [id, ...current]
-    ));
+  const toggleCollectionItem = useCallback((collectionId, itemId) => {
+    setFavoriteCollections((current) => current.map((collection) => (
+      collection.id === collectionId
+        ? {
+            ...collection,
+            itemIds: collection.itemIds.includes(itemId)
+              ? collection.itemIds.filter((id) => id !== itemId)
+              : [itemId, ...collection.itemIds],
+          }
+        : collection
+    )));
+  }, []);
+
+  const createFavoriteCollection = useCallback((name) => {
+    const normalizedName = name.trim();
+    if (!normalizedName) return null;
+    const id = `collection-${Date.now().toString(36)}`;
+    setFavoriteCollections((current) => [
+      ...current,
+      { id, name: normalizedName.slice(0, 36), itemIds: [] },
+    ]);
+    return id;
+  }, []);
+
+  const deleteFavoriteCollection = useCallback((collectionId) => {
+    if (collectionId === 'favorites') return;
+    setFavoriteCollections((current) => current.filter((collection) => collection.id !== collectionId));
   }, []);
 
   return (
@@ -279,7 +329,8 @@ function App() {
             activeSegmentId={activeSegmentId}
             onClose={handleClosePanel}
             isFavorite={favoriteIds.includes(activeSegmentId)}
-            onToggleFavorite={() => toggleFavorite(activeSegmentId)}
+            favoriteCollections={favoriteCollections}
+            onToggleCollection={(collectionId) => toggleCollectionItem(collectionId, activeSegmentId)}
             onNavigateSegment={handleSegmentClick}
             onCompare={() => setComparisonId(activeSegmentId)}
           />
@@ -298,8 +349,10 @@ function App() {
       {showSavedItems && (
         <Suspense fallback={null}>
           <SavedItems
-            favoriteIds={favoriteIds}
+            collections={favoriteCollections}
             recentEntries={recentEntries}
+            onCreateCollection={createFavoriteCollection}
+            onDeleteCollection={deleteFavoriteCollection}
             onClearHistory={() => setRecentEntries([])}
             onClose={() => setShowSavedItems(false)}
             onSelect={(id) => {
