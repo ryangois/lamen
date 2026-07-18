@@ -6,11 +6,11 @@ import { useDialogFocus } from '../hooks/useDialogFocus';
 import './TreeResearch.css';
 
 function HistoricalTreeSketch({ shape }) {
-  return createPortal((
+  return (
     <div className={`historical-tree-sketch shape-${shape}`} aria-hidden="true">
       {Array.from({ length: 10 }, (_, index) => <i key={index}></i>)}
     </div>
-  ), document.body);
+  );
 }
 
 export default function TreeResearch({ onClose, onOpenPath }) {
@@ -31,7 +31,7 @@ export default function TreeResearch({ onClose, onOpenPath }) {
     return () => window.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  return (
+  return createPortal((
     <div className="tree-research-backdrop" role="presentation" onMouseDown={onClose}>
       <section
         ref={dialogRef}
@@ -122,7 +122,8 @@ export default function TreeResearch({ onClose, onOpenPath }) {
                       <strong lang="he" dir="rtl">{letter.hebrew}</strong>
                       <div>
                         <span>{letter.name} · {letter.value}</span>
-                        <p>{letter.image}</p>
+                        <p><b>Imagem:</b> {letter.image}</p>
+                        <p>{letter.meaning}</p>
                         {path && (
                           <button type="button" onClick={() => onOpenPath(path.id)}>
                             Abrir caminho {path.number}
@@ -168,5 +169,5 @@ export default function TreeResearch({ onClose, onOpenPath }) {
         </div>
       </section>
     </div>
-  );
+  ), document.body);
 }

@@ -149,7 +149,8 @@ export function HebrewAnalysisPanel({ analysis, value, onNavigate }) {
             <strong lang="he" dir="rtl">{letter.letter}</strong>
             <div>
               <span>{letter.name} · {letter.value}</span>
-              <p>{letter.image}</p>
+              <p><b>Imagem:</b> {letter.image}</p>
+              <p>{letter.meaning}</p>
             </div>
           </article>
         ))}

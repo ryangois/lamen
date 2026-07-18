@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import TreeResearch from './TreeResearch';
@@ -10,8 +9,13 @@ function activateByKeyboard(event, callback) {
   callback();
 }
 
-export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
-  const [showResearch, setShowResearch] = useState(false);
+export default function TreeOfLife({
+  activeSegmentId,
+  onSegmentClick,
+  researchOpen,
+  onOpenResearch,
+  onCloseResearch,
+}) {
   const handleSelect = (id) => {
     onSegmentClick?.(id);
   };
@@ -25,7 +29,7 @@ export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
           Toque em uma Sephirah ou caminho para abrir as correspondências no painel,
           como na roda.
         </p>
-        <button type="button" className="tree-research-launch" onClick={() => setShowResearch(true)}>
+        <button type="button" className="tree-research-launch" onClick={onOpenResearch}>
           <span aria-hidden="true">✦</span>
           231 Portais e árvores históricas
         </button>
@@ -129,11 +133,11 @@ export default function TreeOfLife({ activeSegmentId, onSegmentClick }) {
           <span><i className="legend-dot mercy"></i>Pilar da Misericórdia</span>
         </div>
       </div>
-      {showResearch && (
+      {researchOpen && (
         <TreeResearch
-          onClose={() => setShowResearch(false)}
+          onClose={onCloseResearch}
           onOpenPath={(id) => {
-            setShowResearch(false);
+            onCloseResearch();
             handleSelect(id);
           }}
         />

@@ -110,6 +110,8 @@ O menu hambúrguer está disponível em celular e computador e reúne:
    - Roda
    - Lista
 3. Árvore
+   - Diagrama
+   - 231 Portais
 4. Oráculo
 5. Meu anjo
 6. Estudo

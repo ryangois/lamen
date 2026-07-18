@@ -118,11 +118,28 @@ test('editorial terminology distinguishes singular and plural Sephiroth forms', 
 test('the 22 Hebrew letters form exactly 231 distinct unordered gates', () => {
   assert.equal(HEBREW_LETTERS.length, 22);
   assert.equal(new Set(HEBREW_LETTERS.map((letter) => letter.hebrew)).size, 22);
+  HEBREW_LETTERS.forEach((letter) => {
+    assert.ok(letter.image, `${letter.name} image`);
+    assert.ok(letter.meaning, `${letter.name} meaning`);
+  });
   const gates = HEBREW_LETTERS.flatMap((first, firstIndex) => (
     HEBREW_LETTERS.slice(firstIndex + 1).map((second) => getLetterGate(first.hebrew, second.hebrew).pair)
   ));
   assert.equal(gates.length, 231);
   assert.equal(new Set(gates).size, 231);
+});
+
+test('only the five Hebrew letters with final forms expose a final-form card', () => {
+  const expected = new Set(['Kaph', 'Mem', 'Nun', 'Peh', 'Tzaddi']);
+  treePaths.forEach((path) => {
+    const entry = contentData[path.id];
+    assert.equal(Boolean(entry.hebrewLetter.finalForm), expected.has(path.letter), path.letter);
+    assert.equal(
+      Object.hasOwn(entry.associations, 'Forma final'),
+      expected.has(path.letter),
+      `${path.letter} association`,
+    );
+  });
 });
 
 test('research layers are complete for Tree entries', () => {

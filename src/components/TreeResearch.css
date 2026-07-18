@@ -228,6 +228,16 @@
   font-weight: 800;
 }
 
+.gate-letter-cards p + p {
+  color: #b8c2cf;
+}
+
+.gate-letter-cards p b {
+  color: var(--accent-gold);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+}
+
 .gate-letter-cards article button {
   width: fit-content;
   padding: 0.35rem 0;

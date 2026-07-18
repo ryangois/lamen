@@ -10,8 +10,9 @@ function MenuIcon({ name }) {
     wheel: <><circle cx="12" cy="12" r="7.5" /><circle cx="12" cy="12" r="2" /><path d="M12 4.5v5.5m0 4v5.5M4.5 12H10m4 0h5.5" /></>,
     list: <><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1" /><circle cx="4.5" cy="12" r="1" /><circle cx="4.5" cy="18" r="1" /></>,
     tree: <><circle cx="12" cy="4.5" r="2" /><circle cx="6" cy="18.5" r="2" /><circle cx="18" cy="18.5" r="2" /><circle cx="12" cy="12" r="2" /><path d="M12 6.5V10m-1.5 3.5-3 3.5m6-3.5 3 3.5" /></>,
+    gates: <><circle cx="9.25" cy="12" r="5.25" /><circle cx="14.75" cy="12" r="5.25" /><path d="M12 4v2m0 12v2" /></>,
     oracle: <><circle cx="12" cy="12" r="7.5" /><path d="M12 2.5V6m0 12v3.5M2.5 12H6m12 0h3.5M7 7l2 2m6 6 2 2m0-10-2 2m-6 6-2 2" /></>,
-    angel: <><path d="M12 5.5c2-3 5.5-2.5 6.5.5.9 2.7-1 5.7-6.5 8.5C6.5 11.7 4.6 8.7 5.5 6 6.5 3 10 2.5 12 5.5Z" /><path d="M9.5 17.5h5M12 14.5v5" /></>,
+    angel: <><ellipse cx="12" cy="4.25" rx="3.5" ry="1.55" /><circle cx="12" cy="9" r="2.25" /><path d="M8.8 13.2C6 11.4 3.8 12.8 4.1 16.8c2.2-.1 3.9.65 5.15 2.2M15.2 13.2c2.8-1.8 5-0.4 4.7 3.6-2.2-.1-3.9.65-5.15 2.2M8.8 19c.35-3.75 1.4-5.7 3.2-5.7s2.85 1.95 3.2 5.7" /></>,
     saved: <path d="m12 3.8 2.5 5 5.5.8-4 3.9.95 5.5L12 16.4 7.05 19 8 13.5 4 9.6l5.5-.8L12 3.8Z" />,
     study: <><path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12H7.5A2.5 2.5 0 0 1 5 16.5v-12Z" /><path d="M8 8h7M8 11.5h7M7.5 19A2.5 2.5 0 0 1 5 16.5" /></>,
     tutorial: <><circle cx="12" cy="12" r="8.5" /><path d="M9.8 9.2a2.35 2.35 0 1 1 3.25 2.18c-.72.32-1.05.82-1.05 1.62v.35" /><path d="M12 17.2h.01" /></>,
@@ -36,10 +37,12 @@ const viewNames = {
 export default function MobileNavigation({
   open,
   view,
+  treeSection,
   savedCount,
   onOpen,
   onClose,
   onViewChange,
+  onTreeSectionChange,
   onSearch,
   onStudy,
   onTutorial,
@@ -50,10 +53,16 @@ export default function MobileNavigation({
 }) {
   const drawerRef = useRef(null);
   const [lamenExpanded, setLamenExpanded] = useState(['wheel', 'list'].includes(view));
+  const [treeExpanded, setTreeExpanded] = useState(view === 'tree');
   useDialogFocus(drawerRef, open);
 
   const chooseView = (nextView) => {
     onViewChange(nextView);
+    onClose();
+  };
+
+  const chooseTreeSection = (section) => {
+    onTreeSectionChange(section);
     onClose();
   };
 
@@ -75,9 +84,12 @@ export default function MobileNavigation({
         >
           <MenuIcon name="menu" />
         </button>
-        <div className="mobile-brand" aria-label={`Lâmen · ${viewNames[view]}`}>
+        <div
+          className="mobile-brand"
+          aria-label={`Lâmen · ${view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}`}
+        >
           <strong className="brand-font">Lâmen</strong>
-          <span>{viewNames[view]}</span>
+          <span>{view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}</span>
         </div>
         <button
           type="button"
@@ -157,15 +169,41 @@ export default function MobileNavigation({
                 )}
               </section>
 
-              <button
-                type="button"
-                className={view === 'tree' ? 'active' : ''}
-                aria-current={view === 'tree' ? 'page' : undefined}
-                onClick={() => chooseView('tree')}
-              >
-                <span className="mobile-item-icon"><MenuIcon name="tree" /></span>
-                <span><strong>Árvore</strong><small>Sephiroth e 22 caminhos</small></span>
-              </button>
+              <section className={`mobile-tree-group ${treeExpanded ? 'expanded' : ''}`}>
+                <button
+                  type="button"
+                  className={view === 'tree' ? 'active' : ''}
+                  aria-expanded={treeExpanded}
+                  aria-controls="mobile-tree-views"
+                  onClick={() => setTreeExpanded((current) => !current)}
+                >
+                  <span className="mobile-item-icon"><MenuIcon name="tree" /></span>
+                  <span><strong>Árvore</strong><small>Diagrama e combinações hebraicas</small></span>
+                  <MenuIcon name="chevron" />
+                </button>
+                {treeExpanded && (
+                  <div id="mobile-tree-views">
+                    <button
+                      type="button"
+                      className={view === 'tree' && treeSection === 'diagram' ? 'active' : ''}
+                      aria-current={view === 'tree' && treeSection === 'diagram' ? 'page' : undefined}
+                      onClick={() => chooseTreeSection('diagram')}
+                    >
+                      <MenuIcon name="tree" />
+                      Diagrama
+                    </button>
+                    <button
+                      type="button"
+                      className={view === 'tree' && treeSection === 'gates' ? 'active' : ''}
+                      aria-current={view === 'tree' && treeSection === 'gates' ? 'page' : undefined}
+                      onClick={() => chooseTreeSection('gates')}
+                    >
+                      <MenuIcon name="gates" />
+                      231 Portais
+                    </button>
+                  </div>
+                )}
+              </section>
               <button
                 type="button"
                 className={view === 'oracle' ? 'active' : ''}

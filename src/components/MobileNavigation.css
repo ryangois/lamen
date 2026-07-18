@@ -151,7 +151,8 @@
   }
 
   .mobile-drawer-nav > button,
-  .mobile-lamen-group > button {
+  .mobile-lamen-group > button,
+  .mobile-tree-group > button {
     display: grid;
     width: 100%;
     min-height: 64px;
@@ -170,14 +171,17 @@
   .mobile-drawer-nav > button:hover,
   .mobile-drawer-nav > button:focus-visible,
   .mobile-lamen-group > button:hover,
-  .mobile-lamen-group > button:focus-visible {
+  .mobile-lamen-group > button:focus-visible,
+  .mobile-tree-group > button:hover,
+  .mobile-tree-group > button:focus-visible {
     color: #f1f3f7;
     background: rgba(255, 255, 255, 0.045);
     border-color: rgba(255, 255, 255, 0.08);
   }
 
   .mobile-drawer-nav > button.active,
-  .mobile-lamen-group > button.active {
+  .mobile-lamen-group > button.active,
+  .mobile-tree-group > button.active {
     color: #fff2af;
     background: linear-gradient(90deg, rgba(212, 175, 55, 0.14), rgba(212, 175, 55, 0.035));
     border-color: rgba(212, 175, 55, 0.3);
@@ -237,26 +241,31 @@
     border-color: rgba(17, 19, 24, 0.12);
   }
 
-  .mobile-lamen-group {
+  .mobile-lamen-group,
+  .mobile-tree-group {
     display: grid;
   }
 
-  .mobile-lamen-group > button > .mobile-menu-icon {
+  .mobile-lamen-group > button > .mobile-menu-icon,
+  .mobile-tree-group > button > .mobile-menu-icon {
     transition: transform 160ms ease;
   }
 
-  .mobile-lamen-group.expanded > button > .mobile-menu-icon {
+  .mobile-lamen-group.expanded > button > .mobile-menu-icon,
+  .mobile-tree-group.expanded > button > .mobile-menu-icon {
     transform: rotate(180deg);
   }
 
-  .mobile-lamen-group > div {
+  .mobile-lamen-group > div,
+  .mobile-tree-group > div {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.45rem;
     padding: 0.35rem 0 0.35rem 3.4rem;
   }
 
-  .mobile-lamen-group > div button {
+  .mobile-lamen-group > div button,
+  .mobile-tree-group > div button {
     display: flex;
     min-width: 0;
     min-height: 44px;
@@ -272,13 +281,15 @@
     font: 750 0.7rem 'Inter', sans-serif;
   }
 
-  .mobile-lamen-group > div button.active {
+  .mobile-lamen-group > div button.active,
+  .mobile-tree-group > div button.active {
     color: #111318;
     background: var(--accent-gold);
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .mobile-lamen-group > div .mobile-menu-icon {
+  .mobile-lamen-group > div .mobile-menu-icon,
+  .mobile-tree-group > div .mobile-menu-icon {
     width: 17px;
     height: 17px;
   }
@@ -325,7 +336,8 @@
   }
 
   .mobile-drawer-nav > button,
-  .mobile-lamen-group > button {
+  .mobile-lamen-group > button,
+  .mobile-tree-group > button {
     min-height: 68px;
     padding-inline: 0.8rem;
   }

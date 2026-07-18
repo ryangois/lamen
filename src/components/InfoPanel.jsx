@@ -497,11 +497,18 @@ export default function InfoPanel({
                                     <h3 className="brand-font">{content.hebrewLetter.classification}</h3>
                                     <p>{content.hebrewLetter.classMeaning}</p>
                                 </div>
-                                <div>
-                                    <span>Forma final</span>
-                                    <strong lang="he" dir="rtl">{content.hebrewLetter.finalForm || '—'}</strong>
-                                    <small>{content.hebrewLetter.finalFormNote}</small>
+                                <div className="letter-meaning-card">
+                                    <span>Significado da letra</span>
+                                    <h3 className="brand-font">{content.hebrewLetter.image}</h3>
+                                    <p>{content.hebrewLetter.meaning}</p>
                                 </div>
+                                {content.hebrewLetter.finalForm && (
+                                    <div className="letter-final-card">
+                                        <span>Forma final</span>
+                                        <strong lang="he" dir="rtl">{content.hebrewLetter.finalForm}</strong>
+                                        <small>{content.hebrewLetter.finalFormNote}</small>
+                                    </div>
+                                )}
                             </article>
                         )}
                         {neighbors.previous && neighbors.next && (
@@ -775,21 +782,24 @@ export default function InfoPanel({
                                             <header>
                                                 <span>Tarot comparado</span>
                                                 <h3 className="brand-font">Marselha, Rider-Waite e Thoth</h3>
+                                                <p className="tarot-mobile-hint">Deslize para comparar as três cartas</p>
                                             </header>
-                                            <div className="tarot-grid">
+                                            <div className="tarot-grid" role="list" tabIndex="0" aria-label="Comparação horizontal de baralhos">
                                                 {content.tarotDecks.map((card) => (
-                                                    <article className="tarot-card" key={card.deck}>
+                                                    <article className="tarot-card" role="listitem" key={card.deck}>
                                                         <TarotCardArtwork key={card.image} card={card} />
-                                                        <strong>{card.deck}</strong>
-                                                        <span className="tarot-card-title">{card.title}</span>
-                                                        <small>
-                                                            {card.sourceUrl ? (
-                                                                <a href={card.sourceUrl} target="_blank" rel="noreferrer">
-                                                                    {card.source}
-                                                                </a>
-                                                            ) : card.source}
-                                                        </small>
-                                                        <p>{card.note}</p>
+                                                        <div className="tarot-card-copy">
+                                                            <strong>{card.deck}</strong>
+                                                            <span className="tarot-card-title">{card.title}</span>
+                                                            <p>{card.note}</p>
+                                                            <small>
+                                                                {card.sourceUrl ? (
+                                                                    <a href={card.sourceUrl} target="_blank" rel="noreferrer">
+                                                                        Consultar fonte da carta
+                                                                    </a>
+                                                                ) : card.source}
+                                                            </small>
+                                                        </div>
                                                     </article>
                                                 ))}
                                             </div>

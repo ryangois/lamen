@@ -717,6 +717,7 @@ const finalLetterForms = {
 };
 
 function getHebrewLetterProfile(path) {
+  const letter = HEBREW_LETTERS.find((entry) => entry.name === path.letter);
   const classification = motherLetters.has(path.letter)
     ? 'Letra mãe'
     : doubleLetters.has(path.letter)
@@ -731,6 +732,8 @@ function getHebrewLetterProfile(path) {
   return {
     classification,
     classMeaning,
+    image: letter?.image,
+    meaning: letter?.meaning,
     finalForm: finalLetterForms[path.letter] || null,
     finalFormNote: finalLetterForms[path.letter]
       ? 'Possui uma forma distinta quando aparece no final de uma palavra.'
@@ -756,7 +759,10 @@ treePathProfiles.forEach((path) => add(path.id, {
     Função: path.meaning,
     'Nome hebraico': path.hebrew,
     Classificação: getHebrewLetterProfile(path).classification,
-    'Forma final': getHebrewLetterProfile(path).finalForm || 'não possui',
+    'Significado simbólico': getHebrewLetterProfile(path).meaning,
+    ...(getHebrewLetterProfile(path).finalForm
+      ? { 'Forma final': getHebrewLetterProfile(path).finalForm }
+      : {}),
     'Sefer Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
   },
   hebrewLetter: getHebrewLetterProfile(path),
@@ -1672,6 +1678,7 @@ Object.entries(content).forEach(([id, item]) => {
           name: detail?.name || 'Forma final',
           value: hebrewGematriaValues[letter],
           image: detail?.image || 'forma final da letra',
+          meaning: detail?.meaning || 'Forma contextual da letra usada no fim da palavra.',
         };
       }),
       lexicalRoot: HEBREW_ROOTS_BY_ID[id] || (

@@ -103,6 +103,7 @@ function App() {
   const closePanelOnPopRef = useRef(false);
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
+  const [treeSection, setTreeSection] = useState('diagram');
   const [showAngelFinder, setShowAngelFinder] = useState(() => (
     new URLSearchParams(window.location.search).get('acao') === 'meu-anjo'
   ));
@@ -226,6 +227,14 @@ function App() {
 
   const handleViewChange = useCallback((nextView) => {
     setView(nextView);
+    if (nextView === 'tree') setTreeSection('diagram');
+    setActiveSegmentId(null);
+    writeSegmentToUrl(null);
+  }, []);
+
+  const handleTreeSectionChange = useCallback((section) => {
+    setView('tree');
+    setTreeSection(section);
     setActiveSegmentId(null);
     writeSegmentToUrl(null);
   }, []);
@@ -356,10 +365,12 @@ function App() {
       <MobileNavigation
         open={showMobileMenu}
         view={view}
+        treeSection={treeSection}
         savedCount={favoriteIds.length}
         onOpen={() => setShowMobileMenu(true)}
         onClose={() => setShowMobileMenu(false)}
         onViewChange={handleViewChange}
+        onTreeSectionChange={handleTreeSectionChange}
         onSearch={() => setShowSearch(true)}
         onStudy={() => setShowStudy(true)}
         onTutorial={() => setShowHelp(true)}
@@ -399,6 +410,9 @@ function App() {
             <TreeOfLife
               onSegmentClick={handleSegmentClick}
               activeSegmentId={activeSegmentId}
+              researchOpen={treeSection === 'gates'}
+              onOpenResearch={() => setTreeSection('gates')}
+              onCloseResearch={() => setTreeSection('diagram')}
             />
           </Suspense>
         ) : (

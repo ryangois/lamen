@@ -178,6 +178,12 @@
   line-height: 1.45;
 }
 
+.hebrew-letter-analysis p b {
+  color: var(--accent-gold);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+
 .hebrew-word-summary {
   display: flex;
   align-items: center;
