@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lamen-shell-v20';
+const CACHE_NAME = 'hermetika-shell-v21';
 const APP_SHELL = ['/', '/favicon.svg', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {

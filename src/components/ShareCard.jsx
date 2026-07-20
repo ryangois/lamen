@@ -138,7 +138,7 @@ export default function ShareCard({ content, onClose }) {
       try {
         await navigator.share({
           title: content.title,
-          text: `${content.title} — Lâmen Hermético`,
+          text: `${content.title} — Hermetika`,
           url,
           files: [file],
         });

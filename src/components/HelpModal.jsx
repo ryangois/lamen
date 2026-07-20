@@ -10,12 +10,12 @@ const tutorialSections = [
   },
   {
     icon: '◎',
-    title: 'Lâmen: Roda',
+    title: 'Hermetika: Roda',
     text: 'Explore o mapa hermético visual e toque em qualquer setor. No celular, arraste e use a pinça; no computador, arraste e use a roda do mouse.',
   },
   {
     icon: '☷',
-    title: 'Lâmen: Lista',
+    title: 'Hermetika: Lista',
     text: 'Consulte o mesmo acervo como catálogo pesquisável, com filtros e acesso rápido a anjos, signos, planetas, coros e demais categorias.',
   },
   {
@@ -54,6 +54,11 @@ const tutorialSections = [
     text: 'Siga uma trilha guiada em sete módulos. O progresso fica salvo neste dispositivo para que você possa retomar de onde parou.',
   },
   {
+    icon: '§',
+    title: 'Metodologia',
+    text: 'Veja como a Hermetika separa fonte primária, tradição interpretativa, correspondência hermética, reconstrução histórica, síntese editorial e prática contemplativa.',
+  },
+  {
     icon: '★',
     title: 'Salvos',
     text: 'Crie coleções, consulte o histórico e compartilhe conjuntos. Exporte ou importe um backup de favoritos, coleções, progresso, histórico e notas.',
@@ -61,7 +66,7 @@ const tutorialSections = [
   {
     icon: '↧',
     title: 'Instalar',
-    text: 'Quando disponível, use “Instalar Lâmen” no menu para acessar o site como aplicativo. Seus dados continuam armazenados localmente no navegador.',
+    text: 'Quando disponível, use “Instalar Hermetika” no menu para acessar o site como aplicativo. Seus dados continuam armazenados localmente no navegador.',
   },
 ];
 
@@ -83,7 +88,7 @@ export default function HelpModal({ onClose }) {
         <header className="help-heading">
           <div>
             <p className="help-eyebrow">Tutorial</p>
-            <h2 className="brand-font" id="help-title">Como usar o Lâmen</h2>
+            <h2 className="brand-font" id="help-title">Como usar a Hermetika</h2>
             <p>Um guia para explorar o mapa, pesquisar correspondências e organizar seus estudos.</p>
           </div>
           <button type="button" className="help-close" onClick={onClose} aria-label="Fechar tutorial">

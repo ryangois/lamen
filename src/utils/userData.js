@@ -76,7 +76,7 @@ export function downloadUserDataBackup() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = `lamen-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  anchor.download = `hermetika-backup-${new Date().toISOString().slice(0, 10)}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -85,7 +85,7 @@ export async function importUserDataBackup(file) {
   if (!file || file.size > 5_000_000) throw new Error('Arquivo de backup inválido ou muito grande.');
   const backup = JSON.parse(await file.text());
   if (backup?.format !== 'lamen-backup' || backup?.version !== 1) {
-    throw new Error('Este arquivo não é um backup compatível do Lâmen.');
+    throw new Error('Este arquivo não é um backup compatível da Hermetika.');
   }
 
   const collections = sanitizeCollections(backup.collections);

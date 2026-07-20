@@ -178,6 +178,108 @@
   line-height: 1.45;
 }
 
+.iconography-list {
+  display: grid;
+  gap: 0.38rem;
+  margin: 0.25rem 0 0;
+}
+
+.iconography-list > div {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 0.5rem;
+  padding-top: 0.38rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.iconography-list dt {
+  color: var(--accent-gold);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.iconography-list dd {
+  margin: 0;
+  color: #c9d2df;
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+.letter-script-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.25rem 0;
+}
+
+.letter-script-pair > span {
+  display: grid;
+  min-width: 70px;
+  place-items: center;
+  gap: 0.15rem;
+  padding: 0.4rem;
+  background: rgba(212, 175, 55, 0.075);
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 10px;
+}
+
+.letter-script-pair small {
+  color: #8f9cad;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+}
+
+.letter-script-pair b {
+  color: var(--accent-gold);
+  font: 700 1.3rem 'Times New Roman', serif;
+}
+
+.letter-philology,
+.letter-paleo-note {
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9px;
+  color: #9da9b8;
+  font-size: 0.62rem;
+}
+
+.letter-paleo-note a {
+  color: var(--accent-gold);
+  font-weight: 800;
+}
+
+.spelling-variants {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 15px;
+}
+
+.spelling-variants h4,
+.spelling-variants p {
+  margin: 0;
+}
+
+.spelling-variants > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.spelling-variants > div span {
+  padding: 0.35rem 0.55rem;
+  color: #f0d473;
+  background: rgba(212, 175, 55, 0.09);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
 .hebrew-letter-analysis p b {
   color: var(--accent-gold);
   font-size: 0.62rem;

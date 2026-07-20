@@ -54,7 +54,7 @@ export default function Oracle({ onSegmentClick }) {
     <section className="oracle-shell" aria-labelledby="oracle-title">
       <div className="oracle-hero">
         <span className="oracle-eyebrow">Oráculo hermético</span>
-        <h1 id="oracle-title" className="brand-font">Sorteie uma chave do Lamen</h1>
+        <h1 id="oracle-title" className="brand-font">Sorteie uma chave da Hermetika</h1>
         <p>
           Formule uma pergunta, escolha o campo simbólico e sorteie um anjo,
           caminho, esfera ou correspondência para contemplação.

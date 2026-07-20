@@ -160,7 +160,7 @@ const provenanceByCategory = {
     ['Direções e armas', 'Magia cerimonial', 'Idade Moderna–contemporânea', 'Hermética', 'Direções, arcanjos, naipes e cores mudam conforme o ritual e a ordem.'],
   ],
   symbol: [
-    ['Síntese editorial', 'Fontes comparadas do Lâmen', 'contemporânea', 'Estudo comparado', 'A ficha aproxima sistemas sem afirmar que tenham uma única origem histórica.'],
+    ['Síntese editorial', 'Fontes comparadas da Hermetika', 'contemporânea', 'Estudo comparado', 'A ficha aproxima sistemas sem afirmar que tenham uma única origem histórica.'],
   ],
 };
 

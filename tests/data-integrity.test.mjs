@@ -153,8 +153,22 @@ test('research layers are complete for Tree entries', () => {
     const entry = contentData[path.id];
     assert.equal(entry.seferVersions.length, 4, path.id);
     assert.equal(entry.tarotComparison.length, 3, path.id);
+    assert.equal(entry.variations.length, 4, path.id);
+    assert.ok(entry.variations.every((variation) => variation.facts?.length === 4), `${path.id} variations`);
+    assert.ok(entry.variations.every((variation) => (
+      variation.description.includes(path.letter) || variation.description.includes(path.hebrew)
+    )), `${path.id} specificity`);
     assert.ok(entry.hebrewAnalysis, path.id);
   });
+});
+
+test('Marseille Strength and Justice preserve their historical numbering', () => {
+  const teth = contentData.path_teth.tarotDecks.find((card) => card.deck.startsWith('Tarot de Marselha'));
+  const lamed = contentData.path_lamed.tarotDecks.find((card) => card.deck.startsWith('Tarot de Marselha'));
+  assert.equal(teth.variant, 'Arcano 11');
+  assert.equal(teth.image, '/tarot/marseille/lamed.webp');
+  assert.equal(lamed.variant, 'Arcano 08');
+  assert.equal(lamed.image, '/tarot/marseille/teth.webp');
 });
 
 test('provenance and equal-gematria links remain internally consistent', () => {
@@ -168,4 +182,60 @@ test('provenance and equal-gematria links remain internally consistent', () => {
   Object.values(RESEARCH_SOURCES).forEach((url) => {
     assert.doesNotThrow(() => new URL(url));
   });
+});
+
+test('all encyclopedia entries expose the new editorial and contemplative layers', () => {
+  Object.values(contentData).forEach((item) => {
+    assert.ok(item.brief?.length > 40, `${item.id} is missing its beginner summary`);
+    assert.equal(item.associationTimeline?.length, 6, `${item.id} has an incomplete history timeline`);
+    assert.ok(item.practice?.objective, `${item.id} is missing a practice objective`);
+    assert.ok(item.practice?.duration, `${item.id} is missing a suggested duration`);
+    assert.ok(item.practice?.journal, `${item.id} is missing a journal prompt`);
+    assert.match(item.practice?.disclaimer || '', /não substitui/i, `${item.id} is missing the practice disclaimer`);
+  });
+});
+
+test('angels, Sephiroth and paths expose their specific research additions', () => {
+  const angels = Object.values(contentData).filter((item) => item.categoryLabel === 'Anjo');
+  const sephiroth = Object.values(contentData).filter((item) => item.categoryLabel === 'Sephirah');
+  const paths = Object.values(contentData).filter((item) => item.categoryLabel === 'Caminho');
+
+  assert.equal(angels.length, 72);
+  angels.forEach((angel) => {
+    assert.ok(angel.psalm?.context?.psalmTheme);
+    assert.ok(angel.psalm?.context?.associationReason);
+    assert.match(angel.psalm?.context?.nameDistinction || '', /tríplice hebraico/i);
+  });
+
+  assert.equal(sephiroth.length, 10);
+  sephiroth.forEach((sephirah) => {
+    assert.ok(sephirah.biblicalOccurrences?.occurrences?.length);
+    assert.ok(sephirah.spellingVariants?.forms?.length);
+  });
+
+  assert.equal(paths.length, 22);
+  paths.forEach((path) => {
+    assert.ok(path.pathTransformation?.text);
+    assert.ok(path.variationConclusion);
+    assert.equal(path.tarotComparison?.length, 3);
+    path.tarotComparison.forEach((card) => {
+      assert.deepEqual(
+        Object.keys(card.iconography || {}).sort(),
+        ['changes', 'colors', 'gaze', 'objects', 'posture'],
+      );
+    });
+  });
+});
+
+test('all 22 path letters include script, sound and philological notes', () => {
+  Object.values(contentData)
+    .filter((item) => item.categoryLabel === 'Caminho')
+    .forEach((path) => {
+      const [letter] = path.hebrewAnalysis.letters;
+      assert.ok(letter.modern);
+      assert.ok(letter.paleo);
+      assert.ok(letter.sound);
+      assert.ok(letter.philology);
+      assert.ok(letter.paleoNote);
+    });
 });

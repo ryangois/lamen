@@ -15,6 +15,7 @@ const HelpModal = lazy(() => import('./components/HelpModal'));
 const GlobalSearch = lazy(() => import('./components/GlobalSearch'));
 const ComparePanel = lazy(() => import('./components/ComparePanel'));
 const StudyPath = lazy(() => import('./components/StudyPath'));
+const Methodology = lazy(() => import('./components/Methodology'));
 
 function getInitialView() {
   const savedView = window.localStorage.getItem('lamen-view');
@@ -113,6 +114,7 @@ function App() {
   const [showSearch, setShowSearch] = useState(false);
   const [comparisonId, setComparisonId] = useState(null);
   const [showStudy, setShowStudy] = useState(false);
+  const [showMethodology, setShowMethodology] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [favoriteCollections, setFavoriteCollections] = useState(readStoredCollections);
@@ -197,6 +199,7 @@ function App() {
 
       if (showMobileMenu) setShowMobileMenu(false);
       else if (comparisonId) setComparisonId(null);
+      else if (showMethodology) setShowMethodology(false);
       else if (showStudy) setShowStudy(false);
       else if (showSearch) setShowSearch(false);
       else if (showHelp) setShowHelp(false);
@@ -207,7 +210,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSegmentId, comparisonId, handleClosePanel, showAngelFinder, showHelp, showMobileMenu, showSavedItems, showSearch, showStudy]);
+  }, [activeSegmentId, comparisonId, handleClosePanel, showAngelFinder, showHelp, showMethodology, showMobileMenu, showSavedItems, showSearch, showStudy]);
 
   useEffect(() => {
     const handleSearchShortcut = (event) => {
@@ -380,6 +383,7 @@ function App() {
         onSearch={() => setShowSearch(true)}
         onStudy={() => setShowStudy(true)}
         onTutorial={() => setShowHelp(true)}
+        onMethodology={() => setShowMethodology(true)}
         onAngelFinder={() => setShowAngelFinder(true)}
         onSaved={() => setShowSavedItems(true)}
         canInstall={Boolean(installPrompt)}
@@ -473,6 +477,12 @@ function App() {
       {showHelp && (
         <Suspense fallback={null}>
           <HelpModal onClose={() => setShowHelp(false)} />
+        </Suspense>
+      )}
+
+      {showMethodology && (
+        <Suspense fallback={null}>
+          <Methodology onClose={() => setShowMethodology(false)} />
         </Suspense>
       )}
 

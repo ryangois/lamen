@@ -69,7 +69,7 @@ function buildCollectionCard(name, items) {
   }
   context.fillStyle = '#8e98a8';
   context.font = '500 20px Inter, sans-serif';
-  context.fillText('Mapa hermético interativo · lamen', 92, 1254);
+  context.fillText('Enciclopédia hermética interativa · Hermetika', 92, 1254);
   return canvas;
 }
 
@@ -78,13 +78,13 @@ export async function shareCollection(name, items) {
   const canvas = buildCollectionCard(name, items);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('Não foi possível criar o cartão.');
-  const fileName = `lamen-${name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'colecao'}.png`;
+  const fileName = `hermetika-${name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'colecao'}.png`;
   const file = new File([blob], fileName, { type: 'image/png' });
 
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
     await navigator.share({
-      title: `Coleção ${name} · Lâmen`,
-      text: `Minha coleção “${name}” no Lâmen.`,
+      title: `Coleção ${name} · Hermetika`,
+      text: `Minha coleção “${name}” na Hermetika.`,
       files: [file],
     });
     return 'Coleção compartilhada.';

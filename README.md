@@ -1,4 +1,4 @@
-# Lâmen
+# Hermetika
 
 Enciclopédia hermética interativa que reúne os 72 anjos, signos, planetas, esferas, caminhos da Árvore da Vida, Tarot, Salmos, gematria e outras correspondências em uma experiência visual e pesquisável.
 
@@ -6,7 +6,7 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 
 ## Funcionalidades
 
-### Lâmen em roda
+### Hermetika em roda
 
 - Mapa circular interativo com 72 anjos distribuídos em grupos de seis para cada signo.
 - Anéis de signos, graus, planetas, elementos, modalidades, coros e arcanjos.
@@ -14,7 +14,7 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 - Movimento e aproximação por arraste, pinça e roda do mouse.
 - Abertura direta das fichas enciclopédicas a partir de qualquer setor.
 
-### Lâmen em lista
+### Hermetika em lista
 
 - Visualização do mesmo acervo em formato de catálogo.
 - Busca e filtros para encontrar anjos e correspondências.
@@ -63,9 +63,9 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 
 As fichas adaptam seu conteúdo ao tipo de símbolo e organizam as informações em quatro grupos:
 
-- **Estudo:** resumo, história, tradição, versões textuais e Quatro Mundos.
-- **Relações:** correspondências, relações internas, gematria, hebraico, Tarot e variações.
-- **Prática:** Salmos, pronúncia e conteúdo contemplativo quando disponível.
+- **Estudo:** “Em poucas palavras”, ocorrências no Tanakh, história, linha do tempo, tradição, versões textuais e Quatro Mundos.
+- **Relações:** correspondências diretas e invertidas, relações internas, gematria, hebraico, iconografia comparada do Tarot e variações.
+- **Prática:** Salmos contextualizados, objetivo, duração, pergunta, registro e conteúdo contemplativo responsável.
 - **Fontes:** proveniência e referências consultadas.
 
 Também incluem, conforme o item:
@@ -79,6 +79,10 @@ Também incluem, conforme o item:
 - compartilhamento por URL;
 - gematria do nome completo e de formas abreviadas;
 - análise de letras, raízes e equivalências numéricas.
+- grafia quadrática e paleo-hebraica, sons, formas finais e ressalvas filológicas;
+- síntese específica de “O que realmente varia” em cada caminho;
+- transformação concreta entre as duas Sephiroth ligadas por cada caminho;
+- linha do tempo da fonte antiga à síntese editorial da Hermetika.
 
 ### Estudo guiado
 
@@ -106,7 +110,7 @@ Também incluem, conforme o item:
 O menu hambúrguer está disponível em celular e computador e reúne:
 
 1. Buscar
-2. Lâmen
+2. Mapa
    - Roda
    - Lista
 3. Árvore
@@ -116,14 +120,15 @@ O menu hambúrguer está disponível em celular e computador e reúne:
 5. Meu anjo
 6. Estudo
 7. Tutorial
-8. Salvos
-9. Instalar Lâmen, quando permitido pelo navegador
+8. Metodologia
+9. Salvos
+10. Instalar Hermetika, quando permitido pelo navegador
 
 O botão redondo com `?` abre o mesmo tutorial disponível no menu.
 
 ## Conteúdo e critérios editoriais
 
-O Lâmen aproxima fontes judaicas, cabalísticas, cristãs, ocultistas e herméticas sem tratá-las como uma única tradição histórica.
+A Hermetika aproxima fontes judaicas, cabalísticas, cristãs, ocultistas e herméticas sem tratá-las como uma única tradição histórica.
 
 As fichas procuram:
 
@@ -133,6 +138,9 @@ As fichas procuram:
 - separar nomes hebraicos, transliterações e traduções;
 - manter grafias e termos consistentes;
 - identificar imagens históricas e reconstruções editoriais.
+
+A página **Metodologia**, acessível pelo menu, define fonte primária, tradição interpretativa,
+correspondência hermética, reconstrução histórica, síntese editorial e conteúdo contemplativo.
 
 Entre as referências digitais utilizadas estão Sefaria, The Ilanot Project, British Museum e outros acervos indicados nas próprias fichas.
 

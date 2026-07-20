@@ -161,7 +161,7 @@ export default function TreeResearch({ onClose, onOpenPath }) {
                 ))}
               </div>
               <p className="tree-gallery-note">
-                As miniaturas são esquemas editoriais do Lâmen, não reproduções dos manuscritos.
+                As miniaturas são esquemas editoriais da Hermetika, não reproduções dos manuscritos.
                 Os links levam ao Ilanot Project, catálogo acadêmico desenvolvido na Universidade de Haifa.
               </p>
             </section>

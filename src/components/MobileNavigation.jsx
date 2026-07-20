@@ -16,6 +16,7 @@ function MenuIcon({ name }) {
     saved: <path d="m12 3.8 2.5 5 5.5.8-4 3.9.95 5.5L12 16.4 7.05 19 8 13.5 4 9.6l5.5-.8L12 3.8Z" />,
     study: <><path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12H7.5A2.5 2.5 0 0 1 5 16.5v-12Z" /><path d="M8 8h7M8 11.5h7M7.5 19A2.5 2.5 0 0 1 5 16.5" /></>,
     tutorial: <><circle cx="12" cy="12" r="8.5" /><path d="M9.8 9.2a2.35 2.35 0 1 1 3.25 2.18c-.72.32-1.05.82-1.05 1.62v.35" /><path d="M12 17.2h.01" /></>,
+    methodology: <><path d="M5 5.5h5.5A2.5 2.5 0 0 1 13 8v11H7.5A2.5 2.5 0 0 1 5 16.5v-11Z" /><path d="M19 5.5h-3A3 3 0 0 0 13 8v11h3.5a2.5 2.5 0 0 0 2.5-2.5v-11Z" /></>,
     install: <><path d="M12 3v12m-4-4 4 4 4-4" /><path d="M5 18.5h14" /></>,
     chevron: <path d="m8.5 10 3.5 3.5 3.5-3.5" />,
   };
@@ -46,6 +47,7 @@ export default function MobileNavigation({
   onSearch,
   onStudy,
   onTutorial,
+  onMethodology,
   onAngelFinder,
   onSaved,
   canInstall,
@@ -86,9 +88,9 @@ export default function MobileNavigation({
         </button>
         <div
           className="mobile-brand"
-          aria-label={`Lâmen · ${view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}`}
+          aria-label={`Hermetika · ${view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}`}
         >
-          <strong className="brand-font">Lâmen</strong>
+          <strong className="brand-font">Hermetika</strong>
           <span>{view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}</span>
         </div>
         <button
@@ -116,7 +118,7 @@ export default function MobileNavigation({
             <div className="mobile-drawer-header">
               <div>
                 <span>Navegação</span>
-                <h2 className="brand-font" id="mobile-menu-title">Lâmen</h2>
+                <h2 className="brand-font" id="mobile-menu-title">Hermetika</h2>
               </div>
               <button type="button" onClick={onClose} aria-label="Fechar menu">
                 <MenuIcon name="close" />
@@ -142,7 +144,7 @@ export default function MobileNavigation({
                   onClick={() => setLamenExpanded((current) => !current)}
                 >
                   <span className="mobile-item-icon"><MenuIcon name="wheel" /></span>
-                  <span><strong>Lâmen</strong><small>Explorar o mapa hermético</small></span>
+                  <span><strong>Mapa</strong><small>Explorar a roda ou o catálogo</small></span>
                   <MenuIcon name="chevron" />
                 </button>
                 {lamenExpanded && (
@@ -225,6 +227,10 @@ export default function MobileNavigation({
                 <span className="mobile-item-icon"><MenuIcon name="tutorial" /></span>
                 <span><strong>Tutorial</strong><small>Conheça todas as funcionalidades</small></span>
               </button>
+              <button type="button" onClick={() => runAndClose(onMethodology)}>
+                <span className="mobile-item-icon"><MenuIcon name="methodology" /></span>
+                <span><strong>Metodologia</strong><small>Fontes, camadas e critérios editoriais</small></span>
+              </button>
               <button type="button" onClick={() => runAndClose(onSaved)}>
                 <span className="mobile-item-icon"><MenuIcon name="saved" /></span>
                 <span><strong>Salvos</strong><small>Coleções e histórico</small></span>
@@ -233,7 +239,7 @@ export default function MobileNavigation({
               {canInstall && (
                 <button type="button" className="mobile-install-item" onClick={() => runAndClose(onInstall)}>
                   <span className="mobile-item-icon"><MenuIcon name="install" /></span>
-                  <span><strong>Instalar Lâmen</strong><small>Usar como aplicativo neste dispositivo</small></span>
+                  <span><strong>Instalar Hermetika</strong><small>Usar como aplicativo neste dispositivo</small></span>
                 </button>
               )}
             </nav>

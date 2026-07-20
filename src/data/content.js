@@ -13,6 +13,19 @@ import {
   buildFourWorlds,
   buildProvenance,
 } from './researchData.js';
+import {
+  LETTER_DETAILS,
+  SEPHIRAH_BIBLICAL_OCCURRENCES,
+  buildAngelPsalmContext,
+  buildAssociationTimeline,
+  buildBrief,
+  buildInverseCorrespondences,
+  buildPathTransformation,
+  buildResponsiblePractice,
+  buildSpellingVariants,
+  buildTarotIconography,
+  buildVariationConclusion,
+} from './editorialEnhancements.js';
 
 const content = {};
 
@@ -263,10 +276,10 @@ function tarotAssetKey(title) {
     'O Hierofante': ['05_Hierophant', '05'],
     'Os Enamorados': ['06_Lovers', '06'],
     'O Carro': ['07_Chariot', '07'],
-    'A Força': ['08_Strength', '08'],
+    'A Força': ['08_Strength', '11'],
     'O Eremita': ['09_Hermit', '09'],
     'A Roda da Fortuna': ['10_Wheel_of_Fortune', '10'],
-    'A Justiça': ['11_Justice', '11'],
+    'A Justiça': ['11_Justice', '08'],
     'O Enforcado': ['12_Hanged_Man', '12'],
     'A Morte': ['13_Death', '13'],
     'A Temperança': ['14_Temperance', '14'],
@@ -331,12 +344,49 @@ const thothTarotAccents = {
   Shin: '#dd4f3c', Tav: '#776b9c',
 };
 
+const rwsTarotNumbers = {
+  Aleph: '0', Beth: 'I', Gimel: 'II', Daleth: 'III', Heh: 'IV', Vav: 'V',
+  Zayin: 'VI', Cheth: 'VII', Teth: 'VIII', Yod: 'IX', Kaph: 'X', Lamed: 'XI',
+  Mem: 'XII', Nun: 'XIII', Samekh: 'XIV', Ayin: 'XV', Peh: 'XVI',
+  Tzaddi: 'XVII', Qoph: 'XVIII', Resh: 'XIX', Shin: 'XX', Tav: 'XXI',
+};
+
+const marseilleTarotProfiles = {
+  Aleph: ['O Louco / Le Mat', 'sem número'],
+  Beth: ['O Mago / Le Bateleur', 'I'],
+  Gimel: ['A Papisa / La Papesse', 'II'],
+  Daleth: ['A Imperatriz / L’Impératrice', 'III'],
+  Heh: ['O Imperador / L’Empereur', 'IV'],
+  Vav: ['O Papa / Le Pape', 'V'],
+  Zayin: ['Os Enamorados / L’Amoureux', 'VI'],
+  Cheth: ['O Carro / Le Chariot', 'VII'],
+  Teth: ['A Força / La Force', 'XI'],
+  Yod: ['O Eremita / L’Hermite', 'IX'],
+  Kaph: ['A Roda da Fortuna / La Roue de Fortune', 'X'],
+  Lamed: ['A Justiça / La Justice', 'VIII'],
+  Mem: ['O Enforcado / Le Pendu', 'XII'],
+  Nun: ['Arcano sem nome', 'XIII'],
+  Samekh: ['A Temperança / Tempérance', 'XIV'],
+  Ayin: ['O Diabo / Le Diable', 'XV'],
+  Peh: ['A Casa de Deus / La Maison Dieu', 'XVI'],
+  Tzaddi: ['A Estrela / L’Étoile', 'XVII'],
+  Qoph: ['A Lua / La Lune', 'XVIII'],
+  Resh: ['O Sol / Le Soleil', 'XIX'],
+  Shin: ['O Julgamento / Le Jugement', 'XX'],
+  Tav: ['O Mundo / Le Monde', 'XXI'],
+};
+
 function buildTarotDecks(path) {
   const keys = tarotAssetKey(path.tarot);
   if (!keys) return [];
 
   const [, marseille] = keys;
   const marseilleFilename = `Jean_Dodal_Tarot_trump_${marseille}.jpg`;
+  const marseilleImageKey = path.letter === 'Teth'
+    ? 'lamed'
+    : path.letter === 'Lamed'
+      ? 'teth'
+      : path.id.slice(5);
 
   return [
     {
@@ -350,7 +400,7 @@ function buildTarotDecks(path) {
     {
       deck: 'Tarot de Marselha · Jean Dodal',
       title: path.tarot,
-      image: `/tarot/marseille/${path.id.slice(5)}.webp`,
+      image: `/tarot/marseille/${marseilleImageKey}.webp`,
       variant: `Arcano ${marseille}`,
       source: 'Jean Dodal, Lyon, 1701–1715 · domínio público',
       sourceUrl: `https://commons.wikimedia.org/wiki/File:${marseilleFilename}`,
@@ -368,7 +418,7 @@ function buildTarotDecks(path) {
       },
       source: 'Correspondência do Thoth · consulte a edição oficial',
       sourceUrl: 'https://www.usgamesinc.com/tarot-and-inspiration/crowley-thoth-tarot-deck-premier-edition.html',
-      note: 'Cartão de referência original do Lamen. A arte de Frieda Harris não é reproduzida porque a editora exige autorização específica.',
+      note: 'Cartão de referência original da Hermetika. A arte de Frieda Harris não é reproduzida porque a editora exige autorização específica.',
     },
   ];
 }
@@ -741,6 +791,73 @@ function getHebrewLetterProfile(path) {
   };
 }
 
+function buildPathVariations(path) {
+  const letter = HEBREW_LETTERS.find((entry) => entry.name === path.letter);
+  const profile = getHebrewLetterProfile(path);
+  const rwsNumber = rwsTarotNumbers[path.letter];
+  const thothTitle = thothTarotTitles[path.letter];
+  const thothNumber = thothTarotNumbers[path.letter];
+  const thothAttribution = thothTarotAttributions[path.letter];
+  const [marseilleTitle, marseilleNumber] = marseilleTarotProfiles[path.letter];
+  const attributionChanged = thothAttribution !== path.attribution;
+  const titleChanged = thothTitle !== path.tarot || thothNumber !== rwsNumber;
+
+  const seferDescription = motherLetters.has(path.letter)
+    ? `${path.letter} integra as três letras mães e é relacionada a ${path.attribution}. O texto trabalha a letra como potência formativa, sem colocá-la no caminho ${path.number} entre ${path.fromName} e ${path.toName}.`
+    : doubleLetters.has(path.letter)
+      ? `${path.letter} integra as sete letras duplas. As duplas são relacionadas aos sete planetas, mas a ordem exata varia entre recensões e comentários; ${path.attribution} é a correspondência hermética adotada nesta Árvore.`
+      : `${path.letter} integra as doze letras simples. Elas são relacionadas a ciclos zodiacais, meses e funções do corpo; ${path.attribution} é a correspondência usada nesta sequência hermética.`;
+
+  const thothDescription = attributionChanged
+    ? `Crowley aplica a troca “Tzaddi não é a Estrela”: ${path.letter} recebe ${thothAttribution} e ${thothTitle} ${thothNumber}, em vez de ${path.attribution} e ${path.tarot} ${rwsNumber}.`
+    : titleChanged
+      ? `Mantém ${path.letter} ligada a ${thothAttribution}, mas apresenta o arcano como ${thothTitle} ${thothNumber}, em lugar de ${path.tarot} ${rwsNumber}.`
+      : `Mantém ${path.letter}, ${thothAttribution} e ${thothTitle} ${thothNumber}; a variação está principalmente na linguagem visual e thelêmica da carta.`;
+
+  return [
+    {
+      name: 'Sefer Yetzirah',
+      description: seferDescription,
+      facts: [
+        ['Letra', `${path.letter} · ${path.hebrew}`],
+        ['Classe', profile.classification],
+        ['Valor', String(letter?.value)],
+        ['Imagem', letter?.image],
+      ],
+    },
+    {
+      name: 'Golden Dawn e Rider–Waite–Smith',
+      description: `No sistema usado como base do diagrama, o caminho ${path.number} liga ${path.fromName} a ${path.toName}: ${path.letter} corresponde a ${path.attribution} e ao arcano ${path.tarot}.`,
+      facts: [
+        ['Caminho', `${path.number} · ${path.fromName}–${path.toName}`],
+        ['Atribuição', path.attribution],
+        ['Arcano', `${rwsNumber} · ${path.tarot}`],
+        ['Letra', `${path.letter} · ${path.hebrew}`],
+      ],
+    },
+    {
+      name: 'Tarot de Marselha · Jean Dodal',
+      description: `O trunfo histórico aparece como ${marseilleTitle}, número ${marseilleNumber}. O baralho não imprime a letra ${path.hebrew} nem a atribuição ${path.attribution}; essa associação é uma camada ocultista posterior.`,
+      facts: [
+        ['Trunfo', marseilleTitle],
+        ['Número', marseilleNumber],
+        ['Letra impressa', 'Não'],
+        ['Astrologia impressa', 'Não'],
+      ],
+    },
+    {
+      name: 'Thoth · Crowley–Harris',
+      description: thothDescription,
+      facts: [
+        ['Letra', `${path.letter} · ${path.hebrew}`],
+        ['Atribuição', thothAttribution],
+        ['Arcano', `${thothNumber} · ${thothTitle}`],
+        ['Comparação', attributionChanged ? 'Atribuição trocada' : titleChanged ? 'Título ou número alterado' : 'Atribuição mantida'],
+      ],
+    },
+  ];
+}
+
 treePathProfiles.forEach((path) => add(path.id, {
   title: `${path.number}. ${path.letter} · ${path.fromName}–${path.toName}`,
   subtitle: `${path.hebrew} · ${path.attribution} · ${path.tarot}`,
@@ -766,6 +883,7 @@ treePathProfiles.forEach((path) => add(path.id, {
     'Sefer Yetzirah': `A letra ${path.letter} (${path.hebrew}) é contemplada como potência formativa; sua atribuição a ${path.attribution} segue a síntese hermética dos 22 caminhos.`,
   },
   hebrewLetter: getHebrewLetterProfile(path),
+  variations: buildPathVariations(path),
   tarotDecks: buildTarotDecks(path),
   gematria: buildHebrewWordGematria(path.letter, path.hebrew, `A letra ${path.letter} reduz sua força ao valor ${getGematriaBreakdown(path.hebrew).value}, usado como chave contemplativa do caminho ${path.number}.`),
   practice: {
@@ -1639,6 +1757,7 @@ function classifySource(source) {
 Object.entries(content).forEach(([id, item]) => {
   const category = getContentCategory(id);
   const profile = editorialProfiles[category] || editorialProfiles.symbol;
+  item.id = id;
   item.categoryLabel = profile.label;
   item.relations = buildRelations(id);
   item.pronunciation = buildPronunciation(id, category, item);
@@ -1647,11 +1766,19 @@ Object.entries(content).forEach(([id, item]) => {
     meditation: `Leia as correspondências sem pressa, escolha uma imagem ou palavra-chave e observe o que ela mobiliza antes de formular uma conclusão.`,
     integration: `Registre uma ação pequena e verificável que traduza a contemplação de ${item.title} para a vida cotidiana.`,
   };
+  item.practice = buildResponsiblePractice(item);
+  item.brief = buildBrief(item, item.categoryLabel);
+  item.pathTransformation = buildPathTransformation(item);
+  item.inverseCorrespondences = buildInverseCorrespondences(item);
+  item.associationTimeline = buildAssociationTimeline(item);
+  item.spellingVariants = buildSpellingVariants(id, item);
+  item.biblicalOccurrences = SEPHIRAH_BIBLICAL_OCCURRENCES[id] || null;
+  if (item.psalm) item.psalm.context = buildAngelPsalmContext(item.psalm, item);
   item.history = profile.history.map((paragraph, index) => ({
     title: index === 0 ? 'Origem e formação' : 'Desenvolvimento das correspondências',
     paragraphs: [paragraph],
   }));
-  item.variations = profile.variations.map(([name, description]) => ({
+  item.variations = item.variations || profile.variations.map(([name, description]) => ({
     name,
     description,
   }));
@@ -1672,13 +1799,23 @@ Object.entries(content).forEach(([id, item]) => {
       text: normalizedText,
       letterCount: [...normalizedText].length,
       letters: [...normalizedText].map((letter) => {
-        const detail = HEBREW_LETTERS.find((entry) => entry.hebrew === letter);
+        const finalToRegular = { ך: 'כ', ם: 'מ', ן: 'נ', ף: 'פ', ץ: 'צ' };
+        const detail = HEBREW_LETTERS.find((entry) => entry.hebrew === (finalToRegular[letter] || letter));
+        const editorialDetail = detail ? LETTER_DETAILS[detail.name] : null;
         return {
           letter,
           name: detail?.name || 'Forma final',
           value: hebrewGematriaValues[letter],
           image: detail?.image || 'forma final da letra',
           meaning: detail?.meaning || 'Forma contextual da letra usada no fim da palavra.',
+          modern: detail?.hebrew || letter,
+          paleo: editorialDetail?.paleo,
+          sound: editorialDetail?.sound,
+          finalForm: editorialDetail?.finalForm,
+          variants: editorialDetail?.variants,
+          philology: editorialDetail?.philology,
+          paleoNote: editorialDetail?.paleoNote,
+          sourceUrl: editorialDetail?.sourceUrl,
         };
       }),
       lexicalRoot: HEBREW_ROOTS_BY_ID[id] || (
@@ -1693,6 +1830,7 @@ Object.entries(content).forEach(([id, item]) => {
         : category === 'path'
           ? 'Esta ficha trata uma letra isolada. Seu nome e sua imagem tradicional não constituem uma raiz lexical.'
           : 'A tradução informa o sentido tradicional do termo; etimologia, uso bíblico e interpretação cabalística são camadas diferentes.',
+      spellingVariants: item.spellingVariants,
       equals: [],
     };
   }
@@ -1713,9 +1851,11 @@ Object.entries(content).forEach(([id, item]) => {
       difference: card.deck.startsWith('Thoth')
         ? `Nesta carta: ${card.title}; confira número, nome e atribuição porque o Thoth altera pontos do esquema da Golden Dawn.`
         : `Nesta carta: ${card.title}; compare postura, objetos, direção do olhar e organização da cena.`,
+      iconography: buildTarotIconography(card, item.associations?.Tarot),
       sourceUrl: card.sourceUrl,
     }));
   }
+  item.variationConclusion = buildVariationConclusion(item);
   if (item.sources.length > 0) {
     item.citations = {
       description: [0],

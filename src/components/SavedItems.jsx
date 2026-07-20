@@ -263,7 +263,7 @@ export default function SavedItems({
           title="Últimos abertos"
           emptyText={allRecent.length > 0
             ? 'Nenhum item do histórico corresponde aos filtros.'
-            : 'Seu histórico aparece aqui conforme você explora o Lâmen.'}
+            : 'Seu histórico aparece aqui conforme você explora a Hermetika.'}
           items={recent}
           onSelect={onSelect}
           onClear={onClearHistory}
@@ -282,7 +282,7 @@ export default function SavedItems({
               type="file"
               accept="application/json,.json"
               onChange={handleImport}
-              aria-label="Selecionar arquivo de backup do Lâmen"
+              aria-label="Selecionar arquivo de backup da Hermetika"
             />
           </div>
           {dataFeedback && <p className="saved-data-feedback" role="status">{dataFeedback}</p>}

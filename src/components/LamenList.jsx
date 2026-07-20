@@ -76,10 +76,10 @@ export default function LamenList({ onSegmentClick, activeSegmentId }) {
   };
 
   return (
-    <section className="catalog-view" aria-label="Catálogo do Lamen">
+    <section className="catalog-view" aria-label="Catálogo da Hermetika">
       <div className="catalog-header">
         <div>
-          <p className="catalog-eyebrow">Enciclopédia do Lamen</p>
+          <p className="catalog-eyebrow">Enciclopédia Hermetika</p>
           <h1 className="catalog-title brand-font">Explorar em lista</h1>
           <p className="catalog-intro">
             Pesquise os 149 símbolos e refine por signo, coro, planeta, elemento ou esfera.

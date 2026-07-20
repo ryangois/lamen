@@ -110,6 +110,15 @@ export function TarotComparisonPanel({ cards }) {
             <strong>{card.title}</strong>
             <p>{card.visualLanguage}</p>
             <small>{card.difference}</small>
+            {card.iconography && (
+              <dl className="iconography-list">
+                <div><dt>Figura</dt><dd>{card.iconography.posture}</dd></div>
+                <div><dt>Objetos</dt><dd>{card.iconography.objects}</dd></div>
+                <div><dt>Olhar</dt><dd>{card.iconography.gaze}</dd></div>
+                <div><dt>Cores</dt><dd>{card.iconography.colors}</dd></div>
+                <div><dt>Mudanças</dt><dd>{card.iconography.changes}</dd></div>
+              </dl>
+            )}
             {card.sourceUrl && (
               <a href={card.sourceUrl} target="_blank" rel="noreferrer">Consultar fonte do baralho</a>
             )}
@@ -149,14 +158,37 @@ export function HebrewAnalysisPanel({ analysis, value, onNavigate }) {
             <strong lang="he" dir="rtl">{letter.letter}</strong>
             <div>
               <span>{letter.name} · {letter.value}</span>
+              {(letter.modern || letter.paleo) && (
+                <div className="letter-script-pair">
+                  <span><small>Quadrática</small><b lang="he" dir="rtl">{letter.modern}</b></span>
+                  {letter.paleo && <span><small>Paleo-hebraica</small><b>{letter.paleo}</b></span>}
+                  {letter.finalForm && <span><small>Forma final</small><b lang="he" dir="rtl">{letter.finalForm}</b></span>}
+                </div>
+              )}
+              {letter.variants && <p><b>Nome:</b> {letter.variants}</p>}
+              {letter.sound && <p><b>Som:</b> {letter.sound}</p>}
               <p><b>Imagem:</b> {letter.image}</p>
               <p>{letter.meaning}</p>
+              {letter.philology && <p className="letter-philology">{letter.philology}</p>}
+              {letter.paleoNote && (
+                <p className="letter-paleo-note">
+                  {letter.paleoNote}{' '}
+                  {letter.sourceUrl && <a href={letter.sourceUrl} target="_blank" rel="noreferrer">Fonte Unicode</a>}
+                </p>
+              )}
             </div>
           </article>
         ))}
       </div>
+      {analysis.spellingVariants && (
+        <section className="spelling-variants">
+          <h4 className="brand-font">Grafias e transliterações</h4>
+          <div>{analysis.spellingVariants.forms.map((form) => <span key={form}>{form}</span>)}</div>
+          <p>{analysis.spellingVariants.note}</p>
+        </section>
+      )}
       <section className="equal-gematria">
-        <h4 className="brand-font">Mesmo valor dentro do Lâmen</h4>
+        <h4 className="brand-font">Mesmo valor dentro da Hermetika</h4>
         {analysis.equals.length ? (
           <div>
             {analysis.equals.map((item) => (

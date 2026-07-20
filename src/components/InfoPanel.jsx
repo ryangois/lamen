@@ -33,7 +33,7 @@ const flatSegments = ringStructure.flatMap((ring) => (
 ));
 
 const TAB_GROUPS = [
-    { id: 'study', label: 'Estudo', tabs: ['summary', 'history', 'tradition', 'textual', 'worlds'] },
+    { id: 'study', label: 'Estudo', tabs: ['summary', 'biblical', 'history', 'timeline', 'tradition', 'textual', 'worlds'] },
     { id: 'correspondences', label: 'Relações', tabs: ['associations', 'relations', 'gematria', 'hebrew', 'tarot', 'variations'] },
     { id: 'practice', label: 'Prática', tabs: ['psalm', 'practice', 'notes'] },
     { id: 'sources', label: 'Fontes', tabs: ['provenance', 'sources'] },
@@ -78,7 +78,7 @@ function getBreadcrumbs(activeSegmentId, content) {
 
     return [
         { label: 'Enciclopédia' },
-        { label: isTreeEntry ? 'Árvore da Vida' : 'Lâmen' },
+        { label: isTreeEntry ? 'Árvore da Vida' : 'Hermetika' },
         parentCategory && { label: parentCategory.label, id: parentCategory.id },
         { label: BREADCRUMB_CATEGORIES[category] || `${category}s` },
         { label: content?.title, current: true },
@@ -309,6 +309,7 @@ export default function InfoPanel({
     const icon = ICONS[activeSegmentId] || '✦';
     const tabs = useMemo(() => [
         { id: 'summary', label: 'Resumo', available: true },
+        { id: 'biblical', label: 'Tanakh', available: Boolean(content?.biblicalOccurrences) },
         { id: 'psalm', label: 'Salmo', available: Boolean(content?.psalm) },
         { id: 'gematria', label: 'Gematria', available: Boolean(content?.gematria) },
         { id: 'hebrew', label: 'Hebraico', available: Boolean(content?.hebrewAnalysis) },
@@ -317,6 +318,7 @@ export default function InfoPanel({
         { id: 'tarot', label: 'Tarot comparado', available: Boolean(content?.tarotComparison?.length) },
         { id: 'practice', label: 'Prática', available: Boolean(content?.practice) },
         { id: 'history', label: 'História', available: Boolean(content?.history?.length) },
+        { id: 'timeline', label: 'Linha do tempo', available: Boolean(content?.associationTimeline?.length) },
         { id: 'variations', label: 'Variações', available: Boolean(content?.variations?.length) },
         { id: 'tradition', label: 'Tradição', available: Boolean(content?.sections?.length || content?.traditionNote) },
         { id: 'textual', label: 'Versões do texto', available: Boolean(content?.seferVersions?.length) },
@@ -641,6 +643,12 @@ export default function InfoPanel({
                         >
                             {activeTab === 'summary' && (
                                 <section className="tab-section">
+                                    {content.brief && (
+                                        <article className="brief-card">
+                                            <span>Em poucas palavras</span>
+                                            <p>{content.brief}</p>
+                                        </article>
+                                    )}
                                     <p className="description">
                                         <GlossaryText onTerm={setGlossaryEntry}>{content.description}</GlossaryText>
                                         <InlineCitations
@@ -663,6 +671,14 @@ export default function InfoPanel({
                                         </ul>
                                     )}
 
+                                    {content.pathTransformation && (
+                                        <article className="transformation-card">
+                                            <span>Transformação do caminho</span>
+                                            <h3 className="brand-font">{content.pathTransformation.from} → {content.pathTransformation.to}</h3>
+                                            <p>{content.pathTransformation.text}</p>
+                                        </article>
+                                    )}
+
                                     {content.psalm && (
                                         <article className="psalm-card compact">
                                             <div className="psalm-header">
@@ -677,6 +693,32 @@ export default function InfoPanel({
                                             <p className="psalm-note">{content.psalm.meditation}</p>
                                         </article>
                                     )}
+                                </section>
+                            )}
+
+                            {activeTab === 'biblical' && content.biblicalOccurrences && (
+                                <section className="tab-section biblical-occurrences">
+                                    <header>
+                                        <span>Base lexical no Tanakh</span>
+                                        <h3 className="brand-font">
+                                            <b lang="he" dir="rtl">{content.biblicalOccurrences.term}</b>
+                                            {' · '}{content.biblicalOccurrences.translation}
+                                        </h3>
+                                        <p>
+                                            Estas ocorrências mostram o uso bíblico da palavra. Elas são anteriores à
+                                            organização cabalística da Árvore e não devem ser lidas automaticamente como
+                                            menções ao diagrama.
+                                        </p>
+                                    </header>
+                                    <div>
+                                        {content.biblicalOccurrences.occurrences.map((occurrence) => (
+                                            <article key={occurrence.reference}>
+                                                <a href={occurrence.url} target="_blank" rel="noreferrer">{occurrence.reference}</a>
+                                                <blockquote lang="he" dir="rtl">{occurrence.excerpt}</blockquote>
+                                                <p>{occurrence.context}</p>
+                                            </article>
+                                        ))}
+                                    </div>
                                 </section>
                             )}
 
@@ -712,6 +754,26 @@ export default function InfoPanel({
                                         )}
                                         <p className="psalm-note">{content.psalm.note}</p>
                                     </article>
+                                    {content.psalm.context && (
+                                        <section className="psalm-context-grid">
+                                            <article>
+                                                <span>Tema do Salmo</span>
+                                                <p>{content.psalm.context.psalmTheme}</p>
+                                            </article>
+                                            <article>
+                                                <span>Contexto do verso</span>
+                                                <p>{content.psalm.context.verseContext}</p>
+                                            </article>
+                                            <article>
+                                                <span>Por que foi associado</span>
+                                                <p>{content.psalm.context.associationReason}</p>
+                                            </article>
+                                            <article>
+                                                <span>Tríplice e nome angelizado</span>
+                                                <p>{content.psalm.context.nameDistinction}</p>
+                                            </article>
+                                        </section>
+                                    )}
                                     <section className="info-section">
                                         <h3 className="section-title brand-font">Fonte do texto</h3>
                                         {content.psalm.hebrewSource && (
@@ -826,6 +888,22 @@ export default function InfoPanel({
                                             ))}
                                         </div>
                                     )}
+                                    {content.inverseCorrespondences?.length > 0 && (
+                                        <section className="inverse-correspondences">
+                                            <header>
+                                                <span>Leitura inversa</span>
+                                                <h3 className="brand-font">Como esta ficha modifica a correspondência</h3>
+                                            </header>
+                                            <div>
+                                                {content.inverseCorrespondences.map((entry) => (
+                                                    <article key={entry.label}>
+                                                        <h4>{entry.label}</h4>
+                                                        <p>{entry.text}</p>
+                                                    </article>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    )}
                                     {content.tarotDecks?.length > 0 && (
                                         <section className="tarot-gallery" aria-label="Cartas de Tarot associadas">
                                             <header>
@@ -906,6 +984,14 @@ export default function InfoPanel({
                                         <span>Integração</span>
                                         <h3 className="brand-font">Prática contemplativa</h3>
                                         <div>
+                                            <small>Objetivo</small>
+                                            <p>{content.practice.objective}</p>
+                                        </div>
+                                        <div>
+                                            <small>Duração sugerida</small>
+                                            <p>{content.practice.duration}</p>
+                                        </div>
+                                        <div>
                                             <small>Pergunta</small>
                                             <p>{content.practice.prompt}</p>
                                         </div>
@@ -914,9 +1000,14 @@ export default function InfoPanel({
                                             <p>{content.practice.meditation}</p>
                                         </div>
                                         <div>
+                                            <small>Registro no caderno</small>
+                                            <p>{content.practice.journal}</p>
+                                        </div>
+                                        <div>
                                             <small>Integração</small>
                                             <p>{content.practice.integration}</p>
                                         </div>
+                                        <p className="practice-disclaimer">{content.practice.disclaimer}</p>
                                     </article>
                                 </section>
                             )}
@@ -937,6 +1028,28 @@ export default function InfoPanel({
                                 </section>
                             )}
 
+                            {activeTab === 'timeline' && content.associationTimeline?.length > 0 && (
+                                <section className="tab-section association-history">
+                                    <header>
+                                        <span>História da associação</span>
+                                        <h3 className="brand-font">Da fonte antiga à síntese editorial</h3>
+                                        <p>As etapas indicam camadas documentais; não uma transmissão única e sem mudanças.</p>
+                                    </header>
+                                    <div className="association-history-list">
+                                        {content.associationTimeline.map((entry, index) => (
+                                            <article key={entry.stage}>
+                                                <b>{String(index + 1).padStart(2, '0')}</b>
+                                                <div>
+                                                    <span>{entry.period}</span>
+                                                    <h4>{entry.stage}</h4>
+                                                    <p>{entry.text}</p>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
                             {activeTab === 'variations' && content.variations?.length > 0 && (
                                 <section className="tab-section">
                                     <header className="variations-header">
@@ -950,11 +1063,29 @@ export default function InfoPanel({
                                         {content.variations.map((variation, index) => (
                                             <article key={variation.name}>
                                                 <span>{String(index + 1).padStart(2, '0')}</span>
-                                                <h4>{variation.name}</h4>
-                                                <p>{variation.description}</p>
+                                                <div className="variation-card-copy">
+                                                    <h4>{variation.name}</h4>
+                                                    {variation.facts?.length > 0 && (
+                                                        <dl>
+                                                            {variation.facts.map(([label, value]) => (
+                                                                <div key={label}>
+                                                                    <dt>{label}</dt>
+                                                                    <dd>{value}</dd>
+                                                                </div>
+                                                            ))}
+                                                        </dl>
+                                                    )}
+                                                    <p>{variation.description}</p>
+                                                </div>
                                             </article>
                                         ))}
                                     </div>
+                                    {content.variationConclusion && (
+                                        <article className="variation-conclusion">
+                                            <span>O que realmente varia</span>
+                                            <p>{content.variationConclusion}</p>
+                                        </article>
+                                    )}
                                 </section>
                             )}
 

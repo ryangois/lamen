@@ -486,7 +486,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
       ref={canvasRef}
       className="lamen-canvas"
       tabIndex={0}
-      aria-label="Roda interativa do Lamen. Arraste para girar e use a roda do mouse ou pinça para ampliar. Pelo teclado, use setas para girar, mais e menos para zoom, e zero para resetar."
+      aria-label="Roda interativa da Hermetika. Arraste para girar e use a roda do mouse ou pinça para ampliar. Pelo teclado, use setas para girar, mais e menos para zoom, e zero para resetar."
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endPointer}

@@ -1,0 +1,97 @@
+.methodology-modal {
+  width: min(920px, 100%);
+}
+
+.methodology-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.methodology-grid article {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 17px;
+}
+
+.methodology-grid article > span {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: #12141a;
+  background: var(--accent-gold);
+  border-radius: 50%;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.methodology-grid h3,
+.methodology-grid p {
+  margin: 0;
+}
+
+.methodology-grid h3 {
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+
+.methodology-grid p,
+.methodology-principles li {
+  margin-top: 0.4rem;
+  color: #b9c4d1;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.methodology-principles,
+.methodology-sources {
+  padding: 1rem;
+  margin-top: 1rem;
+  background: rgba(212, 175, 55, 0.07);
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 18px;
+}
+
+.methodology-principles h3,
+.methodology-sources h3 {
+  margin: 0;
+}
+
+.methodology-principles ul {
+  padding-left: 1.1rem;
+  margin-bottom: 0;
+}
+
+.methodology-sources > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.methodology-sources a {
+  padding: 0.5rem 0.7rem;
+  color: #f0d473;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+@media (max-width: 620px) {
+  .methodology-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .methodology-grid article {
+    padding: 0.85rem;
+  }
+}
