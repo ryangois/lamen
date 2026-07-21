@@ -252,5 +252,7 @@ test('blog posts have unique, SEO-ready routes and metadata', () => {
     assert.ok(post.description.length >= 120 && post.description.length <= 180);
     assert.ok(post.tags.length >= 3);
     assert.doesNotThrow(() => new Date(post.publishedAt).toISOString());
+    assert.ok(post.sections.length >= 3, `${post.slug} needs an article outline`);
+    assert.equal(new Set(post.sections.map(([id]) => id)).size, post.sections.length, `${post.slug} has duplicate section ids`);
   });
 });

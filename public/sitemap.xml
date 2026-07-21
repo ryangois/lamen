@@ -17,4 +17,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>https://lamen-mu.vercel.app/blog/arvore-da-vida-sempre-teve-22-caminhos</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lamen-mu.vercel.app/blog/quatro-arvores-da-vida-atziluth-briah-yetzirah-assiah</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>

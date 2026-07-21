@@ -1,27 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { blogPosts, getBlogPost } from '../data/blogPosts';
 import './Blog.css';
 
-const sections = [
-  ['um-alfabeto', 'Um mesmo alfabeto, diferentes mapas'],
-  ['sefer-yetzirah', 'O que é o Sefer Yetzirah?'],
-  ['tres-maes', 'As três letras-mães'],
-  ['sete-duplas', 'As sete letras duplas'],
-  ['doze-simples', 'As doze letras simples'],
-  ['versoes', 'As versões do texto'],
-  ['arvore-da-vida', 'A Árvore da Vida'],
-  ['kabbalah-hermetica', 'A Kabbalah Hermética'],
-  ['golden-dawn', 'A influência da Golden Dawn'],
-  ['tav', 'Tav: Saturno e Terra'],
-  ['shin', 'Shin: fogo e Espírito'],
-  ['camadas', 'Correspondência textual e derivada'],
-  ['tarot', 'O caso do Tarot'],
-  ['linguagens', 'Correspondências como linguagens'],
-  ['qual-sistema', 'Qual sistema está correto?'],
-  ['metodo', 'Como estudar sem se perder'],
-  ['comparacao', 'Comparação resumida'],
-  ['conclusao', 'Conclusão'],
-];
+const TreePathsArticle = lazy(() => import('./blog/TreePathsArticle'));
+const FourWorldsArticle = lazy(() => import('./blog/FourWorldsArticle'));
 
 const references = [
   ['Sefer Yetzirah — texto hebraico e traduções', 'https://www.sefaria.org/Sefer_Yetzirah.1-6'],
@@ -135,7 +117,7 @@ function BlogIndex({ onOpenPost }) {
         {blogPosts.map((post) => (
           <article className="blog-post-card" key={post.slug}>
             <div className="blog-card-letters" lang="he" dir="rtl" aria-hidden="true">
-              {post.featuredLetters.map((letter) => <span key={letter}>{letter}</span>)}
+              {post.featuredLetters.map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
             </div>
             <div className="blog-card-meta">
               <span>{post.category}</span>
@@ -404,6 +386,12 @@ function BlogArticle({ post, onBack }) {
     }
   };
 
+  const articleComponents = {
+    'arvore-da-vida-sempre-teve-22-caminhos': TreePathsArticle,
+    'quatro-arvores-da-vida-atziluth-briah-yetzirah-assiah': FourWorldsArticle,
+  };
+  const ArticleContent = articleComponents[post.slug] || HebrewLettersArticle;
+
   return (
     <div className="blog-article-scroll" ref={scrollRef} onScroll={handleScroll}>
       <div className="reading-progress" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
@@ -428,9 +416,13 @@ function BlogArticle({ post, onBack }) {
         <div className="article-layout">
           <aside className="article-toc">
             <span>Neste artigo</span>
-            <ol>{sections.map(([id, label]) => <li key={id}><a href={`#${id}`}>{label}</a></li>)}</ol>
+            <ol>{post.sections.map(([id, label]) => <li key={id}><a href={`#${id}`}>{label}</a></li>)}</ol>
           </aside>
-          <div className="article-body"><HebrewLettersArticle post={post} /></div>
+          <div className="article-body">
+            <Suspense fallback={<div className="article-loading">Preparando artigo…</div>}>
+              <ArticleContent post={post} />
+            </Suspense>
+          </div>
         </div>
       </article>
     </div>
