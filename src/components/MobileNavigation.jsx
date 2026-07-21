@@ -17,6 +17,7 @@ function MenuIcon({ name }) {
     study: <><path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12H7.5A2.5 2.5 0 0 1 5 16.5v-12Z" /><path d="M8 8h7M8 11.5h7M7.5 19A2.5 2.5 0 0 1 5 16.5" /></>,
     tutorial: <><circle cx="12" cy="12" r="8.5" /><path d="M9.8 9.2a2.35 2.35 0 1 1 3.25 2.18c-.72.32-1.05.82-1.05 1.62v.35" /><path d="M12 17.2h.01" /></>,
     methodology: <><path d="M5 5.5h5.5A2.5 2.5 0 0 1 13 8v11H7.5A2.5 2.5 0 0 1 5 16.5v-11Z" /><path d="M19 5.5h-3A3 3 0 0 0 13 8v11h3.5a2.5 2.5 0 0 0 2.5-2.5v-11Z" /></>,
+    blog: <><path d="M6 4.5h12v15H6z" /><path d="M9 8h6M9 11.5h6M9 15h4" /></>,
     install: <><path d="M12 3v12m-4-4 4 4 4-4" /><path d="M5 18.5h14" /></>,
     chevron: <path d="m8.5 10 3.5 3.5 3.5-3.5" />,
   };
@@ -33,6 +34,7 @@ const viewNames = {
   list: 'Lista',
   tree: 'Árvore',
   oracle: 'Oráculo',
+  blog: 'Blog',
 };
 
 export default function MobileNavigation({
@@ -48,6 +50,7 @@ export default function MobileNavigation({
   onStudy,
   onTutorial,
   onMethodology,
+  onBlog,
   onAngelFinder,
   onSaved,
   canInstall,
@@ -230,6 +233,15 @@ export default function MobileNavigation({
               <button type="button" onClick={() => runAndClose(onMethodology)}>
                 <span className="mobile-item-icon"><MenuIcon name="methodology" /></span>
                 <span><strong>Metodologia</strong><small>Fontes, camadas e critérios editoriais</small></span>
+              </button>
+              <button
+                type="button"
+                className={view === 'blog' ? 'active' : ''}
+                aria-current={view === 'blog' ? 'page' : undefined}
+                onClick={() => runAndClose(onBlog)}
+              >
+                <span className="mobile-item-icon"><MenuIcon name="blog" /></span>
+                <span><strong>Blog</strong><small>Ensaios, fontes e história das correspondências</small></span>
               </button>
               <button type="button" onClick={() => runAndClose(onSaved)}>
                 <span className="mobile-item-icon"><MenuIcon name="saved" /></span>

@@ -149,6 +149,11 @@
   overflow: hidden;
 }
 
+.main-content.blog-mode {
+  padding: 0;
+  overflow: hidden;
+}
+
 .view-loading {
   display: grid;
   height: 100%;
@@ -206,6 +211,9 @@
     padding: 0;
   }
   .main-content.oracle-mode {
+    padding: 0;
+  }
+  .main-content.blog-mode {
     padding: 0;
   }
   .view-toolbar {

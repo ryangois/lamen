@@ -16,8 +16,15 @@ const GlobalSearch = lazy(() => import('./components/GlobalSearch'));
 const ComparePanel = lazy(() => import('./components/ComparePanel'));
 const StudyPath = lazy(() => import('./components/StudyPath'));
 const Methodology = lazy(() => import('./components/Methodology'));
+const Blog = lazy(() => import('./components/Blog'));
+
+function getBlogSlug() {
+  const match = window.location.pathname.match(/^\/blog\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 function getInitialView() {
+  if (window.location.pathname === '/blog' || window.location.pathname.startsWith('/blog/')) return 'blog';
   const savedView = window.localStorage.getItem('lamen-view');
   return ['wheel', 'list', 'tree', 'oracle'].includes(savedView) ? savedView : 'wheel';
 }
@@ -52,6 +59,13 @@ function writeSegmentToUrl(segmentId, method = 'replaceState') {
     lamenEntry: Boolean(item),
     lamenDepth: nextDepth,
   }, '', url);
+}
+
+function writeBlogToUrl(slug = null, method = 'pushState') {
+  const url = new URL(window.location.href);
+  url.pathname = slug ? `/blog/${slug}` : '/blog';
+  url.search = '';
+  window.history[method]({ hermetikaBlog: true, blogSlug: slug }, '', url);
 }
 
 function readStoredIds(key) {
@@ -105,6 +119,7 @@ function App() {
   const closePanelOnPopRef = useRef(false);
   const [activeSegmentId, setActiveSegmentId] = useState(getInitialSegmentId);
   const [view, setView] = useState(getInitialView);
+  const [blogSlug, setBlogSlug] = useState(getBlogSlug);
   const [treeSection, setTreeSection] = useState('diagram');
   const [showAngelFinder, setShowAngelFinder] = useState(() => (
     new URLSearchParams(window.location.search).get('acao') === 'meu-anjo'
@@ -129,7 +144,7 @@ function App() {
   ), [activeSegmentId, view]);
 
   useEffect(() => {
-    window.localStorage.setItem('lamen-view', view);
+    if (view !== 'blog') window.localStorage.setItem('lamen-view', view);
   }, [view]);
 
   useEffect(() => {
@@ -161,6 +176,14 @@ function App() {
         writeSegmentToUrl(null);
         return;
       }
+      if (window.location.pathname === '/blog' || window.location.pathname.startsWith('/blog/')) {
+        setView('blog');
+        setBlogSlug(getBlogSlug());
+        setActiveSegmentId(null);
+        return;
+      }
+      setBlogSlug(null);
+      setView((current) => (current === 'blog' ? 'wheel' : current));
       setActiveSegmentId(getInitialSegmentId());
     };
 
@@ -238,7 +261,15 @@ function App() {
     setView(nextView);
     if (nextView === 'tree') setTreeSection('diagram');
     setActiveSegmentId(null);
+    setBlogSlug(null);
     writeSegmentToUrl(null);
+  }, []);
+
+  const handleOpenBlog = useCallback((slug = null) => {
+    setView('blog');
+    setBlogSlug(slug);
+    setActiveSegmentId(null);
+    writeBlogToUrl(slug);
   }, []);
 
   const handleTreeSectionChange = useCallback((section) => {
@@ -384,6 +415,7 @@ function App() {
         onStudy={() => setShowStudy(true)}
         onTutorial={() => setShowHelp(true)}
         onMethodology={() => setShowMethodology(true)}
+        onBlog={() => handleOpenBlog()}
         onAngelFinder={() => setShowAngelFinder(true)}
         onSaved={() => setShowSavedItems(true)}
         canInstall={Boolean(installPrompt)}
@@ -402,7 +434,7 @@ function App() {
       <main
         id="main-content"
         tabIndex="-1"
-        className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''} ${view === 'oracle' ? 'oracle-mode' : ''}`}
+        className={`main-content ${view === 'list' ? 'list-mode' : ''} ${view === 'tree' ? 'tree-mode' : ''} ${view === 'oracle' ? 'oracle-mode' : ''} ${view === 'blog' ? 'blog-mode' : ''}`}
       >
         {view === 'wheel' ? (
           <div className="map-container">
@@ -425,9 +457,17 @@ function App() {
               onCloseResearch={() => setTreeSection('diagram')}
             />
           </Suspense>
-        ) : (
+        ) : view === 'oracle' ? (
           <Suspense fallback={<div className="view-loading">Carregando Oráculo…</div>}>
             <Oracle onSegmentClick={handleSegmentClick} />
+          </Suspense>
+        ) : (
+          <Suspense fallback={<div className="view-loading">Carregando Blog…</div>}>
+            <Blog
+              slug={blogSlug}
+              onOpenPost={(slug) => handleOpenBlog(slug)}
+              onBack={() => handleOpenBlog()}
+            />
           </Suspense>
         )}
       </main>

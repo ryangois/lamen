@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { contentData } from '../src/data/content.js';
+import { blogPosts, getBlogPost } from '../src/data/blogPosts.js';
 import {
   HEBREW_LETTERS,
   RESEARCH_SOURCES,
@@ -238,4 +239,18 @@ test('all 22 path letters include script, sound and philological notes', () => {
       assert.ok(letter.philology);
       assert.ok(letter.paleoNote);
     });
+});
+
+test('blog posts have unique, SEO-ready routes and metadata', () => {
+  const slugs = new Set();
+  blogPosts.forEach((post) => {
+    assert.match(post.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    assert.ok(!slugs.has(post.slug), `duplicate blog slug: ${post.slug}`);
+    slugs.add(post.slug);
+    assert.equal(getBlogPost(post.slug), post);
+    assert.ok(post.title.length > 20);
+    assert.ok(post.description.length >= 120 && post.description.length <= 180);
+    assert.ok(post.tags.length >= 3);
+    assert.doesNotThrow(() => new Date(post.publishedAt).toISOString());
+  });
 });

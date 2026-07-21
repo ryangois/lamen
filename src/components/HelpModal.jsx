@@ -59,6 +59,11 @@ const tutorialSections = [
     text: 'Veja como a Hermetika separa fonte primária, tradição interpretativa, correspondência hermética, reconstrução histórica, síntese editorial e prática contemplativa.',
   },
   {
+    icon: '✎',
+    title: 'Blog',
+    text: 'Leia ensaios longos com sumário, fontes e comparações históricas. Cada artigo possui endereço próprio e pode ser compartilhado.',
+  },
+  {
     icon: '★',
     title: 'Salvos',
     text: 'Crie coleções, consulte o histórico e compartilhe conjuntos. Exporte ou importe um backup de favoritos, coleções, progresso, histórico e notas.',

@@ -59,6 +59,14 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 - Sugestões durante a digitação.
 - Atalho de teclado `/`.
 
+### Blog
+
+- Página editorial com índice de artigos.
+- URLs próprias e metadados SEO para cada publicação.
+- Sumário interno, progresso de leitura e compartilhamento.
+- Tabelas e diagramas adaptados ao celular.
+- Referências consultáveis e distinção entre camadas históricas.
+
 ### Fichas enciclopédicas
 
 As fichas adaptam seu conteúdo ao tipo de símbolo e organizam as informações em quatro grupos:
@@ -121,8 +129,9 @@ O menu hambúrguer está disponível em celular e computador e reúne:
 6. Estudo
 7. Tutorial
 8. Metodologia
-9. Salvos
-10. Instalar Hermetika, quando permitido pelo navegador
+9. Blog
+10. Salvos
+11. Instalar Hermetika, quando permitido pelo navegador
 
 O botão redondo com `?` abre o mesmo tutorial disponível no menu.
 
