@@ -46,7 +46,7 @@ Admin /admin
 - **Supabase Postgres:** posts, metadados, categorias, tags e revisões.
 - **Supabase Auth:** acesso restrito ao admin.
 - **Supabase Storage:** imagens, capas e documentos.
-- **Tiptap:** editor visual baseado em conteúdo JSON estruturado.
+- **Editor estruturado do Hermetika:** implementado em React com blocos JSONB e importação de texto. O Tiptap permanece uma opção futura para edição rica dentro dos blocos.
 - **React:** componentes editoriais e pré-visualização.
 - **Next.js, recomendado para a camada pública:** renderização dos posts, metadados, sitemap e atualização incremental.
 - **Vercel:** hospedagem, domínio, SSL e deploy.
@@ -57,8 +57,7 @@ Referências oficiais:
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [Supabase Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Supabase Storage](https://supabase.com/docs/guides/storage)
-- [Tiptap e conteúdo JSON](https://tiptap.dev/docs/editor/core-concepts/introduction)
-- [Extensões do Tiptap](https://tiptap.dev/docs/editor/core-concepts/extensions)
+- [Tiptap e conteúdo JSON, referência para uma evolução futura](https://tiptap.dev/docs/editor/core-concepts/introduction)
 - [Next.js: metadados dinâmicos](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)
 - [Next.js: Incremental Static Regeneration](https://nextjs.org/docs/app/guides/incremental-static-regeneration)
 - [Vercel: domínio personalizado](https://vercel.com/docs/domains/working-with-domains/add-a-domain)
@@ -368,6 +367,6 @@ O blog deve funcionar como porta de entrada para Roda, Árvore, Oráculo e ficha
 
 Para o Hermetika, a solução com melhor equilíbrio entre autonomia, consistência visual e possibilidade de crescimento é:
 
-> Admin próprio em React com Tiptap, conteúdo JSONB no Supabase, imagens no Supabase Storage, autenticação com Supabase Auth e páginas públicas renderizadas por Next.js na Vercel.
+> Admin próprio em React com blocos editoriais estruturados, conteúdo JSONB no Supabase, imagens no Supabase Storage, autenticação com Supabase Auth e, na fase seguinte, páginas públicas renderizadas por Next.js na Vercel.
 
 Essa abordagem permite escrever sem código, mantém todos os posts visualmente consistentes, suporta futuras contas de leitores e oferece uma base adequada para SEO e crescimento editorial.

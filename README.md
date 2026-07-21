@@ -67,6 +67,17 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 - Tabelas e diagramas adaptados ao celular.
 - Referências consultáveis e distinção entre camadas históricas.
 
+#### Administração editorial
+
+- Área protegida em `/admin` para criar, revisar e publicar posts.
+- Editor por blocos com importação de texto e pré-visualização fiel ao blog.
+- Supabase para autenticação, posts, revisões e imagens.
+- Artigos estáticos mantidos como fallback.
+- [Arquitetura editorial](./admin-posts.md)
+- [Configuração passo a passo do Supabase](./ADMIN-SUPABASE.md)
+- Migration: `supabase/migrations/202607210001_blog_admin.sql`
+- Ambiente local: copie `.env.example` para `.env.local`.
+
 ### Fichas enciclopédicas
 
 As fichas adaptam seu conteúdo ao tipo de símbolo e organizam as informações em quatro grupos:

@@ -5,6 +5,13 @@ import { resolve } from 'node:path';
 import { contentData } from '../src/data/content.js';
 import { blogPosts, getBlogPost } from '../src/data/blogPosts.js';
 import {
+  calculateReadingTime,
+  parseArticleText,
+  sectionsFromBlocks,
+  slugify,
+  validateBlocks,
+} from '../src/data/articleBlocks.js';
+import {
   HEBREW_LETTERS,
   RESEARCH_SOURCES,
   getLetterGate,
@@ -255,4 +262,19 @@ test('blog posts have unique, SEO-ready routes and metadata', () => {
     assert.ok(post.sections.length >= 3, `${post.slug} needs an article outline`);
     assert.equal(new Set(post.sections.map(([id]) => id)).size, post.sections.length, `${post.slug} has duplicate section ids`);
   });
+});
+
+test('the CMS block parser creates safe, navigable article content', () => {
+  const blocks = parseArticleText(`Resumo editorial.\n\n## Uma seção\n\nParágrafo.\n\n- item um\n- item dois\n\n> Citação.`);
+  assert.deepEqual(blocks.map((block) => block.type), ['lead', 'heading', 'paragraph', 'list', 'quote']);
+  assert.deepEqual(sectionsFromBlocks(blocks), [['uma-secao', 'Uma seção']]);
+  assert.equal(slugify('Árvore da Vida: 22 Caminhos'), 'arvore-da-vida-22-caminhos');
+  assert.equal(validateBlocks(blocks).length, 0);
+  assert.ok(calculateReadingTime(blocks) >= 1);
+});
+
+test('the Supabase editorial migration and environment template are versioned', () => {
+  assert.ok(existsSync(resolve('supabase/migrations/202607210001_blog_admin.sql')));
+  assert.ok(existsSync(resolve('.env.example')));
+  assert.ok(existsSync(resolve('ADMIN-SUPABASE.md')));
 });

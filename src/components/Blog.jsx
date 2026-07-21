@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { blogPosts, getBlogPost } from '../data/blogPosts';
+import { blogPosts } from '../data/blogPosts';
+import { fetchPublishedPosts } from '../services/publicBlogRepository';
+import ArticleRenderer from './blog/ArticleRenderer';
 import './Blog.css';
 
 const TreePathsArticle = lazy(() => import('./blog/TreePathsArticle'));
@@ -30,7 +32,7 @@ function useBlogSeo(post) {
     const previousTitle = document.title;
     const description = document.head.querySelector('meta[name="description"]');
     const previousDescription = description?.content;
-    const title = post ? `${post.title} — Hermetika` : 'Blog — Hermetika';
+    const title = post ? `${post.seoTitle || post.title} — Hermetika` : 'Blog — Hermetika';
     const summary = post?.description || 'Ensaios da Hermetika sobre Kabbalah, Tarot, letras hebraicas e história das correspondências.';
     const canonicalUrl = `${window.location.origin}${post ? `/blog/${post.slug}` : '/blog'}`;
 
@@ -44,6 +46,7 @@ function useBlogSeo(post) {
       ['meta[property="og:url"]', { property: 'og:url' }, canonicalUrl],
       ['meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary'],
     ];
+    if (post?.coverImageUrl) socialMeta.push(['meta[property="og:image"]', { property: 'og:image' }, post.coverImageUrl]);
     const socialRecords = socialMeta.map(([selector, attributes, value]) => {
       const record = ensureMeta(selector, attributes);
       const previousContent = record.element.getAttribute('content');
@@ -78,6 +81,7 @@ function useBlogSeo(post) {
         publisher: { '@type': 'Organization', name: 'Hermetika' },
         mainEntityOfPage: canonicalUrl,
         keywords: post.tags.join(', '),
+        ...(post.coverImageUrl ? { image: post.coverImageUrl } : {}),
       });
       document.head.appendChild(structuredData);
     }
@@ -96,7 +100,7 @@ function useBlogSeo(post) {
   }, [post]);
 }
 
-function BlogIndex({ onOpenPost }) {
+function BlogIndex({ onOpenPost, posts }) {
   return (
     <section className="blog-index" aria-labelledby="blog-index-title">
       <header className="blog-index-hero">
@@ -114,8 +118,9 @@ function BlogIndex({ onOpenPost }) {
       </div>
 
       <div className="blog-post-grid">
-        {blogPosts.map((post) => (
+        {posts.map((post) => (
           <article className="blog-post-card" key={post.slug}>
+            {post.coverImageUrl && <img className="blog-card-cover" src={post.coverImageUrl} alt={post.coverImageAlt || ''} loading="lazy" />}
             <div className="blog-card-letters" lang="he" dir="rtl" aria-hidden="true">
               {post.featuredLetters.map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
             </div>
@@ -391,6 +396,9 @@ function BlogArticle({ post, onBack }) {
     'quatro-arvores-da-vida-atziluth-briah-yetzirah-assiah': FourWorldsArticle,
   };
   const ArticleContent = articleComponents[post.slug] || HebrewLettersArticle;
+  const publishedLabel = post.publishedAt
+    ? new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(post.publishedAt))
+    : '20 de julho de 2026';
 
   return (
     <div className="blog-article-scroll" ref={scrollRef} onScroll={handleScroll}>
@@ -405,7 +413,7 @@ function BlogArticle({ post, onBack }) {
           <h1 className="brand-font">{post.title}</h1>
           <p>{post.description}</p>
           <div className="article-byline">
-            <div><span className="article-author-mark" aria-hidden="true">א</span><span><b>Hermetika Editorial</b><small>20 de julho de 2026 · {post.readingTime}</small></span></div>
+            <div><span className="article-author-mark" aria-hidden="true">א</span><span><b>Hermetika Editorial</b><small>{publishedLabel} · {post.readingTime}</small></span></div>
             <button type="button" onClick={handleShare} aria-label="Compartilhar artigo">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="m8 11 7.8-4.7M8 13l7.8 4.7"/></svg>
               {shareFeedback || 'Compartilhar'}
@@ -414,14 +422,24 @@ function BlogArticle({ post, onBack }) {
         </header>
 
         <div className="article-layout">
-          <aside className="article-toc">
+          {post.sections?.length > 0 && <aside className="article-toc">
             <span>Neste artigo</span>
             <ol>{post.sections.map(([id, label]) => <li key={id}><a href={`#${id}`}>{label}</a></li>)}</ol>
-          </aside>
+          </aside>}
           <div className="article-body">
-            <Suspense fallback={<div className="article-loading">Preparando artigo…</div>}>
-              <ArticleContent post={post} />
-            </Suspense>
+            {post.source === 'supabase' ? (
+              <>
+                <ArticleRenderer blocks={post.content} />
+                <footer className="article-tags">
+                  <span>Categoria: <b>{post.category}</b></span>
+                  <div>{post.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                </footer>
+              </>
+            ) : (
+              <Suspense fallback={<div className="article-loading">Preparando artigo…</div>}>
+                <ArticleContent post={post} />
+              </Suspense>
+            )}
           </div>
         </div>
       </article>
@@ -430,8 +448,28 @@ function BlogArticle({ post, onBack }) {
 }
 
 export default function Blog({ slug, onOpenPost, onBack }) {
-  const post = useMemo(() => (slug ? getBlogPost(slug) : null), [slug]);
+  const [remotePosts, setRemotePosts] = useState([]);
+  const [remoteLoading, setRemoteLoading] = useState(true);
+  const posts = useMemo(() => {
+    const merged = new Map(blogPosts.map((post) => [post.slug, post]));
+    remotePosts.forEach((post) => merged.set(post.slug, post));
+    return [...merged.values()].sort((left, right) => new Date(right.publishedAt || 0) - new Date(left.publishedAt || 0));
+  }, [remotePosts]);
+  const post = useMemo(() => (slug ? posts.find((item) => item.slug === slug) || null : null), [posts, slug]);
   useBlogSeo(post);
+
+  useEffect(() => {
+    let active = true;
+    fetchPublishedPosts()
+      .then((items) => { if (active) setRemotePosts(items); })
+      .catch(() => { /* Static articles remain available if the CMS is offline. */ })
+      .finally(() => { if (active) setRemoteLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  if (remoteLoading && slug && !post) {
+    return <div className="view-loading">Carregando artigo…</div>;
+  }
 
   if (slug && !post) {
     return (
@@ -445,7 +483,7 @@ export default function Blog({ slug, onOpenPost, onBack }) {
 
   return (
     <div className="blog-view">
-      {post ? <BlogArticle post={post} onBack={onBack} /> : <BlogIndex onOpenPost={onOpenPost} />}
+      {post ? <BlogArticle post={post} onBack={onBack} /> : <BlogIndex onOpenPost={onOpenPost} posts={posts} />}
     </div>
   );
 }

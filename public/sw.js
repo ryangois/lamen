@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hermetika-shell-v22';
+const CACHE_NAME = 'hermetika-shell-v23';
 const APP_SHELL = ['/', '/favicon.svg', '/manifest.webmanifest', '/robots.txt', '/sitemap.xml'];
 
 self.addEventListener('install', (event) => {
