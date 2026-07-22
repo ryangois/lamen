@@ -1,7 +1,15 @@
 import { sectionsFromBlocks } from '../data/articleBlocks';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
+const supabaseUrl = (
+  import.meta.env.NEXT_PUBLIC_SUPABASE_URL
+  || import.meta.env.VITE_SUPABASE_URL
+)?.trim();
+
+const supabaseAnonKey = (
+  import.meta.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  || import.meta.env.VITE_SUPABASE_ANON_KEY
+)?.trim();
 const configured = Boolean(
   supabaseUrl
   && supabaseAnonKey
@@ -47,4 +55,3 @@ export async function fetchPublishedPosts() {
   if (!response.ok) throw new Error(`Não foi possível carregar o CMS (${response.status}).`);
   return (await response.json()).map(mapPost);
 }
-

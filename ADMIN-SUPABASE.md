@@ -132,8 +132,8 @@ para:
 Preencha:
 
 ```env
-VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
-VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICAVEL
+NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=SUA_CHAVE_PUBLICAVEL
 ```
 
 O `.gitignore` já ignora arquivos `*.local`, portanto `.env.local` não deve ser enviado ao GitHub.
@@ -189,8 +189,8 @@ Faça estes testes antes do lançamento:
 3. Adicione:
 
 ```text
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
 
 4. Marque os ambientes desejados:
