@@ -74,6 +74,18 @@ export async function signInAdmin(email, password) {
   return data;
 }
 
+export async function signInAdminWithMagicLink(email) {
+  if (!isSupabaseConfigured) throw new Error('Supabase ainda não foi configurado.');
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: `${window.location.origin}/admin`,
+    },
+  });
+  if (error) throw error;
+}
+
 export async function signOutAdmin() {
   if (supabase) await supabase.auth.signOut();
 }

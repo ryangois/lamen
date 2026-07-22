@@ -8,6 +8,7 @@ import {
   onAdminAuthChange,
   saveAdminPost,
   signInAdmin,
+  signInAdminWithMagicLink,
   signOutAdmin,
 } from '../services/blogRepository';
 import { createEmptyPost } from '../data/adminPost';
@@ -30,9 +31,17 @@ function SetupRequired() {
   );
 }
 
-function Login({ onLogin, loading, error }) {
+function Login({ onLogin, onMagicLink, loading, error }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+
+  const requestMagicLink = async () => {
+    setMagicLinkSent(false);
+    const sent = await onMagicLink(email);
+    if (sent) setMagicLinkSent(true);
+  };
+
   return (
     <main className="admin-gate">
       <form className="admin-gate-card" onSubmit={(event) => { event.preventDefault(); onLogin(email, password); }}>
@@ -42,7 +51,11 @@ function Login({ onLogin, loading, error }) {
         <label><span>E-mail</span><input type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
         <label><span>Senha</span><input type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} /></label>
         {error && <div className="admin-alert error" role="alert">{error}</div>}
+        {magicLinkSent && <div className="admin-alert success" role="status">Link enviado. Abra o e-mail neste dispositivo para entrar sem senha.</div>}
         <button type="submit" disabled={loading}>{loading ? 'Entrando…' : 'Entrar'}</button>
+        <div className="admin-login-divider"><span>ou</span></div>
+        <button type="button" className="admin-secondary" disabled={loading || !email} onClick={requestMagicLink}>Enviar link de acesso</button>
+        <p className="admin-login-hint">O link mágico usa o mesmo e-mail cadastrado no Supabase e dispensa a senha.</p>
         <a className="admin-muted-link" href="/">Voltar ao Hermetika</a>
       </form>
     </main>
@@ -108,7 +121,7 @@ export default function AdminApp() {
   useEffect(() => { if (session) loadDashboard(); else { setProfile(null); setPosts([]); } }, [session]);
 
   if (!isSupabaseConfigured) return <SetupRequired />;
-  if (!session) return <Login loading={loading} error={error} onLogin={async (email, password) => { setLoading(true); setError(''); try { const data = await signInAdmin(email, password); setSession(data.session); } catch (loginError) { setError(loginError.message); } finally { setLoading(false); } }} />;
+  if (!session) return <Login loading={loading} error={error} onLogin={async (email, password) => { setLoading(true); setError(''); try { const data = await signInAdmin(email, password); setSession(data.session); } catch (loginError) { setError(loginError.message); } finally { setLoading(false); } }} onMagicLink={async (email) => { setLoading(true); setError(''); try { await signInAdminWithMagicLink(email); return true; } catch (magicLinkError) { setError(magicLinkError.message); return false; } finally { setLoading(false); } }} />;
   if (editing) return <PostEditor initialPost={editing} saving={loading} onCancel={() => setEditing(null)} onSave={async (post) => { setLoading(true); setError(''); try { const saved = await saveAdminPost(post, session.user.id); setNotice(saved.status === 'published' ? 'Artigo publicado.' : 'Rascunho salvo.'); setEditing(null); await loadDashboard(); } catch (saveError) { setError(saveError.message); throw saveError; } finally { setLoading(false); } }} />;
   if (!profile && error) return <main className="admin-gate"><section className="admin-gate-card"><span className="admin-mark">!</span><h1>Acesso não autorizado</h1><div className="admin-alert error">{error}</div><p>Confirme se o usuário recebeu o papel <code>admin</code>, <code>editor</code> ou <code>author</code> no Supabase.</p><button type="button" onClick={() => signOutAdmin()}>Sair</button></section></main>;
   if (!profile) return <main className="admin-gate"><div className="view-loading">Carregando admin…</div></main>;
