@@ -310,10 +310,10 @@
 @media (min-width: 769px) {
   .mobile-topbar {
     top: 1rem;
-    left: 1rem;
+    left: 50%;
     width: 360px;
     height: 62px;
-    transform: none;
+    transform: translateX(-50%);
     border-radius: 22px;
   }
 
