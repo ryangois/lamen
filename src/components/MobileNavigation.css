@@ -351,6 +351,13 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .mobile-topbar,
+  .mobile-drawer-backdrop {
+    display: none;
+  }
+}
+
 @keyframes mobileDrawerIn {
   from {
     opacity: 0;

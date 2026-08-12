@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LamenMap from './components/LamenMap';
 import MobileNavigation from './components/MobileNavigation';
+import DesktopNavigation from './components/DesktopNavigation';
 import { findRouteItem, getRoutePath } from './data/routes';
 import { treeSephiroth } from './data/treeOfLife';
 import './App.css';
@@ -325,6 +326,19 @@ function App() {
       <a className="skip-link" href="#main-content">Pular para o conteúdo</a>
       <div className="ambient-glow"></div>
 
+      <DesktopNavigation
+        view={view}
+        savedCount={favoriteIds.length}
+        onViewChange={handleViewChange}
+        onSearch={() => setShowSearch(true)}
+        onStudy={() => setShowStudy(true)}
+        onAngelFinder={() => setShowAngelFinder(true)}
+        onSaved={() => setShowSavedItems(true)}
+        onBlog={() => handleOpenBlog()}
+        onMethodology={() => setShowMethodology(true)}
+        onTutorial={() => setShowHelp(true)}
+      />
+
       <header className="view-toolbar" aria-label="Navegação principal">
         <div className="view-switcher" role="group" aria-label="Escolher visualização">
           <button
@@ -439,6 +453,13 @@ function App() {
         {view === 'wheel' ? (
           <div className="map-container">
             <LamenMap onSegmentClick={handleSegmentClick} activeSegmentId={activeSegmentId} />
+            <div className="desktop-map-guide" aria-hidden="true">
+              <span><b>Arraste</b> para girar</span>
+              <i></i>
+              <span><b>Scroll</b> para ampliar</span>
+              <i></i>
+              <span><b>Clique</b> para explorar</span>
+            </div>
           </div>
         ) : view === 'list' ? (
           <Suspense fallback={<div className="view-loading">Carregando catálogo…</div>}>
