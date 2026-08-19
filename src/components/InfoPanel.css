@@ -1264,8 +1264,6 @@
     background: rgba(255, 255, 255, 0.045);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    content-visibility: auto;
-    contain-intrinsic-size: 250px 480px;
 }
 
 .tarot-card-copy {
@@ -1279,6 +1277,7 @@
 .tarot-placeholder,
 .thoth-reference-card {
     width: 100%;
+    height: auto;
     aspect-ratio: 2 / 3.25;
     object-fit: contain;
     background:
@@ -1360,6 +1359,7 @@
 
 .tarot-image-link {
     display: block;
+    min-width: 0;
     border-radius: 12px;
     outline: none;
 }
