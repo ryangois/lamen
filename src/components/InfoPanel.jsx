@@ -174,7 +174,6 @@ function TarotCardArtwork({ card }) {
             alt={`${card.deck}: ${card.title}`}
             width="400"
             height="650"
-            loading="lazy"
             decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setFailed(true)}
