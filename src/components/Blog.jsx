@@ -6,6 +6,7 @@ import './Blog.css';
 
 const TreePathsArticle = lazy(() => import('./blog/TreePathsArticle'));
 const FourWorldsArticle = lazy(() => import('./blog/FourWorldsArticle'));
+const AlephArticle = lazy(() => import('./blog/AlephArticle'));
 
 const references = [
   ['Sefer Yetzirah — texto hebraico e traduções', 'https://www.sefaria.org/Sefer_Yetzirah.1-6'],
@@ -394,6 +395,7 @@ function BlogArticle({ post, onBack }) {
   const articleComponents = {
     'arvore-da-vida-sempre-teve-22-caminhos': TreePathsArticle,
     'quatro-arvores-da-vida-atziluth-briah-yetzirah-assiah': FourWorldsArticle,
+    'aleph-primeira-letra-hebraica-sopro-unidade-louco': AlephArticle,
   };
   const ArticleContent = articleComponents[post.slug] || HebrewLettersArticle;
   const publishedLabel = post.publishedAt
