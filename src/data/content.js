@@ -1238,6 +1238,47 @@ const angelThemes = [
   'proteção, coragem e libertação da opressão', 'conclusão, renascimento, medicina e longevidade',
 ];
 
+// Um risco ou excesso específico associado a cada tema de angelThemes (mesma ordem/índice).
+// Usado para compor uma leitura editorial própria por anjo, em vez de repetir uma única frase genérica.
+const angelShadowCautions = [
+  'impulsividade que atropela quem também precisa decidir', 'apaziguar às custas da própria voz',
+  'rigidez em promessas que já não servem', 'suspeita excessiva, ver rivalidade onde não há',
+  'autocrítica que paralisa em vez de corrigir', 'buscar reconhecimento antes da cura em si',
+  'adiar decisões sob o pretexto de "estudar mais"', 'acumular além da necessidade',
+  'perdoar sem que haja reparação real', 'negar a falta em vez de expô-la',
+  'talento usado para dominar, não para proteger', 'isolamento disfarçado de discrição',
+  'lealdade que impede reconhecer um vínculo que já não serve', 'rigidez punitiva no lugar de justiça reparadora',
+  'moralismo que julga em vez de purificar', 'exigir lealdade cega de quem se lidera',
+  'confundir intuição com certeza', 'pressa que atropela a apuração da verdade',
+  'resignação que vira passividade', 'disciplina que sufoca a espontaneidade',
+  'desconfiança sistemática, ver engano em toda parte', 'diplomacia que evita tomar posição',
+  'cautela excessiva que impede avançar', 'proteger alguém da verdade que precisa ouvir',
+  'contemplação que evita a ação necessária', 'neutralidade que, na prática, favorece o mais forte',
+  'ensino que se torna doutrinação', 'hipervigilância diante de riscos improváveis',
+  'zelo que se converte em intransigência', 'esperar demais por condições perfeitas',
+  'perfeccionismo técnico que trava a entrega', 'eloquência usada para vencer discussões, não para esclarecer',
+  'suspeita permanente que dificulta confiar', 'obediência que se converte em submissão',
+  'aceitar um acordo desfavorável só para encerrar o conflito', 'provar a própria inocência até virar obsessão',
+  'curiosidade que ultrapassa limites éticos', 'rigidez ritualística e desconfiança de todo atalho',
+  'manter vínculos familiares por obrigação, não por escolha', 'usar a arte para evitar a dor, não para elaborá-la',
+  'dedicação que ignora os próprios limites', 'ver conspiração onde há apenas coincidência',
+  'medir o próprio valor pela prosperidade material', 'utilitarismo que descarta o que não rende resultado imediato',
+  'motivar os outros e negligenciar a própria recuperação', 'fascínio pelo oculto que substitui o cuidado com o concreto',
+  'guardar conhecimento quando ele precisava ser compartilhado', 'paz que evita as conversas difíceis dentro da relação',
+  'generosidade que busca reconhecimento', 'decidir depressa demais só para evitar o desconforto da dúvida',
+  'investigação que perde de vista o cuidado com a pessoa', 'resiliência que impede pedir ajuda',
+  'abstração que se afasta da vida cotidiana', 'apego excessivo à reputação',
+  'fazer o bem à espera de retorno', 'modéstia que esconde necessidades reais',
+  'estratégia que instrumentaliza pessoas', 'força mental que nega o corpo e o descanso',
+  'acumular conhecimento sem aplicá-lo', 'reparar os outros e adiar a própria cura',
+  'manter afinidades superficiais para evitar vínculos mais exigentes', 'retiro que vira fuga do convívio',
+  'engenho usado para vantagem às custas do outro', 'ensinar sem escutar',
+  'sabedoria teórica desconectada da experiência', 'serenidade que evita reconhecer um desequilíbrio real',
+  'buscar transformação externa sem mudança interna', 'pressa por resultados que força um processo natural',
+  'apego ao que foi perdido, dificuldade de deixar ir', 'progresso espiritual usado como fuga de questões práticas',
+  'proteção em excesso que impede autonomia', 'apego ao encerramento, dificuldade de deixar processos em aberto',
+];
+
 const angelSegments = ringStructure.find((ring) => ring.ringId === 'angels').segments;
 
 angelSegments.forEach((segment, index) => {
@@ -1307,8 +1348,9 @@ angelSegments.forEach((segment, index) => {
         title: 'Influência tradicional',
         paragraphs: [
           `Textos esotéricos posteriores relacionam ${name} a ${angelThemes[index]}. Essa linguagem pode ser usada como tema de contemplação, oração, escrita reflexiva ou estudo histórico.`,
-          ANGEL_RESEARCH_NOTES[segment.id] || `O equilíbrio desse campo pede a expressão consciente das qualidades indicadas, evitando transformar uma virtude em rigidez, fuga, domínio ou grandiosidade.`,
-        ],
+          `Leitura editorial da Hermetika: o convite de ${name} é viver ${angelThemes[index]} sem cair em seu excesso mais comum — ${angelShadowCautions[index]}.`,
+          ANGEL_RESEARCH_NOTES[segment.id],
+        ].filter(Boolean),
       },
       {
         title: 'Posição no sistema',
