@@ -55,7 +55,7 @@ export default function DesktopNavigation({
   return (
     <aside className="desktop-navigation" aria-label="Navegação principal">
       <div className="desktop-brand">
-        <span className="desktop-brand-mark" aria-hidden="true">H</span>
+        <img className="desktop-brand-mark" src="/favicon.svg" alt="" width="46" height="46" />
         <div>
           <strong className="brand-font">Hermetika</strong>
           <span>Enciclopédia hermética</span>

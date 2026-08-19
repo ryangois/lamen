@@ -119,6 +119,7 @@ export default function MobileNavigation({
             onMouseDown={(event) => event.stopPropagation()}
           >
             <div className="mobile-drawer-header">
+              <img className="mobile-drawer-mark" src="/favicon.svg" alt="" width="40" height="40" />
               <div>
                 <span>Navegação</span>
                 <h2 className="brand-font" id="mobile-menu-title">Hermetika</h2>
