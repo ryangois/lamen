@@ -278,6 +278,10 @@ const PSALM_THEMES = {
   145: 'louvor alfabético à bondade, justiça e realeza divina',
 };
 
+export const ANGEL_RESEARCH_NOTES = {
+  angel_1: 'Compêndios angelicais do século XX, como La Kabbale Pratique (1951), de Robert Ambelain, glosam Vehuiah como “Deus que eleva e exalta acima de todas as coisas”. Essa frase é uma glosa devocional moderna, repetida por autores ocultistas de língua francesa e inglesa; não é uma tradução filológica do tríplice hebraico nem está documentada em fontes judaicas anteriores ao Renascimento.',
+};
+
 export function buildAngelPsalmContext(psalm, item) {
   if (!psalm?.reference) return null;
   const match = psalm.reference.match(/Salmos?\s+(\d+)/i);

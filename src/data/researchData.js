@@ -121,7 +121,7 @@ export const HISTORICAL_TREES = [
 const provenanceByCategory = {
   angel: [
     ['Base textual', 'Êxodo 14:19–21', 'Antiguidade bíblica', 'Judaica', 'Os tríplices derivam da combinação de três versos; vocalizações, terminações e personalidades angélicas são recepções posteriores.'],
-    ['Nome convencional', 'Cabala cristã e tabelas do Shem', 'Idade Moderna', 'Cristã cabalística', 'As terminações -el e -iah e muitas grafias variam conforme manuscrito, língua e escola.'],
+    ['Nome convencional', 'Reuchlin, De Arte Cabalistica (1517)', 'Idade Moderna', 'Cristã cabalística', 'Reuchlin lista os 72 nomes angelizados; Agrippa e, no século XVII, Kircher os retomam e reorganizam. As terminações -el e -iah e muitas grafias variam conforme manuscrito, língua e escola.'],
     ['Regências', 'Tabelas astrológicas e herméticas', 'séculos XIX–XX', 'Hermética', 'Graus, decanatos, coros e horários pertencem a sínteses posteriores, não ao texto de Êxodo.'],
   ],
   path: [

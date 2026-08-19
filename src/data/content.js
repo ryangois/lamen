@@ -14,6 +14,7 @@ import {
   buildProvenance,
 } from './researchData.js';
 import {
+  ANGEL_RESEARCH_NOTES,
   LETTER_DETAILS,
   SEPHIRAH_BIBLICAL_OCCURRENCES,
   buildAngelPsalmContext,
@@ -49,6 +50,14 @@ const sources = {
   agrippa: {
     label: 'Agrippa — De Occulta Philosophia, Livro III',
     url: 'https://www.esotericarchives.com/agrippa/agripp3b.htm',
+  },
+  reuchlin: {
+    label: 'Johann Reuchlin — De Arte Cabalistica (1517), tradução em inglês',
+    url: 'https://archive.org/details/onartofkabbalahd0000reuc',
+  },
+  kircher: {
+    label: 'Athanasius Kircher — Oedipus Aegyptiacus, vol. II (1653)',
+    url: 'https://archive.org/details/AthanasiiKircheriOedipusAegyptiacusVolII1653',
   },
   agrippaPlanets: {
     label: 'Agrippa — correspondências celestes e planetárias',
@@ -1298,7 +1307,7 @@ angelSegments.forEach((segment, index) => {
         title: 'Influência tradicional',
         paragraphs: [
           `Textos esotéricos posteriores relacionam ${name} a ${angelThemes[index]}. Essa linguagem pode ser usada como tema de contemplação, oração, escrita reflexiva ou estudo histórico.`,
-          `O equilíbrio desse campo pede a expressão consciente das qualidades indicadas, evitando transformar uma virtude em rigidez, fuga, domínio ou grandiosidade.`,
+          ANGEL_RESEARCH_NOTES[segment.id] || `O equilíbrio desse campo pede a expressão consciente das qualidades indicadas, evitando transformar uma virtude em rigidez, fuga, domínio ou grandiosidade.`,
         ],
       },
       {
@@ -1322,7 +1331,7 @@ angelSegments.forEach((segment, index) => {
         ],
       },
     ],
-    sources: [sources.exodus, sources.shemPaper, sources.shemTable, hebrewScriptureSource, scriptureSource],
+    sources: [sources.exodus, sources.reuchlin, sources.shemTable, sources.agrippa, sources.kircher, sources.shemPaper, hebrewScriptureSource, scriptureSource],
   });
 });
 
@@ -1609,7 +1618,7 @@ const editorialProfiles = {
   angel: {
     label: 'Anjo',
     history: [
-      'O núcleo de três letras deriva de uma leitura combinatória de Êxodo 14:19–21. A vocalização como nomes angélicos e muitas atribuições surgem em recepções cabalísticas posteriores.',
+      'O núcleo de três letras deriva de uma leitura combinatória de Êxodo 14:19–21. A vocalização como nomes angélicos aparece documentada em De Arte Cabalistica (1517), de Johann Reuchlin; Cornelius Agrippa a retoma no século XVI, e Athanasius Kircher a rearranja em Oedipus Aegyptiacus (1652–1654).',
       'Versos dos Salmos, coros, graus zodiacais e contraparte de Rudd pertencem a camadas históricas distintas e devem ser lidos com suas fontes.',
     ],
     variations: [
