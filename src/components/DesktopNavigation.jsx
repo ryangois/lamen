@@ -58,13 +58,13 @@ export default function DesktopNavigation({
         <span className="desktop-brand-mark" aria-hidden="true">H</span>
         <div>
           <strong className="brand-font">Hermetika</strong>
-          <span>Atlas de correspondências</span>
+          <span>Enciclopédia hermética</span>
         </div>
       </div>
 
       <button type="button" className="desktop-search" onClick={onSearch}>
         <NavIcon name="search" />
-        <span>Buscar no atlas</span>
+        <span>Buscar na enciclopédia</span>
         <kbd>/</kbd>
       </button>
 
@@ -82,7 +82,7 @@ export default function DesktopNavigation({
           <NavigationButton icon="study" label="Trilha de estudo" onClick={onStudy} />
           <NavigationButton icon="angel" label="Meu anjo" onClick={onAngelFinder} />
           <NavigationButton icon="saved" label="Salvos" badge={savedCount} onClick={onSaved} />
-          <NavigationButton icon="blog" label="Ensaios" active={view === 'blog'} onClick={onBlog} />
+          <NavigationButton icon="blog" label="Blog" description="Ensaios e reflexões" active={view === 'blog'} onClick={onBlog} />
         </section>
       </nav>
 

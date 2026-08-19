@@ -92,7 +92,7 @@ export default function AngelFinder({ onClose, onSelectAngel }) {
           </article>
         ) : (
           <div className="finder-empty">
-            Escolha uma data para revelar a correspondência angelical.
+            Escolha um signo e um grau para revelar a correspondência angelical.
           </div>
         )}
 

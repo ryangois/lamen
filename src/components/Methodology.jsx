@@ -50,7 +50,7 @@ export default function Methodology({ onClose }) {
         <section className="methodology-principles">
           <h3 className="brand-font">Regras editoriais</h3>
           <ul>
-            <li>Uma ocorrência bíblica de uma palavra não é tratada automaticamente como referência à Sephirah posterior.</li>
+            <li>Uma ocorrência bíblica de uma palavra não é tratada automaticamente como referência a uma Sephirah — conceito cabalístico consolidado em época posterior ao texto bíblico.</li>
             <li>Uma correspondência é acompanhada de tradição, período ou ressalva quando sua origem não é antiga.</li>
             <li>Grafias e transliterações alternativas são variantes, não personagens ou conceitos diferentes por padrão.</li>
             <li>Práticas são apresentadas como contemplação simbólica, nunca como diagnóstico, tratamento ou profecia.</li>

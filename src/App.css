@@ -7,61 +7,6 @@
   overflow: hidden;
 }
 
-.view-toolbar {
-  position: absolute;
-  top: 1rem;
-  left: 50%;
-  z-index: 20;
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  transform: translateX(-50%);
-}
-
-.view-switcher {
-  display: flex;
-  gap: 0.3rem;
-  padding: 0.35rem;
-  background: rgba(12, 14, 21, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(16px);
-}
-
-.view-button {
-  display: flex;
-  min-width: 92px;
-  min-height: 38px;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: 0 1rem;
-  color: #9ca8b9;
-  background: transparent;
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
-  font: 600 0.85rem 'Inter', sans-serif;
-  transition: color 160ms ease, background 160ms ease;
-}
-
-.view-button:hover {
-  color: var(--text-primary);
-}
-
-.view-button.active {
-  color: #111318;
-  background: var(--accent-gold);
-}
-
-.view-button:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
-
 .help-launch {
   min-height: 42px;
   padding: 0 1rem;
@@ -199,18 +144,51 @@
   display: none;
 }
 
+.mobile-map-guide {
+  position: absolute;
+  left: 50%;
+  bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.6rem;
+  max-width: calc(100% - 1.5rem);
+  padding: 0.5rem 0.75rem;
+  color: #738094;
+  background: rgba(9, 11, 17, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  font: 600 0.62rem 'Inter', sans-serif;
+  pointer-events: none;
+}
+
+.mobile-map-guide b {
+  color: #b9c2ce;
+  font-weight: 750;
+}
+
+.mobile-map-guide i {
+  width: 3px;
+  height: 3px;
+  background: rgba(212, 175, 55, 0.65);
+  border-radius: 50%;
+}
+
 @media (min-width: 1024px) {
   .main-content {
     margin-left: 284px;
     padding: 1.25rem;
   }
 
-  .mobile-topbar,
-  .mobile-drawer-backdrop {
+  .help-launch {
     display: none;
   }
 
-  .help-launch {
+  .mobile-map-guide {
     display: none;
   }
 
@@ -276,9 +254,6 @@
   }
   .main-content.blog-mode {
     padding: 0;
-  }
-  .view-toolbar {
-    display: none;
   }
   .help-launch {
     min-height: 38px;

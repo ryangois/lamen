@@ -502,7 +502,7 @@ export function buildResponsiblePractice(item) {
 export const METHODOLOGY_SECTIONS = [
   {
     title: 'Fonte primária',
-    text: 'Texto, objeto ou testemunho histórico apresentado diretamente — por exemplo, um verso do Tanakh, uma passagem do Sefer Yetzirah ou uma carta histórica preservada em acervo. A fonte é citada sem afirmar que já contenha todas as leituras posteriores.',
+    text: 'Texto, objeto ou testemunho histórico apresentado diretamente — por exemplo, um verso do Tanakh, uma passagem do Sefer Yetzirah ou uma carta histórica preservada em acervo. Citar a fonte não significa afirmar que ela já contém todas as leituras que vieram depois.',
   },
   {
     title: 'Tradição interpretativa',

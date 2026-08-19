@@ -339,83 +339,6 @@ function App() {
         onTutorial={() => setShowHelp(true)}
       />
 
-      <header className="view-toolbar" aria-label="Navegação principal">
-        <div className="view-switcher" role="group" aria-label="Escolher visualização">
-          <button
-            type="button"
-            className={`view-button ${view === 'wheel' ? 'active' : ''}`}
-            aria-pressed={view === 'wheel'}
-            onClick={() => handleViewChange('wheel')}
-          >
-            <span aria-hidden="true">◎</span>
-            Roda
-          </button>
-          <button
-            type="button"
-            className={`view-button ${view === 'list' ? 'active' : ''}`}
-            aria-pressed={view === 'list'}
-            onClick={() => handleViewChange('list')}
-          >
-            <span aria-hidden="true">☷</span>
-            Lista
-          </button>
-          <button
-            type="button"
-            className={`view-button ${view === 'tree' ? 'active' : ''}`}
-            aria-pressed={view === 'tree'}
-            onClick={() => handleViewChange('tree')}
-          >
-            <span aria-hidden="true">✦</span>
-            Árvore
-          </button>
-          <button
-            type="button"
-            className={`view-button ${view === 'oracle' ? 'active' : ''}`}
-            aria-pressed={view === 'oracle'}
-            onClick={() => handleViewChange('oracle')}
-          >
-            <span aria-hidden="true">✺</span>
-            Oráculo
-          </button>
-          <button
-            type="button"
-            className="view-button"
-            aria-label="Abrir trilha de estudo"
-            onClick={() => setShowStudy(true)}
-          >
-            <span aria-hidden="true">◫</span>
-            Estudo
-          </button>
-          <button
-            type="button"
-            className="view-button"
-            aria-label="Abrir busca universal"
-            onClick={() => setShowSearch(true)}
-          >
-            <span aria-hidden="true">⌕</span>
-            Buscar
-          </button>
-          <button
-            type="button"
-            className="view-button"
-            aria-label="Abrir calculadora Meu Anjo"
-            onClick={() => setShowAngelFinder(true)}
-          >
-            <span aria-hidden="true">✧</span>
-            Meu anjo
-          </button>
-          <button
-            type="button"
-            className="view-button"
-            aria-label="Abrir favoritos e histórico"
-            onClick={() => setShowSavedItems(true)}
-          >
-            <span aria-hidden="true">★</span>
-            Salvos
-          </button>
-        </div>
-      </header>
-
       <MobileNavigation
         open={showMobileMenu}
         view={view}
@@ -459,6 +382,13 @@ function App() {
               <span><b>Scroll</b> para ampliar</span>
               <i></i>
               <span><b>Clique</b> para explorar</span>
+            </div>
+            <div className="mobile-map-guide" aria-hidden="true">
+              <span><b>Arraste</b> para girar</span>
+              <i></i>
+              <span><b>Pinça</b> para ampliar</span>
+              <i></i>
+              <span><b>Toque</b> para explorar</span>
             </div>
           </div>
         ) : view === 'list' ? (

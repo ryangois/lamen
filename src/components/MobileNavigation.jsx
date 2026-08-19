@@ -31,7 +31,7 @@ function MenuIcon({ name }) {
 
 const viewNames = {
   wheel: 'Roda',
-  list: 'Lista',
+  list: 'Catálogo',
   tree: 'Árvore',
   oracle: 'Oráculo',
   blog: 'Blog',
@@ -168,7 +168,7 @@ export default function MobileNavigation({
                       onClick={() => chooseView('list')}
                     >
                       <MenuIcon name="list" />
-                      Lista
+                      Catálogo
                     </button>
                   </div>
                 )}
@@ -224,7 +224,7 @@ export default function MobileNavigation({
               </button>
               <button type="button" onClick={() => runAndClose(onStudy)}>
                 <span className="mobile-item-icon"><MenuIcon name="study" /></span>
-                <span><strong>Estudo</strong><small>Trilha guiada em sete módulos</small></span>
+                <span><strong>Trilha de estudo</strong><small>Sete módulos guiados</small></span>
               </button>
               <button type="button" onClick={() => runAndClose(onTutorial)}>
                 <span className="mobile-item-icon"><MenuIcon name="tutorial" /></span>

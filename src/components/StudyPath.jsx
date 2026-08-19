@@ -95,9 +95,9 @@ export default function StudyPath({ onClose, onOpen }) {
       >
         <header>
           <div>
-            <span>Trilha guiada</span>
+            <span>Trilha de estudo</span>
             <h2 className="brand-font" id="study-title">Do fundamento à síntese</h2>
-            <p>Sete módulos em uma ordem que evita misturar sistemas antes da base.</p>
+            <p>Sete módulos em ordem, pensados para firmar a base antes de cruzar sistemas.</p>
           </div>
           <button type="button" onClick={onClose} aria-label="Fechar trilha de estudo">×</button>
         </header>

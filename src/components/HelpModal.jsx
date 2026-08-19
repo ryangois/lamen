@@ -15,7 +15,7 @@ const tutorialSections = [
   },
   {
     icon: '☷',
-    title: 'Hermetika: Lista',
+    title: 'Hermetika: Catálogo',
     text: 'Consulte o mesmo acervo como catálogo pesquisável, com filtros e acesso rápido a anjos, signos, planetas, coros e demais categorias.',
   },
   {
@@ -26,7 +26,7 @@ const tutorialSections = [
   {
     icon: 'אב',
     title: '231 Portais',
-    text: 'No laboratório da Árvore, combine duas das 22 letras hebraicas e compare o portal direto, a inversão, os valores e os caminhos relacionados.',
+    text: 'No laboratório da Árvore, combine duas das 22 letras hebraicas para revelar um portal. Compare a inversão, os valores numéricos e os caminhos relacionados.',
   },
   {
     icon: '✺',
@@ -41,16 +41,16 @@ const tutorialSections = [
   {
     icon: '◫',
     title: 'Fichas enciclopédicas',
-    text: 'Navegue por Estudo, Relações, Prática e Fontes. As abas disponíveis mudam conforme o item e podem incluir Salmo, gematria, hebraico, Tarot e proveniência.',
+    text: 'Cada ficha reúne Estudo, Relações, Prática e Fontes em abas. Dependendo do item, você também encontra Salmo, gematria, hebraico, Tarot ou proveniência.',
   },
   {
     icon: '⇄',
     title: 'Comparar e estudar',
-    text: 'Compare símbolos relacionados, use o estudo focado para reduzir distrações, avance entre fichas e registre notas privadas no navegador.',
+    text: 'Compare símbolos relacionados ou ative o estudo focado para reduzir distrações. Avance entre fichas e registre notas privadas, salvas apenas no seu navegador.',
   },
   {
     icon: '◈',
-    title: 'Estudo',
+    title: 'Trilha de estudo',
     text: 'Siga uma trilha guiada em sete módulos. O progresso fica salvo neste dispositivo para que você possa retomar de onde parou.',
   },
   {
