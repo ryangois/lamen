@@ -96,6 +96,14 @@
     object-fit: cover;
 }
 
+.celestial-symbol {
+    display: block;
+    width: 96px;
+    height: 96px;
+    margin: 24px auto;
+    filter: drop-shadow(0 0 18px rgba(212, 175, 55, 0.25));
+}
+
 .image-overlay {
     position: absolute;
     bottom: 0;

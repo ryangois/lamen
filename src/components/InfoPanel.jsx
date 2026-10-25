@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { getContent } from '../data/content';
 import { findGlossaryEntry, glossaryPattern } from '../data/glossary';
 import { ringStructure } from '../data/rings';
+import { celestialSymbolPath } from '../data/celestialSymbols';
 import MiniContextMap from './MiniContextMap';
 import {
     FourWorldsPanel,
@@ -440,7 +441,11 @@ export default function InfoPanel({
                             <div className="image-overlay"></div>
                         </div>
                     ) : (
-                        <div className="image-placeholder">{icon}</div>
+                        <div className="image-placeholder">
+                            {celestialSymbolPath(activeSegmentId) ? (
+                                <img className="celestial-symbol" src={celestialSymbolPath(activeSegmentId)} alt="" width="96" height="96" />
+                            ) : icon}
+                        </div>
                     )}
 
                     <div className="info-body">

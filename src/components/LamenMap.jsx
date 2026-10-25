@@ -210,17 +210,23 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         ctx.shadowBlur = 1.2;
         ctx.fillStyle = segment.textColor || '#fff';
 
-        if (ring.ringId === 'zodiac' && segment.image) {
+        if ((ring.ringId === 'zodiac' || ring.ringId === 'planets') && segment.image) {
           const image = imagesRef.current.get(segment.image);
           if (image?.complete && image.naturalWidth) {
-            const position = pointAt(middleRadius, segment.middle);
-            const dimension = 28 * (segment.scale || 1);
+            const isPlanet = ring.ringId === 'planets';
+            const position = pointAt(isPlanet ? middleRadius - 4 : middleRadius, segment.middle);
+            const dimension = isPlanet ? 16 : 25;
             ctx.save();
             ctx.translate(position.x, position.y);
             ctx.rotate(segment.middle * Math.PI / 180);
-            ctx.filter = 'invert(1) brightness(2)';
+            ctx.rotate(-rotationRef.current * Math.PI / 180 - segment.middle * Math.PI / 180);
             ctx.drawImage(image, -dimension / 2, -dimension / 2, dimension, dimension);
             ctx.restore();
+          }
+          if (ring.ringId === 'planets') {
+            const labelPosition = pointAt(ring.outerRadius - 5, segment.middle);
+            drawCenteredText(ctx, segment.label, labelPosition.x, labelPosition.y,
+              segment.middle, 3.6, 34);
           }
         } else if (ring.ringId === 'angels') {
           const num = pointAt(ring.innerRadius + 6, segment.middle);
@@ -479,6 +485,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
 
   useEffect(() => () => {
     if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
   }, []);
 
   return (

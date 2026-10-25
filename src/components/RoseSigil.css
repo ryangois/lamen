@@ -150,6 +150,26 @@
   border-radius: 18px;
 }
 
+.rose-center-detail {
+  width: 100%;
+  padding: 0.8rem;
+  border-top: 1px solid rgba(245, 215, 122, 0.18);
+  text-align: center;
+}
+
+.rose-center-detail summary {
+  cursor: pointer;
+  color: var(--accent-gold);
+  font: 700 0.75rem Inter, sans-serif;
+  padding: 0.4rem;
+}
+
+.rose-center-detail svg {
+  display: block;
+  max-width: 100%;
+  margin: 1rem auto 0;
+}
+
 .rose-petal {
   cursor: pointer;
   outline: none;

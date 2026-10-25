@@ -64,26 +64,47 @@ function RoseCenter() {
           strokeWidth="0.35"
         />
       ))}
-      {Array.from({ length: 5 }, (_, index) => {
-        const petal = polar(1.45, index * 72);
-        return <circle key={index} cx={CROSSING.x + petal.x} cy={CROSSING.y + petal.y} r="1.5" fill="#c8202b" />;
-      })}
-      <circle cx={CROSSING.x} cy={CROSSING.y} r="0.8" fill="#f5d77a" />
+      <g transform={`translate(${CROSSING.x} ${CROSSING.y})`} stroke="#851c25" strokeWidth="0.2">
+        {Array.from({ length: 5 }, (_, index) => (
+          <path key={index} transform={`rotate(${index * 72})`}
+            d="M0 0 C-3.3 -1.1 -2.7 -4.3 0 -4.1 C2.7 -4.3 3.3 -1.1 0 0Z"
+            fill="#cf263b" />
+        ))}
+        <circle r="0.85" fill="#f5d77a" />
+      </g>
     </g>
   );
 }
 
 // Draws the rose (optional) and the sigil. The same drawing serves the screen and both SVG downloads,
 // so every color lives in attributes rather than CSS.
-function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLetter, className, titleId, svgRef }) {
-  const polyline = sigil.points.map(({ x, y }) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+function SigilSvg({ sigil, orderByLetter, showRose, showTrace = true, showLetters = true, transparent = false, onAddLetter, className, titleId, svgRef }) {
+  const linePoints = sigil.points.map((point) => ({ ...point }));
+  // Start the first segment at the circle's edge, leaving its interior clear.
+  if (linePoints.length > 1) {
+    const [first, next] = linePoints;
+    const distance = Math.hypot(next.x - first.x, next.y - first.y);
+    const radius = Math.min(showRose ? 6 : 5.5, distance / 2);
+    first.x += (next.x - first.x) / distance * radius;
+    first.y += (next.y - first.y) / distance * radius;
+  }
+  const polyline = linePoints.map(({ x, y }) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+  const xs = sigil.points.map(({ x }) => x);
+  const ys = sigil.points.map(({ y }) => y);
+  const minX = xs.length ? Math.min(...xs) : -86;
+  const maxX = xs.length ? Math.max(...xs) : 86;
+  const minY = ys.length ? Math.min(...ys) : -86;
+  const maxY = ys.length ? Math.max(...ys) : 86;
+  const viewExtent = showRose ? 104 : Math.max(24, (maxX - minX) / 2 + 18, (maxY - minY) / 2 + 18);
+  const viewX = (showRose ? 0 : (minX + maxX) / 2) - viewExtent;
+  const viewY = (showRose ? 0 : (minY + maxY) / 2) - viewExtent;
   const interactive = Boolean(onAddLetter);
 
   return (
     <svg
       ref={svgRef}
       className={className}
-      viewBox="-104 -104 208 208"
+      viewBox={`${viewX} ${viewY} ${viewExtent * 2} ${viewExtent * 2}`}
       width="1040"
       height="1040"
       xmlns="http://www.w3.org/2000/svg"
@@ -91,17 +112,17 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
       aria-labelledby={titleId}
     >
       <title id={titleId}>
-        {sigil.steps.length
+        {sigil.steps.length && showTrace
           ? `Sigilo de ${sigil.letters} traçado na rosa da Rosa-Cruz`
           : 'Rosa da Rosa-Cruz com as 22 letras hebraicas'}
       </title>
-      {!showRose && !transparent && <rect x="-104" y="-104" width="208" height="208" fill="#0d1017" />}
+      {!showRose && !transparent && <rect x={viewX} y={viewY} width={viewExtent * 2} height={viewExtent * 2} fill="#0d1017" />}
       {showRose && (
         <g>
           <circle r="100" fill="#0d1017" stroke="rgba(245,215,122,0.35)" strokeWidth="0.8" />
           {ROSE_PETALS.map((petal) => {
             const orders = orderByLetter.get(petal.hebrew);
-            const active = Boolean(orders);
+            const active = showTrace && Boolean(orders);
             const addLetter = () => onAddLetter(petal.hebrew);
             return (
               <g
@@ -122,7 +143,7 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
                 <path
                   d={getPetalPath(petal)}
                   fill={petal.color}
-                  fillOpacity={sigil.steps.length && !active ? 0.62 : 1}
+                  fillOpacity={showTrace && sigil.steps.length && !active ? 0.62 : 1}
                   stroke={active ? '#ffffff' : 'rgba(13,16,23,0.55)'}
                   strokeWidth={active ? 1.4 : 0.5}
                 />
@@ -133,6 +154,7 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
         </g>
       )}
 
+      <g display={showTrace ? undefined : 'none'} pointerEvents="none">
       {showRose && sigil.points.length > 1 && (
         <polyline
           points={polyline}
@@ -172,8 +194,8 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
         <circle
           cx={sigil.start.x}
           cy={sigil.start.y}
-          r={showRose ? 8 : 5.5}
-          fill={showRose ? 'rgba(13,16,23,0.35)' : 'none'}
+          r={showRose ? 6 : 5.5}
+          fill="none"
           stroke={SIGIL_COLOR}
           strokeWidth="2.6"
         />
@@ -189,7 +211,8 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
           strokeLinecap="round"
         />
       )}
-      {showRose && (
+      </g>
+      {showRose && showLetters && (
         <g
           pointerEvents="none"
           fontWeight="700"
@@ -214,7 +237,7 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
           ))}
         </g>
       )}
-      {showRose && ROSE_PETALS.filter((petal) => orderByLetter.has(petal.hebrew)).map((petal) => {
+      {showRose && showTrace && showLetters && ROSE_PETALS.filter((petal) => orderByLetter.has(petal.hebrew)).map((petal) => {
         const label = orderByLetter.get(petal.hebrew).join('·');
         const offset = polar(Math.min(petal.outer - 6, (petal.inner + petal.outer) / 2 + 7), petal.angle + (petal.ring === 'mothers' ? 30 : 9));
         return (
@@ -253,6 +276,8 @@ export default function RoseSigil({ onOpenPath }) {
   const roseRef = useRef(null);
   const [name, setName] = useState('אדני');
   const [showRose, setShowRose] = useState(true);
+  const [showTrace, setShowTrace] = useState(true);
+  const [showLetters, setShowLetters] = useState(true);
   const sigil = useMemo(() => traceRoseSigil(name), [name]);
   const orderByLetter = useMemo(() => {
     const map = new Map();
@@ -371,11 +396,13 @@ export default function RoseSigil({ onOpenPath }) {
           sigil={sigil}
           orderByLetter={orderByLetter}
           showRose={showRose}
+          showTrace={!showRose || showTrace}
+          showLetters={showLetters}
           onAddLetter={(hebrew) => setName((current) => current + hebrew)}
           className={`rose-sigil-svg ${showRose ? '' : 'sigil-only'}`}
           titleId="rose-sigil-title"
         />
-        {sigil.steps.length > 0 && (
+        {sigil.steps.length > 0 && (!showRose || showTrace) && (
           <div className="rose-sigil-legend" aria-label="Legenda do sigilo">
             <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5" fill="none" stroke={SIGIL_COLOR} strokeWidth="2.4" /></svg>Início</span>
             <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><line x1="-7" y1="0" x2="2" y2="0" stroke={SIGIL_COLOR} strokeWidth="2" /><line x1="3" y1="-6" x2="3" y2="6" stroke={SIGIL_COLOR} strokeWidth="3" strokeLinecap="round" /></svg>Fim</span>
@@ -387,6 +414,12 @@ export default function RoseSigil({ onOpenPath }) {
           <button type="button" onClick={() => setShowRose((current) => !current)}>
             {showRose ? 'Ver só o sigilo' : 'Mostrar a rosa'}
           </button>
+          {showRose && <button type="button" aria-pressed={!showTrace} onClick={() => setShowTrace((current) => !current)}>
+            {showTrace ? 'Ver rosa sem traçado' : 'Mostrar traçado'}
+          </button>}
+          {showRose && <button type="button" aria-pressed={!showLetters} onClick={() => setShowLetters((current) => !current)}>
+            {showLetters ? 'Ocultar letras e números' : 'Mostrar letras e números'}
+          </button>}
           <button
             type="button"
             disabled={!sigil.steps.length}
@@ -406,6 +439,12 @@ export default function RoseSigil({ onOpenPath }) {
           <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose={false} transparent svgRef={tracesRef} />
           <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose svgRef={roseRef} />
         </div>
+        {showRose && <details className="rose-center-detail">
+          <summary>Ver cruz central ampliada</summary>
+          <svg viewBox="-19 -19 38 38" width="200" height="200" role="img" aria-label="Cruz dourada de seis quadrados, rosa vermelha de cinco pétalas e quatro raios verdes sobre campo branco">
+            <RoseCenter />
+          </svg>
+        </details>}
       </div>
 
       {sigil.steps.length > 0 ? (

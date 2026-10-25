@@ -1,3 +1,5 @@
+import { celestialSymbolPath } from './celestialSymbols.js';
+
 // rings.js — 7 rings of the Lamen wheel
 // Colors per zodiac sign (spectrum from the image)
 const ZC=["#c0392b","#e74c3c","#e67e22","#f39c12","#f1c40f","#8dc63f","#27ae60","#1abc9c","#00acc1","#0077b6","#5c35a5","#7b1fa2"];
@@ -132,4 +134,16 @@ export const ringStructure = [
     {id:"arcanjos",label:"ARCANJOS",color:"#ef6c00"},
     {id:"anjos",label:"ANJOS",color:"#7b1fa2"},
   ]},
-];
+].map((ring) => ({
+  ...ring,
+  segments: ring.segments.map((segment) => {
+    const image = celestialSymbolPath(segment.id);
+    if (!image) return segment;
+    return {
+      ...segment,
+      image,
+      scale: 1,
+      label: ring.ringId === 'planets' ? segment.label.replace(/^\S+\s+/, '') : segment.id,
+    };
+  }),
+}));
