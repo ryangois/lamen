@@ -152,10 +152,10 @@ export function traceRoseSigil(text) {
     const nx = -dy / length;
     const ny = dx / length;
     bar = {
-      x1: last.x + nx * 6,
-      y1: last.y + ny * 6,
-      x2: last.x - nx * 6,
-      y2: last.y - ny * 6,
+      x1: last.x + nx * 7.5,
+      y1: last.y + ny * 7.5,
+      x2: last.x - nx * 7.5,
+      y2: last.y - ny * 7.5,
     };
   }
 

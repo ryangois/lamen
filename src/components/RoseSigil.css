@@ -306,3 +306,27 @@
     justify-self: start;
   }
 }
+
+.rose-sigil-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  color: #d5dce6;
+  font: 800 0.68rem 'Inter', sans-serif;
+}
+
+.rose-sigil-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rose-sigil-legend svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rose-sigil-export {
+  display: none;
+}
