@@ -7,10 +7,10 @@ const FONT_SIZE = {
   elements: 8,
   planets: 5.5,
   zodiac: 6.5,
-  decanates: 4.2,
-  angels: 3.2,
-  archangels: 5,
-  choirs: 5.5,
+  decanates: 6.5,
+  angels: 5.4,
+  archangels: 9,
+  choirs: 10,
 };
 const TAU = Math.PI * 2;
 
@@ -227,7 +227,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
           const hebrew = pointAt(ring.outerRadius - 24, segment.middle);
           const letters = pointAt(ring.outerRadius - 10, segment.middle);
           drawCenteredText(ctx, String(segment.num), num.x, num.y, segment.middle, size * 0.9, 8, 800);
-          drawCenteredText(ctx, segment.subLabel, name.x, name.y, segment.middle + 90, size, 70, 500);
+          drawCenteredText(ctx, segment.subLabel, name.x, name.y, segment.middle + 90, size, 70, 600);
           drawCenteredText(ctx, segment.hebrew, hebrew.x, hebrew.y, segment.middle, size * 1.15, 12, 400);
           drawCenteredText(ctx, segment.letters, letters.x, letters.y, segment.middle, size * 0.9, 12, 800);
         } else if (ring.segments.length >= 9) {
