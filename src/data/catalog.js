@@ -1,5 +1,5 @@
-import { getContent } from './content';
-import { ringStructure } from './rings';
+import { getContent } from './content.js';
+import { ringStructure } from './rings.js';
 
 export const CATEGORY_NAMES = {
   elements: 'Elementos',

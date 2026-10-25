@@ -17,12 +17,24 @@ import {
   getLetterGate,
 } from '../src/data/researchData.js';
 import { ringStructure } from '../src/data/rings.js';
+import { oracleItems } from '../src/data/oracle.js';
 import { ROSE_PETALS, normalizeHebrewName, traceRoseSigil } from '../src/data/roseCross.js';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../src/data/treeOfLife.js';
 
 const angels = ringStructure.find((ring) => ring.ringId === 'angels').segments;
 const zodiac = ringStructure.find((ring) => ring.ringId === 'zodiac').segments;
 const choirs = ringStructure.find((ring) => ring.ringId === 'choirs').segments;
+
+test('oracle emblems never contain full names and celestial results use local glyphs', () => {
+  for (const item of oracleItems) {
+    assert.ok([...item.symbol].length <= 4, `Oversized emblem: ${item.id}`);
+    if (['planets', 'zodiac', 'elements'].includes(item.type)) {
+      assert.ok(item.symbolImage, `Missing celestial glyph: ${item.id}`);
+      assert.ok(existsSync(resolve('public', item.symbolImage.slice(1))));
+    }
+  }
+  assert.equal(oracleItems.find((item) => item.id === 'mercury').symbolImage, '/assets/celestial/mercury.svg');
+});
 
 function digitalRoot(value) {
   if (value === 0) return 0;

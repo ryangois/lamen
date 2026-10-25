@@ -1,6 +1,7 @@
-import { flatItems } from './catalog';
-import { getContent } from './content';
-import { treePaths, treeSephiroth, treeSpecialNodes } from './treeOfLife';
+import { CATEGORY_ICONS, flatItems } from './catalog.js';
+import { celestialSymbolPath } from './celestialSymbols.js';
+import { getContent } from './content.js';
+import { treePaths, treeSephiroth, treeSpecialNodes } from './treeOfLife.js';
 
 const TYPE_LABELS = {
   all: 'Tudo',
@@ -21,7 +22,8 @@ function fromCatalogItem(item) {
     title: item.content.title,
     subtitle: item.content.subtitle || item.content.description,
     color: item.color || '#d4af37',
-    symbol: item.label || item.letters || item.content.associations?.Letra || '✦',
+    symbolImage: celestialSymbolPath(item.id),
+    symbol: item.hebrew || item.letters || (item.num ? String(item.num) : CATEGORY_ICONS[item.category]) || '✦',
     keywords: [
       associations.Signo,
       associations.Coro,

@@ -17,6 +17,12 @@ function getPrompt(item) {
     || DEFAULT_PROMPTS[Math.floor(Math.random() * DEFAULT_PROMPTS.length)];
 }
 
+function OracleSymbol({ item }) {
+  if (item?.symbolImage) return <img src={item.symbolImage} alt="" width="64" height="64" />;
+  const symbol = item?.symbol || '✦';
+  return <span className={[...symbol].length > 2 ? 'oracle-symbol-compact' : undefined}>{symbol}</span>;
+}
+
 export default function Oracle({ onSegmentClick }) {
   const [type, setType] = useState('all');
   const [mode, setMode] = useState('single');
@@ -117,8 +123,8 @@ export default function Oracle({ onSegmentClick }) {
             <small>{activeType.label}</small>
           </div>
 
-          <div className="oracle-sigil" style={{ '--oracle-color': result?.color || '#d4af37' }}>
-            <span>{result?.symbol || '✦'}</span>
+          <div className="oracle-sigil" aria-hidden="true" style={{ '--oracle-color': result?.color || '#d4af37' }}>
+            <OracleSymbol item={result} />
           </div>
           <div className="oracle-card-copy">
             <span>{result?.typeLabel || `${poolSize} chaves disponíveis`}</span>
@@ -147,8 +153,8 @@ export default function Oracle({ onSegmentClick }) {
                   <span>{index + 1}</span>
                   <strong>{SPREAD_POSITIONS[index]}</strong>
                 </div>
-                <div className="oracle-spread-sigil" style={{ '--oracle-color': item.color || '#d4af37' }}>
-                  {item.symbol || '✦'}
+                <div className="oracle-spread-sigil" aria-hidden="true" style={{ '--oracle-color': item.color || '#d4af37' }}>
+                  <OracleSymbol item={item} />
                 </div>
                 <small>{item.typeLabel}</small>
                 <h2 className="brand-font">{item.title}</h2>
