@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { ROSE_NAME_PRESETS, ROSE_PETALS, ROSE_RING_SUMMARY, getPetalPath, traceRoseSigil } from '../data/roseCross';
+import { ROSE_NAME_PRESETS, ROSE_PETALS, ROSE_RING_SUMMARY, getPetalPath, polar, traceRoseSigil } from '../data/roseCross';
 import { RESEARCH_SOURCES } from '../data/researchData';
 import { ringStructure } from '../data/rings';
 import { treePaths } from '../data/treeOfLife';
@@ -25,6 +25,52 @@ function downloadSvg(svg, fileName) {
   link.download = `${fileName}.svg`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+// Centre of the rose as described for the lamen: a white field (the reflected brightness of Kether)
+// bearing the golden Cross of Six Squares, the red Rose of Five Petals at its crossing and four green
+// rays issuing from the angles of the cross.
+const SQUARE = 5.6;
+const CROSS_SQUARES = [[0, -2], [0, -1], [0, 0], [0, 1], [-1, -1], [1, -1]];
+const CROSSING = { x: 0, y: -SQUARE / 2 };
+
+function RoseCenter() {
+  const half = SQUARE / 2;
+  const rays = [
+    [half, -SQUARE, 1, -1],
+    [-half, -SQUARE, -1, -1],
+    [half, 0, 1, 1],
+    [-half, 0, -1, 1],
+  ];
+  return (
+    <g>
+      <circle r="17.6" fill="#fbf8ef" stroke="rgba(13,16,23,0.55)" strokeWidth="0.5" />
+      {rays.map(([x, y, dx, dy]) => (
+        <polygon
+          key={`${dx}${dy}`}
+          points={`${x},${y} ${x + dx * 7.5 - dy * 1.6},${y + dy * 7.5 + dx * 1.6} ${x + dx * 7.5 + dy * 1.6},${y + dy * 7.5 - dx * 1.6}`}
+          fill="#1f9e4f"
+        />
+      ))}
+      {CROSS_SQUARES.map(([column, row]) => (
+        <rect
+          key={`${column}${row}`}
+          x={column * SQUARE - half}
+          y={row * SQUARE}
+          width={SQUARE}
+          height={SQUARE}
+          fill="#e2b33c"
+          stroke="#8a6414"
+          strokeWidth="0.35"
+        />
+      ))}
+      {Array.from({ length: 5 }, (_, index) => {
+        const petal = polar(1.45, index * 72);
+        return <circle key={index} cx={CROSSING.x + petal.x} cy={CROSSING.y + petal.y} r="1.5" fill="#c8202b" />;
+      })}
+      <circle cx={CROSSING.x} cy={CROSSING.y} r="0.8" fill="#f5d77a" />
+    </g>
+  );
 }
 
 // Draws the rose (optional) and the sigil. The same drawing serves the screen and both SVG downloads,
@@ -76,30 +122,14 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
                 <path
                   d={getPetalPath(petal)}
                   fill={petal.color}
-                  fillOpacity={active ? 0.95 : 0.32}
-                  stroke={active ? SIGIL_COLOR : 'rgba(255,255,255,0.18)'}
-                  strokeWidth={active ? 1.1 : 0.5}
+                  fillOpacity={sigil.steps.length && !active ? 0.62 : 1}
+                  stroke={active ? '#ffffff' : 'rgba(13,16,23,0.55)'}
+                  strokeWidth={active ? 1.4 : 0.5}
                 />
-                {orders && (
-                  <text
-                    x={petal.x + 6.5}
-                    y={petal.y - 6}
-                    textAnchor="middle"
-                    fontSize="4.6"
-                    fontWeight="800"
-                    fill="#111318"
-                    fontFamily="Inter, sans-serif"
-                  >
-                    {orders.join('·')}
-                  </text>
-                )}
               </g>
             );
           })}
-          <g stroke="rgba(245,215,122,0.55)" strokeWidth="2.4" strokeLinecap="round">
-            <line x1="0" y1="-11" x2="0" y2="11" />
-            <line x1="-8" y1="-4" x2="8" y2="-4" />
-          </g>
+          <RoseCenter />
         </g>
       )}
 
@@ -108,10 +138,10 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
           points={polyline}
           fill="none"
           stroke="#111318"
-          strokeWidth="4.6"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.55"
+          opacity="0.8"
         />
       )}
       {sigil.points.length > 1 && (
@@ -166,27 +196,54 @@ function SigilSvg({ sigil, orderByLetter, showRose, transparent = false, onAddLe
           textAnchor="middle"
           fontFamily="'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif"
           paintOrder="stroke"
-          strokeWidth="2.2"
+          strokeWidth="1.4"
           strokeLinejoin="round"
         >
-          {ROSE_PETALS.map((petal) => {
-            const active = orderByLetter.has(petal.hebrew);
-            return (
-              <text
-                key={petal.hebrew}
-                x={petal.x}
-                y={petal.y}
-                dy="0.35em"
-                fontSize={petal.ring === 'simples' ? 12 : 11}
-                fill={active ? '#111318' : '#f4efe1'}
-                stroke={active ? 'rgba(255,240,200,0.7)' : 'rgba(13,16,23,0.6)'}
-              >
-                {petal.hebrew}
-              </text>
-            );
-          })}
+          {ROSE_PETALS.map((petal) => (
+            <text
+              key={petal.hebrew}
+              x={petal.x}
+              y={petal.y}
+              dy="0.35em"
+              fontSize={petal.ring === 'simples' ? 12.5 : 11.5}
+              fill={petal.letterColor}
+              stroke="rgba(13,16,23,0.45)"
+            >
+              {petal.hebrew}
+            </text>
+          ))}
         </g>
       )}
+      {showRose && ROSE_PETALS.filter((petal) => orderByLetter.has(petal.hebrew)).map((petal) => {
+        const label = orderByLetter.get(petal.hebrew).join('·');
+        const offset = polar(Math.min(petal.outer - 6, (petal.inner + petal.outer) / 2 + 7), petal.angle + (petal.ring === 'mothers' ? 30 : 9));
+        return (
+          <g key={`order-${petal.hebrew}`} pointerEvents="none">
+            <rect
+              x={offset.x - (2.6 + label.length * 1.35)}
+              y={offset.y - 3.4}
+              width={5.2 + label.length * 2.7}
+              height="6.8"
+              rx="3.4"
+              fill={SIGIL_COLOR}
+              stroke="#111318"
+              strokeWidth="0.5"
+            />
+            <text
+              x={offset.x}
+              y={offset.y}
+              dy="0.36em"
+              textAnchor="middle"
+              fontSize="4.8"
+              fontWeight="800"
+              fill="#111318"
+              fontFamily="Inter, sans-serif"
+            >
+              {label}
+            </text>
+          </g>
+        );
+      })}
     </svg>
   );
 }
@@ -217,6 +274,40 @@ export default function RoseSigil({ onOpenPath }) {
           pelas pétalas produz uma figura linear — o círculo marca o início e a barra curta, o fim.
         </p>
       </header>
+
+      <details className="rose-sigil-howto">
+        <summary>Como usar</summary>
+        <ol>
+          <li>
+            <b>Escreva o nome em hebraico.</b> Digite no campo, toque nas pétalas na ordem das letras ou
+            escolha um nome divino ou um dos 72 anjos. Só as 22 consoantes contam: vogais e sinais são
+            ignorados, e as formas finais (ך ם ן ף ץ) valem como a letra comum.
+          </li>
+          <li>
+            <b>Siga a ordem de leitura.</b> O hebraico é lido da direita para a esquerda, e o traçado
+            parte da primeira letra lida. Os números nas pétalas mostram a ordem.
+          </li>
+          <li>
+            <b>Leia as marcas.</b> O círculo fica na pétala da primeira letra; a linha passa pela pétala de
+            cada letra seguinte; a barra curta, perpendicular ao último trecho, fecha na última letra.
+          </li>
+          <li>
+            <b>Estude as correspondências.</b> A lista abaixo da rosa mostra, letra a letra, a família, o
+            elemento, planeta ou signo e o caminho da Árvore da Vida correspondente.
+          </li>
+          <li>
+            <b>Guarde o sigilo.</b> “Baixar só o traço” gera o sigilo isolado, com fundo transparente;
+            “Baixar com a rosa” mantém a rosa ao fundo, para conferir de onde vem cada traço.
+          </li>
+        </ol>
+        <p>
+          <b>Para que servia.</b> Na Golden Dawn, o lamen da Rosa-Cruz era usado sobre o peito nas
+          operações importantes e descrito nos rituais como chave dos sigilos. A rosa servia para extrair
+          os sigilos de nomes divinos, angélicos e de inteligências, usados em talismãs e no trabalho
+          ritual. Regardie sugeria copiar os sigilos em papel vegetal e sobrepô-los à rosa para
+          reconhecer o nome de origem. Aqui, o gerador é uma ferramenta de estudo dessa tradição.
+        </p>
+      </details>
 
       <div className="rose-sigil-input">
         <label>
@@ -288,7 +379,7 @@ export default function RoseSigil({ onOpenPath }) {
           <div className="rose-sigil-legend" aria-label="Legenda do sigilo">
             <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5" fill="none" stroke={SIGIL_COLOR} strokeWidth="2.4" /></svg>Início</span>
             <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><line x1="-7" y1="0" x2="2" y2="0" stroke={SIGIL_COLOR} strokeWidth="2" /><line x1="3" y1="-6" x2="3" y2="6" stroke={SIGIL_COLOR} strokeWidth="3" strokeLinecap="round" /></svg>Fim</span>
-            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="3.4" fill="none" stroke={SIGIL_COLOR} strokeWidth="1.6" /><circle cx="0" cy="5" r="1.6" fill={SIGIL_COLOR} /></svg>Letra repetida</span>
+            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="3.4" fill="none" stroke={SIGIL_COLOR} strokeWidth="1.6" /><circle cx="0" cy="5" r="1.6" fill={SIGIL_COLOR} /></svg>Letra repetida (convenção da Hermetika)</span>
           </div>
         )}
 
@@ -366,10 +457,13 @@ export default function RoseSigil({ onOpenPath }) {
       </div>
 
       <p className="tree-gallery-note">
-        O hebraico é lido da direita para a esquerda, e o traçado segue essa ordem. As cores das pétalas
-        seguem a escala do Rei da Golden Dawn; a posição das letras reproduz a rosa do lamen. O método
-        está documentado no material da Ordem, publicado por Israel Regardie; a rosa como “gerador” é
-        uma leitura moderna desse procedimento, não um termo histórico.
+        As pétalas seguem a escala do Rei da Golden Dawn, com cada letra na cor complementar, e o centro
+        reproduz o campo branco com a Cruz Dourada de seis quadrados, a Rosa Vermelha de cinco pétalas e
+        os quatro raios verdes. A posição das letras segue a rosa do lamen publicada por Israel Regardie;
+        há quem aponte que Tav e Kaph estão trocados nessa versão. O círculo inicial e a barra final
+        vêm das descrições do método. O laço para uma letra repetida em sequência é uma convenção desta
+        ferramenta: não o encontramos documentado nas fontes consultadas. Chamar a rosa de “gerador” é
+        uma leitura moderna do procedimento, não um termo histórico.
       </p>
       <a href={RESEARCH_SOURCES.seferYetzirah} target="_blank" rel="noreferrer">
         Consultar o Sefer Yetzirah na Sefaria

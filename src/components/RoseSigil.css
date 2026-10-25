@@ -330,3 +330,37 @@
 .rose-sigil-export {
   display: none;
 }
+
+.rose-sigil-howto {
+  padding: 0.2rem 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+}
+
+.rose-sigil-howto summary {
+  padding: 0.7rem 0;
+  color: var(--accent-gold);
+  cursor: pointer;
+  font: 850 0.74rem 'Inter', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rose-sigil-howto ol {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 0.8rem;
+  padding-left: 1.2rem;
+  color: #aeb9c8;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.rose-sigil-howto b {
+  color: var(--text-primary);
+}
+
+.rose-sigil-howto > p {
+  margin-bottom: 0.9rem;
+}
