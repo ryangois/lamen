@@ -210,23 +210,16 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         ctx.shadowBlur = 1.2;
         ctx.fillStyle = segment.textColor || '#fff';
 
-        if ((ring.ringId === 'zodiac' || ring.ringId === 'planets') && segment.image) {
+        if (['elements', 'planets', 'zodiac'].includes(ring.ringId) && segment.image) {
           const image = imagesRef.current.get(segment.image);
           if (image?.complete && image.naturalWidth) {
-            const isPlanet = ring.ringId === 'planets';
-            const position = pointAt(isPlanet ? middleRadius - 4 : middleRadius, segment.middle);
-            const dimension = isPlanet ? 16 : 25;
+            const position = pointAt(middleRadius, segment.middle);
+            const dimension = ring.ringId === 'zodiac' ? 34 : ring.ringId === 'planets' ? 29 : 27;
             ctx.save();
             ctx.translate(position.x, position.y);
-            ctx.rotate(segment.middle * Math.PI / 180);
-            ctx.rotate(-rotationRef.current * Math.PI / 180 - segment.middle * Math.PI / 180);
+            ctx.rotate(-rotationRef.current * Math.PI / 180);
             ctx.drawImage(image, -dimension / 2, -dimension / 2, dimension, dimension);
             ctx.restore();
-          }
-          if (ring.ringId === 'planets') {
-            const labelPosition = pointAt(ring.outerRadius - 5, segment.middle);
-            drawCenteredText(ctx, segment.label, labelPosition.x, labelPosition.y,
-              segment.middle, 3.6, 34);
           }
         } else if (ring.ringId === 'angels') {
           const num = pointAt(ring.innerRadius + 6, segment.middle);
@@ -489,6 +482,7 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
   }, []);
 
   return (
+    <>
     <canvas
       ref={canvasRef}
       className="lamen-canvas"
@@ -506,5 +500,15 @@ export default function LamenMap({ onSegmentClick, activeSegmentId }) {
         }
       }}
     />
+    <div className="wheel-controls" role="group" aria-label="Controles da roda">
+      <button type="button" aria-label="Ampliar roda" onClick={() => zoomFromCenter(1 / 1.25)}>+</button>
+      <button type="button" aria-label="Reduzir roda" onClick={() => zoomFromCenter(1.25)}>−</button>
+      <button type="button" onClick={() => {
+        viewportRef.current = { ...BASE_VIEW };
+        rotationRef.current = 0;
+        requestDraw();
+      }}>Restaurar</button>
+    </div>
+    </>
   );
 }

@@ -3,6 +3,17 @@
   gap: 1rem;
 }
 
+.rose-options, .rose-presets-details { width: 100%; }
+.rose-options > summary, .rose-presets-details > summary {
+  padding: 0.85rem;
+  color: #f5d77a;
+  border: 1px solid #ffffff20;
+  border-radius: 12px;
+  cursor: pointer;
+  font: 700 0.8rem Inter, sans-serif;
+}
+.rose-options[open] > summary, .rose-presets-details[open] > summary { margin-bottom: 0.8rem; }
+
 .rose-sigil-lab > header {
   display: grid;
   gap: 0.4rem;

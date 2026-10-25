@@ -29,32 +29,35 @@ export default function TreeOfLife({
   return (
     <section className="tree-shell" aria-labelledby="tree-title">
       <div className="tree-intro">
-        <span className="eyebrow">Árvore da Vida</span>
-        <h1 id="tree-title" className="brand-font">Esferas e caminhos clicáveis</h1>
+        <span className="eyebrow">10 esferas · 22 caminhos</span>
+        <h1 id="tree-title" className="brand-font">Árvore da Vida</h1>
+        <details className="tree-explanation">
+        <summary>Como explorar a Árvore</summary>
         <p>
           Toque em uma Sephirah ou caminho para abrir as correspondências no painel,
           como na roda.
         </p>
+        </details>
         <div className="tree-research-launchers">
           <button type="button" className="tree-research-launch" onClick={() => openResearch('gates')}>
             <span aria-hidden="true">✦</span>
-            231 Portais e árvores históricas
+            Portais e galeria
           </button>
           <button type="button" className="tree-research-launch" onClick={() => openResearch('rose')}>
             <span aria-hidden="true">✿</span>
-            Sigilos na Rosa-Cruz
+            Gerador de sigilos
           </button>
         </div>
       </div>
 
       <div className="tree-stage" aria-label="Árvore da Vida interativa">
-        <svg className="tree-svg" viewBox="0 0 420 660" role="img" aria-labelledby="tree-svg-title">
+        <svg className="tree-svg" viewBox="38 16 344 628" role="img" aria-labelledby="tree-svg-title">
           <title id="tree-svg-title">Árvore da Vida hermética com 10 esferas e 22 caminhos</title>
 
           <g className="tree-pillars" aria-hidden="true">
-            <line x1="112" y1="118" x2="112" y2="470" />
+            <line x1="86" y1="118" x2="86" y2="470" />
             <line x1="210" y1="52" x2="210" y2="606" />
-            <line x1="308" y1="118" x2="308" y2="470" />
+            <line x1="334" y1="118" x2="334" y2="470" />
           </g>
 
           <g className="tree-special-nodes">
@@ -100,7 +103,7 @@ export default function TreeOfLife({
                 >
                   <line className="tree-path-hit" x1={path.x1} y1={path.y1} x2={path.x2} y2={path.y2} />
                   <line className="tree-path-line" x1={path.x1} y1={path.y1} x2={path.x2} y2={path.y2} />
-                  <circle className="tree-path-label-bg" cx={path.labelX} cy={path.labelY} r="13" />
+                  <circle className="tree-path-label-bg" cx={path.labelX} cy={path.labelY} r="14" />
                   <text className="tree-path-label" x={path.labelX} y={path.labelY + 4}>
                     {path.hebrew}
                   </text>
@@ -118,7 +121,10 @@ export default function TreeOfLife({
                 <g
                   key={sephirah.id}
                   className={`tree-node tree-node-${sephirah.pillar} ${isActive ? 'active' : ''}`}
-                  style={{ '--tree-node-color': sephirah.color }}
+                  style={{
+                    '--tree-node-color': sephirah.color,
+                    '--tree-node-ink': ['kether', 'chokmah', 'tiphareth'].includes(sephirah.key) ? '#171a22' : undefined,
+                  }}
                   role="button"
                   tabIndex={0}
                   aria-label={`Abrir ${content.title}`}
@@ -126,7 +132,7 @@ export default function TreeOfLife({
                   onKeyDown={(event) => activateByKeyboard(event, () => handleSelect(sephirah.id))}
                 >
                   <circle className="tree-node-aura" cx={sephirah.x} cy={sephirah.y} r="35" />
-                  <circle className="tree-node-disc" cx={sephirah.x} cy={sephirah.y} r="27" />
+                  <circle className="tree-node-disc" cx={sephirah.x} cy={sephirah.y} r="31" />
                   <text className="tree-node-number" x={sephirah.x} y={sephirah.y - 5}>
                     {sephirah.number}
                   </text>

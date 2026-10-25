@@ -143,7 +143,7 @@ export const ringStructure = [
       ...segment,
       image,
       scale: 1,
-      label: ring.ringId === 'planets' ? segment.label.replace(/^\S+\s+/, '') : segment.id,
+      label: ring.ringId === 'planets' ? segment.label.replace(/^\S+\s+/, '') : (segment.label || segment.id),
     };
   }),
 }));

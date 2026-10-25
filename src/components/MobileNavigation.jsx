@@ -91,10 +91,10 @@ export default function MobileNavigation({
         </button>
         <div
           className="mobile-brand"
-          aria-label={`Hermetika · ${view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}`}
+          aria-label={`Hermetika · ${view === 'tree' ? (treeSection === 'gates' ? 'Laboratório' : 'Árvore da Vida') : viewNames[view]}`}
         >
           <strong className="brand-font">Hermetika</strong>
-          <span>{view === 'tree' ? (treeSection === 'gates' ? '231 Portais' : 'Diagrama') : viewNames[view]}</span>
+          <span>{view === 'tree' ? (treeSection === 'gates' ? 'Laboratório' : 'Árvore da Vida') : viewNames[view]}</span>
         </div>
         <button
           type="button"

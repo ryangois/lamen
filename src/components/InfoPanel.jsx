@@ -348,9 +348,7 @@ export default function InfoPanel({
                 .filter(Boolean),
         }))
         .filter((group) => group.availableTabs.length > 0);
-    const activeTabGroup = tabGroups.find((group) => (
-        group.availableTabs.some((tab) => tab.id === activeTab)
-    )) || tabGroups[0];
+    const navigationTabs = tabs.filter((tab) => ['summary', 'associations', 'sources', activeTab].includes(tab.id));
     const psalmView = psalmViewState.segmentId === activeSegmentId ? psalmViewState.view : 'portuguese';
     const psalmText = {
         hebrew: content?.psalm?.hebrew,
@@ -377,7 +375,7 @@ export default function InfoPanel({
     };
 
     const handleTabKeyDown = (event) => {
-        const availableTabs = activeTabGroup?.availableTabs || [];
+        const availableTabs = navigationTabs;
         const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
         let nextIndex = currentIndex;
         if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % availableTabs.length;
@@ -529,6 +527,8 @@ export default function InfoPanel({
                             <span aria-hidden="true">{focusMode ? '◇' : '◉'}</span>
                             {focusMode ? 'Sair do estudo focado' : 'Estudo focado'}
                         </button>
+                        <details className="panel-context-details" key={`context-${activeSegmentId}`}>
+                        <summary>Posição e guia de leitura</summary>
                         <MiniContextMap activeId={activeSegmentId} title={content.title} />
                         {content.pronunciation && (
                             <article className="pronunciation-card">
@@ -566,6 +566,7 @@ export default function InfoPanel({
                                 )}
                             </article>
                         )}
+                        </details>
                         {neighbors.previous && neighbors.next && (
                             <nav className="panel-navigation" aria-label="Navegar por símbolos do mesmo anel">
                                 <button
@@ -602,25 +603,15 @@ export default function InfoPanel({
                         <div className="divider"></div>
 
                         <div className="panel-tab-navigation">
-                            <div className="panel-tab-groups" aria-label="Grupos da ficha">
-                                {tabGroups.map((group) => (
-                                    <button
-                                        type="button"
-                                        className={activeTabGroup?.id === group.id ? 'active' : ''}
-                                        aria-pressed={activeTabGroup?.id === group.id}
-                                        onClick={() => setTabState({
-                                            segmentId: activeSegmentId,
-                                            tab: group.availableTabs[0].id,
-                                        })}
-                                        key={group.id}
-                                    >
-                                        {group.label}
-                                        <small>{group.availableTabs.length}</small>
-                                    </button>
-                                ))}
-                            </div>
-                            <div className="panel-tabs" role="tablist" aria-label={`Seções de ${activeTabGroup?.label}`}>
-                                {activeTabGroup?.availableTabs.map((tab) => (
+                            <label className="panel-section-select">Seção da ficha
+                                <select value={activeTab} onChange={(event) => setTabState({segmentId: activeSegmentId, tab: event.target.value})}>
+                                    {tabGroups.map((group) => <optgroup label={group.label} key={group.id}>
+                                        {group.availableTabs.map((tab) => <option value={tab.id} key={tab.id}>{tab.label}</option>)}
+                                    </optgroup>)}
+                                </select>
+                            </label>
+                            <div className="panel-tabs" role="tablist" aria-label="Seções da ficha">
+                                {navigationTabs.map((tab) => (
                                 <button
                                     type="button"
                                     role="tab"

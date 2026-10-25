@@ -46,16 +46,31 @@ export default function TreeResearch({ onClose, onOpenPath, initialTab = 'gates'
         <header>
           <div>
             <span>Laboratório da Árvore</span>
-            <h2 className="brand-font" id="tree-research-title">Letras e árvores históricas</h2>
+            <h2 className="brand-font" id="tree-research-title">{tab === 'rose' ? 'Gerador de sigilos' : tab === 'gallery' ? 'Árvores históricas' : '231 Portais'}</h2>
           </div>
           <button type="button" onClick={onClose} aria-label="Fechar laboratório">×</button>
         </header>
 
-        <div className="tree-research-tabs" role="tablist" aria-label="Áreas do laboratório">
+        <div className="tree-research-tabs" role="tablist" aria-label="Áreas do laboratório" onKeyDown={(event) => {
+          const keys = ['gates', 'gallery', 'rose'];
+          const index = keys.indexOf(tab);
+          let next;
+          if (event.key === 'ArrowRight') next = (index + 1) % 3;
+          else if (event.key === 'ArrowLeft') next = (index + 2) % 3;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = 2;
+          else return;
+          event.preventDefault();
+          setTab(keys[next]);
+          event.currentTarget.querySelectorAll('[role="tab"]')[next].focus();
+        }}>
           <button
             type="button"
             role="tab"
             aria-selected={tab === 'gates'}
+            tabIndex={tab === 'gates' ? 0 : -1}
+            id="research-tab-gates"
+            aria-controls="research-panel"
             className={tab === 'gates' ? 'active' : ''}
             onClick={() => setTab('gates')}
           >
@@ -65,6 +80,9 @@ export default function TreeResearch({ onClose, onOpenPath, initialTab = 'gates'
             type="button"
             role="tab"
             aria-selected={tab === 'gallery'}
+            tabIndex={tab === 'gallery' ? 0 : -1}
+            id="research-tab-gallery"
+            aria-controls="research-panel"
             className={tab === 'gallery' ? 'active' : ''}
             onClick={() => setTab('gallery')}
           >
@@ -74,14 +92,17 @@ export default function TreeResearch({ onClose, onOpenPath, initialTab = 'gates'
             type="button"
             role="tab"
             aria-selected={tab === 'rose'}
+            tabIndex={tab === 'rose' ? 0 : -1}
+            id="research-tab-rose"
+            aria-controls="research-panel"
             className={tab === 'rose' ? 'active' : ''}
             onClick={() => setTab('rose')}
           >
-            Rosa-Cruz
+            Sigilos
           </button>
         </div>
 
-        <div className="tree-research-content">
+        <div className="tree-research-content" role="tabpanel" id="research-panel" aria-labelledby={`research-tab-${tab}`}>
           {tab === 'gates' ? (
             <section className="gates-lab">
               <header>

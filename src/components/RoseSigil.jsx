@@ -293,13 +293,130 @@ export default function RoseSigil({ onOpenPath }) {
       <header>
         <span>Golden Dawn · Rosa-Cruz</span>
         <h3 className="brand-font">Trace um nome na rosa</h3>
-        <p>
-          A rosa central do lamen da Rosa-Cruz dá uma pétala a cada uma das 22 letras, em três anéis
-          segundo o Sefer Yetzirah: três mães, sete duplas e doze simples. Seguir as letras de um nome
-          pelas pétalas produz uma figura linear — o círculo marca o início e a barra curta, o fim.
-        </p>
+        <p>Digite um nome em hebraico ou toque nas pétalas para traçar seu sigilo.</p>
       </header>
 
+
+
+      <div className="rose-sigil-input">
+        <label>
+          <span>Nome em hebraico</span>
+          <input
+            type="text"
+            lang="he"
+            dir="rtl"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Digite ou toque nas pétalas"
+            autoComplete="off"
+            spellCheck="false"
+          />
+        </label>
+        <div className="rose-sigil-input-actions">
+          <button
+            type="button"
+            onClick={() => setName((current) => [...current.trimEnd()].slice(0, -1).join(''))}
+            disabled={!name}
+            aria-label="Apagar última letra"
+          >
+            ⌫
+          </button>
+          <button type="button" onClick={() => setName('')} disabled={!name}>Limpar</button>
+        </div>
+      </div>
+
+      {ignored && (
+        <p className="rose-sigil-warning">
+          Apenas as 22 letras hebraicas entram no traçado; formas finais contam como a letra comum, e
+          sinais, vogais e caracteres latinos são ignorados.
+        </p>
+      )}
+
+      <div className="rose-sigil-stage">
+        <SigilSvg
+          sigil={sigil}
+          orderByLetter={orderByLetter}
+          showRose={showRose}
+          showTrace={!showRose || showTrace}
+          showLetters={showLetters}
+          onAddLetter={(hebrew) => setName((current) => current + hebrew)}
+          className={`rose-sigil-svg ${showRose ? '' : 'sigil-only'}`}
+          titleId="rose-sigil-title"
+        />
+        {sigil.steps.length > 0 && (!showRose || showTrace) && (
+          <div className="rose-sigil-legend" aria-label="Legenda do sigilo">
+            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5" fill="none" stroke={SIGIL_COLOR} strokeWidth="2.4" /></svg>Início</span>
+            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><line x1="-7" y1="0" x2="2" y2="0" stroke={SIGIL_COLOR} strokeWidth="2" /><line x1="3" y1="-6" x2="3" y2="6" stroke={SIGIL_COLOR} strokeWidth="3" strokeLinecap="round" /></svg>Fim</span>
+            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="3.4" fill="none" stroke={SIGIL_COLOR} strokeWidth="1.6" /><circle cx="0" cy="5" r="1.6" fill={SIGIL_COLOR} /></svg>Letra repetida (convenção da Hermetika)</span>
+          </div>
+        )}
+
+        <details className="rose-options">
+          <summary>Opções de visualização e exportação</summary>
+        <div className="rose-sigil-toolbar">
+          <button type="button" onClick={() => setShowRose((current) => !current)}>
+            {showRose ? 'Ver só o sigilo' : 'Mostrar a rosa'}
+          </button>
+          {showRose && <button type="button" aria-pressed={!showTrace} onClick={() => setShowTrace((current) => !current)}>
+            {showTrace ? 'Ver rosa sem traçado' : 'Mostrar traçado'}
+          </button>}
+          {showRose && <button type="button" aria-pressed={!showLetters} onClick={() => setShowLetters((current) => !current)}>
+            {showLetters ? 'Ocultar letras e números' : 'Mostrar letras e números'}
+          </button>}
+          <button
+            type="button"
+            disabled={!sigil.steps.length}
+            onClick={() => downloadSvg(tracesRef.current, `sigilo-${sigil.letters}`)}
+          >
+            Baixar só o traço
+          </button>
+          <button
+            type="button"
+            disabled={!sigil.steps.length}
+            onClick={() => downloadSvg(roseRef.current, `sigilo-${sigil.letters}-com-rosa`)}
+          >
+            Baixar com a rosa
+          </button>
+        </div>
+
+        <div className="rose-sigil-export" aria-hidden="true">
+          <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose={false} transparent svgRef={tracesRef} />
+          <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose svgRef={roseRef} />
+        </div>
+        {showRose && <details className="rose-center-detail">
+          <summary>Ver cruz central ampliada</summary>
+          <svg viewBox="-19 -19 38 38" width="200" height="200" role="img" aria-label="Cruz dourada de seis quadrados, rosa vermelha de cinco pétalas e quatro raios verdes sobre campo branco">
+            <RoseCenter />
+          </svg>
+        </details>}
+        </details>
+      </div>
+      <details className="rose-presets-details">
+        <summary>Escolher nome de exemplo ou anjo</summary>
+      <div className="rose-sigil-presets" aria-label="Nomes de exemplo">
+        {ROSE_NAME_PRESETS.map((preset) => (
+          <button
+            type="button"
+            key={preset.hebrew}
+            className={sigil.letters === preset.hebrew ? 'active' : ''}
+            onClick={() => setName(preset.hebrew)}
+          >
+            <b lang="he" dir="rtl">{preset.hebrew}</b>
+            {preset.label}
+          </button>
+        ))}
+        <select
+          value=""
+          onChange={(event) => event.target.value && setName(event.target.value)}
+          aria-label="Usar o nome de um dos 72 anjos"
+        >
+          <option value="">72 anjos…</option>
+          {angelNames.map((angel) => (
+            <option key={angel.id} value={angel.hebrew}>{angel.label} · {angel.hebrew}</option>
+          ))}
+        </select>
+      </div>
+      </details>
       <details className="rose-sigil-howto">
         <summary>Como usar</summary>
         <ol>
@@ -333,120 +450,6 @@ export default function RoseSigil({ onOpenPath }) {
           reconhecer o nome de origem. Aqui, o gerador é uma ferramenta de estudo dessa tradição.
         </p>
       </details>
-
-      <div className="rose-sigil-input">
-        <label>
-          <span>Nome em hebraico</span>
-          <input
-            type="text"
-            lang="he"
-            dir="rtl"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Digite ou toque nas pétalas"
-            autoComplete="off"
-            spellCheck="false"
-          />
-        </label>
-        <div className="rose-sigil-input-actions">
-          <button
-            type="button"
-            onClick={() => setName((current) => [...current.trimEnd()].slice(0, -1).join(''))}
-            disabled={!name}
-            aria-label="Apagar última letra"
-          >
-            ⌫
-          </button>
-          <button type="button" onClick={() => setName('')} disabled={!name}>Limpar</button>
-        </div>
-      </div>
-
-      <div className="rose-sigil-presets" aria-label="Nomes de exemplo">
-        {ROSE_NAME_PRESETS.map((preset) => (
-          <button
-            type="button"
-            key={preset.hebrew}
-            className={sigil.letters === preset.hebrew ? 'active' : ''}
-            onClick={() => setName(preset.hebrew)}
-          >
-            <b lang="he" dir="rtl">{preset.hebrew}</b>
-            {preset.label}
-          </button>
-        ))}
-        <select
-          value=""
-          onChange={(event) => event.target.value && setName(event.target.value)}
-          aria-label="Usar o nome de um dos 72 anjos"
-        >
-          <option value="">72 anjos…</option>
-          {angelNames.map((angel) => (
-            <option key={angel.id} value={angel.hebrew}>{angel.label} · {angel.hebrew}</option>
-          ))}
-        </select>
-      </div>
-      {ignored && (
-        <p className="rose-sigil-warning">
-          Apenas as 22 letras hebraicas entram no traçado; formas finais contam como a letra comum, e
-          sinais, vogais e caracteres latinos são ignorados.
-        </p>
-      )}
-
-      <div className="rose-sigil-stage">
-        <SigilSvg
-          sigil={sigil}
-          orderByLetter={orderByLetter}
-          showRose={showRose}
-          showTrace={!showRose || showTrace}
-          showLetters={showLetters}
-          onAddLetter={(hebrew) => setName((current) => current + hebrew)}
-          className={`rose-sigil-svg ${showRose ? '' : 'sigil-only'}`}
-          titleId="rose-sigil-title"
-        />
-        {sigil.steps.length > 0 && (!showRose || showTrace) && (
-          <div className="rose-sigil-legend" aria-label="Legenda do sigilo">
-            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5" fill="none" stroke={SIGIL_COLOR} strokeWidth="2.4" /></svg>Início</span>
-            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><line x1="-7" y1="0" x2="2" y2="0" stroke={SIGIL_COLOR} strokeWidth="2" /><line x1="3" y1="-6" x2="3" y2="6" stroke={SIGIL_COLOR} strokeWidth="3" strokeLinecap="round" /></svg>Fim</span>
-            <span><svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="3.4" fill="none" stroke={SIGIL_COLOR} strokeWidth="1.6" /><circle cx="0" cy="5" r="1.6" fill={SIGIL_COLOR} /></svg>Letra repetida (convenção da Hermetika)</span>
-          </div>
-        )}
-
-        <div className="rose-sigil-toolbar">
-          <button type="button" onClick={() => setShowRose((current) => !current)}>
-            {showRose ? 'Ver só o sigilo' : 'Mostrar a rosa'}
-          </button>
-          {showRose && <button type="button" aria-pressed={!showTrace} onClick={() => setShowTrace((current) => !current)}>
-            {showTrace ? 'Ver rosa sem traçado' : 'Mostrar traçado'}
-          </button>}
-          {showRose && <button type="button" aria-pressed={!showLetters} onClick={() => setShowLetters((current) => !current)}>
-            {showLetters ? 'Ocultar letras e números' : 'Mostrar letras e números'}
-          </button>}
-          <button
-            type="button"
-            disabled={!sigil.steps.length}
-            onClick={() => downloadSvg(tracesRef.current, `sigilo-${sigil.letters}`)}
-          >
-            Baixar só o traço
-          </button>
-          <button
-            type="button"
-            disabled={!sigil.steps.length}
-            onClick={() => downloadSvg(roseRef.current, `sigilo-${sigil.letters}-com-rosa`)}
-          >
-            Baixar com a rosa
-          </button>
-        </div>
-        <div className="rose-sigil-export" aria-hidden="true">
-          <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose={false} transparent svgRef={tracesRef} />
-          <SigilSvg sigil={sigil} orderByLetter={orderByLetter} showRose svgRef={roseRef} />
-        </div>
-        {showRose && <details className="rose-center-detail">
-          <summary>Ver cruz central ampliada</summary>
-          <svg viewBox="-19 -19 38 38" width="200" height="200" role="img" aria-label="Cruz dourada de seis quadrados, rosa vermelha de cinco pétalas e quatro raios verdes sobre campo branco">
-            <RoseCenter />
-          </svg>
-        </details>}
-      </div>
-
       {sigil.steps.length > 0 ? (
         <article className="rose-sigil-result">
           <div>

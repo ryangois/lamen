@@ -8,6 +8,33 @@
   user-select: none;
 }
 
+.wheel-controls {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #ffffff26;
+  border-radius: 16px;
+  background: #10131ee8;
+}
+.wheel-controls button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #ffffff26;
+  border-radius: 10px;
+  background: #ffffff0c;
+  color: #f5d77a;
+  cursor: pointer;
+  font: 700 0.9rem Inter, sans-serif;
+}
+.wheel-controls button:focus-visible { outline: 2px solid #f5d77a; outline-offset: 2px; }
+@media (max-width: 768px) {
+  .wheel-controls { top: auto; bottom: 76px; right: 12px; }
+}
+
 .lamen-canvas.is-dragging,
 .lamen-canvas:active {
   cursor: grabbing;
