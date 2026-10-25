@@ -39,6 +39,14 @@ O projeto foi desenvolvido com React e Vite, funciona em celular e computador e 
 - Acesso aos caminhos relacionados.
 - Galeria editorial de configurações históricas da Árvore da Vida.
 
+### Sigilos na Rosa-Cruz
+
+- Rosa do lamen da Golden Dawn com as 22 letras em três anéis: três mães, sete duplas e doze simples.
+- Traçado de qualquer nome hebraico, com círculo no início, barra no fim e laço para letras repetidas.
+- Entrada por digitação, toque nas pétalas, nomes divinos de exemplo ou os 72 anjos.
+- Leitura passo a passo com família da letra, elemento, planeta ou signo e acesso ao caminho da Árvore.
+- Visualização só do sigilo e exportação em SVG.
+
 ### Oráculo
 
 - Consulta de uma carta ou símbolo.

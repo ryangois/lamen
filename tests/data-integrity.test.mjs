@@ -17,6 +17,7 @@ import {
   getLetterGate,
 } from '../src/data/researchData.js';
 import { ringStructure } from '../src/data/rings.js';
+import { ROSE_PETALS, normalizeHebrewName, traceRoseSigil } from '../src/data/roseCross.js';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../src/data/treeOfLife.js';
 
 const angels = ringStructure.find((ring) => ring.ringId === 'angels').segments;
@@ -277,4 +278,31 @@ test('the Supabase editorial migration and environment template are versioned', 
   assert.ok(existsSync(resolve('supabase/migrations/202607210001_blog_admin.sql')));
   assert.ok(existsSync(resolve('.env.example')));
   assert.ok(existsSync(resolve('ADMIN-SUPABASE.md')));
+});
+
+test('the Rose Cross places each of the 22 letters on exactly one petal', () => {
+  assert.equal(ROSE_PETALS.length, 22);
+  assert.deepEqual(
+    [...new Set(ROSE_PETALS.map((petal) => petal.hebrew))].sort(),
+    HEBREW_LETTERS.map((letter) => letter.hebrew).sort(),
+  );
+  assert.deepEqual(
+    ['mothers', 'doubles', 'simples'].map((ring) => ROSE_PETALS.filter((petal) => petal.ring === ring).length),
+    [3, 7, 12],
+  );
+});
+
+test('a name traced on the rose starts with a circle and ends with a bar', () => {
+  const adonai = traceRoseSigil('אדני');
+  assert.deepEqual(adonai.steps.map((step) => step.name), ['Aleph', 'Daleth', 'Nun', 'Yod']);
+  assert.equal(adonai.points.length, 4);
+  assert.equal(adonai.value, 65);
+  assert.deepEqual(adonai.start, { x: adonai.steps[0].x, y: adonai.steps[0].y });
+  assert.ok(adonai.bar);
+
+  assert.equal(normalizeHebrewName('אֱלֹהִים x'), 'אלהימ');
+  const doubled = traceRoseSigil('ללה');
+  assert.equal(doubled.loops.length, 1);
+  assert.equal(doubled.points.length, 2);
+  assert.equal(traceRoseSigil('abc').start, null);
 });

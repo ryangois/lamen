@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { getContent } from '../data/content';
 import { treePaths, treeSephiroth, treeSpecialNodes } from '../data/treeOfLife';
 import TreeResearch from './TreeResearch';
@@ -16,8 +17,13 @@ export default function TreeOfLife({
   onOpenResearch,
   onCloseResearch,
 }) {
+  const [researchTab, setResearchTab] = useState('gates');
   const handleSelect = (id) => {
     onSegmentClick?.(id);
+  };
+  const openResearch = (tab) => {
+    setResearchTab(tab);
+    onOpenResearch();
   };
 
   return (
@@ -29,10 +35,16 @@ export default function TreeOfLife({
           Toque em uma Sephirah ou caminho para abrir as correspondências no painel,
           como na roda.
         </p>
-        <button type="button" className="tree-research-launch" onClick={onOpenResearch}>
-          <span aria-hidden="true">✦</span>
-          231 Portais e árvores históricas
-        </button>
+        <div className="tree-research-launchers">
+          <button type="button" className="tree-research-launch" onClick={() => openResearch('gates')}>
+            <span aria-hidden="true">✦</span>
+            231 Portais e árvores históricas
+          </button>
+          <button type="button" className="tree-research-launch" onClick={() => openResearch('rose')}>
+            <span aria-hidden="true">✿</span>
+            Sigilos na Rosa-Cruz
+          </button>
+        </div>
       </div>
 
       <div className="tree-stage" aria-label="Árvore da Vida interativa">
@@ -135,6 +147,7 @@ export default function TreeOfLife({
       </div>
       {researchOpen && (
         <TreeResearch
+          initialTab={researchTab}
           onClose={onCloseResearch}
           onOpenPath={(id) => {
             onCloseResearch();

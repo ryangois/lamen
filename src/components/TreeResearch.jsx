@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { HEBREW_LETTERS, HISTORICAL_TREES, RESEARCH_SOURCES, getLetterGate } from '../data/researchData';
 import { treePaths } from '../data/treeOfLife';
 import { useDialogFocus } from '../hooks/useDialogFocus';
+import RoseSigil from './RoseSigil';
 import './TreeResearch.css';
 
 function HistoricalTreeSketch({ shape }) {
@@ -13,9 +14,9 @@ function HistoricalTreeSketch({ shape }) {
   );
 }
 
-export default function TreeResearch({ onClose, onOpenPath }) {
+export default function TreeResearch({ onClose, onOpenPath, initialTab = 'gates' }) {
   const dialogRef = useRef(null);
-  const [tab, setTab] = useState('gates');
+  const [tab, setTab] = useState(initialTab);
   const [first, setFirst] = useState('א');
   const [second, setSecond] = useState('ב');
   useDialogFocus(dialogRef);
@@ -68,6 +69,15 @@ export default function TreeResearch({ onClose, onOpenPath }) {
             onClick={() => setTab('gallery')}
           >
             Galeria histórica
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'rose'}
+            className={tab === 'rose' ? 'active' : ''}
+            onClick={() => setTab('rose')}
+          >
+            Rosa-Cruz
           </button>
         </div>
 
@@ -138,6 +148,8 @@ export default function TreeResearch({ onClose, onOpenPath }) {
                 Consultar o Sefer Yetzirah na Sefaria
               </a>
             </section>
+          ) : tab === 'rose' ? (
+            <RoseSigil onOpenPath={onOpenPath} />
           ) : (
             <section className="historical-gallery">
               <header>

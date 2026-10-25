@@ -1,0 +1,308 @@
+.rose-sigil-lab {
+  display: grid;
+  gap: 1rem;
+}
+
+.rose-sigil-lab > header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.rose-sigil-lab > header span,
+.rose-sigil-rings span {
+  color: var(--accent-gold);
+  font: 900 0.62rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rose-sigil-lab h3 {
+  font-size: clamp(1.35rem, 4vw, 2rem);
+}
+
+.rose-sigil-lab p {
+  color: #aeb9c8;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.rose-sigil-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.65rem;
+}
+
+.rose-sigil-input label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.rose-sigil-input label span {
+  color: #939faf;
+  font: 850 0.6rem 'Inter', sans-serif;
+  text-transform: uppercase;
+}
+
+.rose-sigil-input input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 0.9rem;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  font: 700 1.5rem 'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif;
+}
+
+.rose-sigil-input input:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.rose-sigil-input-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rose-sigil-input-actions button,
+.rose-sigil-toolbar button,
+.rose-sigil-result li button {
+  min-height: 48px;
+  padding: 0 0.9rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  cursor: pointer;
+  font: 800 0.72rem 'Inter', sans-serif;
+}
+
+.rose-sigil-input-actions button:disabled,
+.rose-sigil-toolbar button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.rose-sigil-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rose-sigil-presets button,
+.rose-sigil-presets select {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.75rem;
+  color: #d5dce6;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 750 0.68rem 'Inter', sans-serif;
+}
+
+.rose-sigil-presets button b {
+  color: var(--accent-gold);
+  font: 700 0.95rem 'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif;
+}
+
+.rose-sigil-presets button.active {
+  color: #111318;
+  background: var(--accent-gold);
+}
+
+.rose-sigil-presets button.active b {
+  color: #111318;
+}
+
+.rose-sigil-presets select option {
+  color: #111318;
+}
+
+.rose-sigil-lab .rose-sigil-warning {
+  padding: 0.6rem 0.8rem;
+  color: #f0c98a;
+  background: rgba(240, 160, 60, 0.1);
+  border-radius: 12px;
+}
+
+.rose-sigil-stage {
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+}
+
+.rose-sigil-svg {
+  width: min(100%, 440px);
+  height: auto;
+  border-radius: 50%;
+}
+
+.rose-sigil-svg.sigil-only {
+  border-radius: 18px;
+}
+
+.rose-petal {
+  cursor: pointer;
+  outline: none;
+}
+
+.rose-petal path {
+  transition: fill-opacity 160ms ease;
+}
+
+.rose-petal:hover path,
+.rose-petal:focus-visible path {
+  fill-opacity: 0.8;
+}
+
+.rose-petal:focus-visible path {
+  stroke: #fff;
+  stroke-width: 1.2;
+}
+
+.rose-sigil-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rose-sigil-result {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(212, 175, 55, 0.075);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+}
+
+.rose-sigil-result > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rose-sigil-result > div strong {
+  color: var(--accent-gold);
+  font: 700 2rem 'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif;
+}
+
+.rose-sigil-result > div span {
+  color: #aeb9c8;
+  font: 800 0.7rem 'Inter', sans-serif;
+}
+
+.rose-sigil-result ol {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rose-sigil-result li {
+  display: grid;
+  grid-template-columns: 1.6rem 2.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(0, 0, 0, 0.28);
+  border-left: 4px solid var(--petal-color);
+  border-radius: 12px;
+}
+
+.rose-sigil-result li > b {
+  color: #939faf;
+  font: 900 0.72rem 'Inter', sans-serif;
+  text-align: center;
+}
+
+.rose-sigil-result li > strong {
+  font: 700 1.6rem 'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif;
+  text-align: center;
+}
+
+.rose-sigil-result li > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.rose-sigil-result li span {
+  font: 800 0.74rem 'Inter', sans-serif;
+}
+
+.rose-sigil-result li small {
+  color: #939faf;
+  font: 700 0.66rem 'Inter', sans-serif;
+}
+
+.rose-sigil-result li button {
+  min-height: 36px;
+  padding: 0 0.7rem;
+  font-size: 0.64rem;
+}
+
+.rose-sigil-lab .rose-sigil-empty {
+  text-align: center;
+}
+
+.rose-sigil-rings {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.rose-sigil-rings article {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.rose-sigil-rings strong {
+  font: 700 1.15rem 'SBL Hebrew', 'Noto Serif Hebrew', 'Times New Roman', serif;
+  word-spacing: 0.15em;
+}
+
+.rose-sigil-rings small {
+  color: #939faf;
+  font: 700 0.64rem 'Inter', sans-serif;
+}
+
+.rose-sigil-lab > a {
+  color: var(--accent-gold);
+  font: 800 0.72rem 'Inter', sans-serif;
+}
+
+@media (max-width: 600px) {
+  .rose-sigil-input,
+  .rose-sigil-rings {
+    grid-template-columns: 1fr;
+  }
+
+  .rose-sigil-input-actions button {
+    flex: 1;
+  }
+
+  .rose-sigil-result li {
+    grid-template-columns: 1.4rem 2rem minmax(0, 1fr);
+  }
+
+  .rose-sigil-result li button {
+    grid-column: 3;
+    justify-self: start;
+  }
+}

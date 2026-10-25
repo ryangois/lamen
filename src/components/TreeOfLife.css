@@ -44,6 +44,12 @@
   line-height: 1.7;
 }
 
+.tree-research-launchers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .tree-research-launch {
   display: inline-flex;
   width: fit-content;
